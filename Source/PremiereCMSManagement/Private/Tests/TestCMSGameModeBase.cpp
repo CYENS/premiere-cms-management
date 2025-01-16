@@ -66,6 +66,9 @@ void ATestCMSGameModeBase::TestGetSessionById() const
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData FileUrl: %s"), *Session.AudioDataFileUrl);
+		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
+		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Title: %s"), *Session.PerformanceTitle);
+		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Description: %s"), *Session.PerformanceDescription);
 	});
 	FOnFailure OnFailure;
 	OnFailure.BindLambda([](const FString& ErrorReason)

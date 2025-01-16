@@ -5,6 +5,8 @@
 
 #include "CMSSession.generated.h"
 
+struct FCMSPerformance;
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct  PREMIERECMSMANAGEMENT_API FCMSSession
 {
@@ -24,4 +26,13 @@ struct  PREMIERECMSMANAGEMENT_API FCMSSession
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
 	FString AudioDataFileUrl;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
+	FString PerformanceId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
+	FString PerformanceTitle;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
+	FString PerformanceDescription;
 };

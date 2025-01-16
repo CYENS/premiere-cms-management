@@ -19,7 +19,7 @@ void USessionRepository::GetSessionById(
 ) const
 {
 	const FString Query = TEXT(R"(
-	query Query($id: ID) {
+	query GetSessionById($id: ID) {
 	  sessionById(id: $id) {
 		id
 		title
@@ -27,6 +27,11 @@ void USessionRepository::GetSessionById(
 		audioData {
 			id
 			fileUrl
+		}
+		performance {
+			id
+			title
+			description
 		}
 	  }
 	}
@@ -106,6 +111,21 @@ bool USessionRepository::ParseCMSSessionFromResponse(
 		{
 			OutErrorReason = TEXT("audioData invalid");
 		}
+		
+		if (
+			const TSharedPtr<FJsonObject> PerformanceObject = SessionByIdObject->GetObjectField(TEXT("performance"));
+			PerformanceObject.IsValid()
+		)
+		{
+			OutSession.PerformanceId = PerformanceObject->GetStringField(TEXT("id"));
+			OutSession.PerformanceTitle = PerformanceObject->GetStringField(TEXT("title"));
+			OutSession.PerformanceDescription = PerformanceObject->GetStringField(TEXT("description"));
+		}
+		else
+		{
+			OutErrorReason = TEXT("performance invalid");
+		}
+		
 		return true;
 	}
 
