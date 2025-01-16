@@ -3,7 +3,7 @@
 
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
-#include "SessionRepository.h"
+#include "Repositories/SessionRepository.h"
 
 void ATestCMSGameModeBase::BeginPlay()
 {

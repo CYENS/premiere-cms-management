@@ -1,5 +1,5 @@
 
-#include "SessionRepository.h"
+#include "Repositories/SessionRepository.h"
 
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
