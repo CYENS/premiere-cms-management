@@ -18,28 +18,21 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 {
     if (Endpoint.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("UGraphQLDataSourceImpl: Endpoint is not set!"));
-        // Immediately invoke callback to signal failure.
         OnComplete.ExecuteIfBound(false, TEXT("No endpoint configured."));
         return;
     }
 
-    // Create an HTTP request
-    TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
-
-    // The default method for GraphQL calls is POST
+    const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
     HttpRequest->SetURL(Endpoint);
     HttpRequest->SetVerb(TEXT("POST"));
     HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-    // Build the JSON body with "query" and "variables"
-    TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
+    const TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
     BodyObject->SetStringField(TEXT("query"), Query);
 
-    // If we have any variables, set them as a nested JSON object
     if (Variables.Num() > 0)
     {
-        TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
+        const TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
         for (const TPair<FString, FString>& Pair : Variables)
         {
             // GraphQL variables can be of various types (ints, bools, etc.).
@@ -56,14 +49,12 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 
     HttpRequest->SetContentAsString(BodyString);
 
-    // Bind our completion handler, passing the callback so we can call it later
     HttpRequest->OnProcessRequestComplete().BindUObject(
         this,
         &ThisClass::OnRequestComplete,
         OnComplete
     );
 
-    // Fire off the async request
     HttpRequest->ProcessRequest();
 }
 
@@ -77,7 +68,7 @@ void UGraphQLDataSource::OnRequestComplete(
     // Check for general errors
     if (!bWasSuccessful || !Response.IsValid())
     {
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSourceImpl: Request failed (no valid response)."));
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSource: Request failed (no valid response)."));
         OnComplete.ExecuteIfBound(false, TEXT("Request failed or response is invalid."));
         return;
     }
@@ -86,7 +77,7 @@ void UGraphQLDataSource::OnRequestComplete(
     int32 StatusCode = Response->GetResponseCode();
     if (StatusCode < 200 || StatusCode >= 300)
     {
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSourceImpl: Request failed with status code %d"), StatusCode);
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSource: Request failed with status code %d"), StatusCode);
         OnComplete.ExecuteIfBound(false, Response->GetContentAsString());
         return;
     }
