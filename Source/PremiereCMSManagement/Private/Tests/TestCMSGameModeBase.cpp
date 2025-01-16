@@ -17,6 +17,7 @@ void ATestCMSGameModeBase::BeginPlay()
 	
 	TestExecuteGraphQLQuery();
 	TestGetSessionById();
+	TestGetActiveSessions();
 }
 
 void ATestCMSGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -61,14 +62,7 @@ void ATestCMSGameModeBase::TestGetSessionById() const
 	FOnGetSessionSuccess OnSuccess;
 	OnSuccess.BindLambda([](const FCMSSession& Session)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session ID: %s"), *Session.Id);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData FileUrl: %s"), *Session.AudioDataFileUrl);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Title: %s"), *Session.PerformanceTitle);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Description: %s"), *Session.PerformanceDescription);
+		LogSession(Session);
 	});
 	FOnFailure OnFailure;
 	OnFailure.BindLambda([](const FString& ErrorReason)
@@ -76,6 +70,25 @@ void ATestCMSGameModeBase::TestGetSessionById() const
 		UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Failed to get Session By Id %s"), *ErrorReason);
 	});
 	SessionRepository->GetSessionById("1", OnSuccess, OnFailure);
+}
+
+void ATestCMSGameModeBase::TestGetActiveSessions() const
+{
+	FOnGetActiveSessionsSuccess OnGetActiveSessions;
+	OnGetActiveSessions.BindLambda([](const TArray<FCMSSession> Sessions)
+	{
+		for (auto Session : Sessions)
+		{
+			LogSession(Session);
+		}
+	});
+	
+	FOnFailure OnFailure;
+	OnFailure.BindLambda([](const FString& ErrorReason)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Failed to get active sessions. Reason: %s"), *ErrorReason);
+	});
+	SessionRepository->GetActiveSessions(OnGetActiveSessions, OnFailure);
 }
 
 void ATestCMSGameModeBase::CreateSession(
@@ -87,15 +100,7 @@ void ATestCMSGameModeBase::CreateSession(
 	FOnGetSessionSuccess OnSuccess;
 	OnSuccess.BindLambda([](const FCMSSession& Session)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session ID: %s"), *Session.Id);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session State: %s"), *Session.State);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData FileUrl: %s"), *Session.AudioDataFileUrl);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Title: %s"), *Session.PerformanceTitle);
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Description: %s"), *Session.PerformanceDescription);
+		LogSession(Session);
 	});
 	FOnFailure OnFailure;
 	OnFailure.BindLambda([](const FString& ErrorReason)
@@ -111,3 +116,17 @@ void ATestCMSGameModeBase::CreateSession(
 	);
 }
 	
+void ATestCMSGameModeBase::LogSession(const FCMSSession& Session)
+{
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("-- Session --"));
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session ID: %s"), *Session.Id);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session State: %s"), *Session.State);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData FileUrl: %s"), *Session.AudioDataFileUrl);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Title: %s"), *Session.PerformanceTitle);
+	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Description: %s"), *Session.PerformanceDescription);
+}
+

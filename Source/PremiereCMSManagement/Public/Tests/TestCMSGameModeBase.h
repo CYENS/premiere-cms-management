@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "TestCMSGameModeBase.generated.h"
 
+struct FCMSSession;
 class USessionRepository;
 class UGraphQLDataSource;
 
@@ -16,6 +17,7 @@ class PREMIERECMSMANAGEMENT_API ATestCMSGameModeBase : public AGameModeBase
 
 	void TestExecuteGraphQLQuery() const;
 	void TestGetSessionById() const;
+	void TestGetActiveSessions() const;
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "TestCMSGameModeBase")
@@ -35,5 +37,7 @@ private:
 	
 	UPROPERTY()
 	USessionRepository* SessionRepository;
+
+	static void LogSession(const FCMSSession& Session);
 	 
 };

@@ -7,6 +7,7 @@
 #include "SessionRepository.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnGetSessionSuccess, FCMSSession& /* Session */);
+DECLARE_DELEGATE_OneParam(FOnGetActiveSessionsSuccess, TArray<FCMSSession> /* Sessions */);
 DECLARE_DELEGATE_OneParam(FOnFailure, FString /* ErrorReason */);
 
 UCLASS()
@@ -20,6 +21,8 @@ public:
 
     void GetSessionById(const FString& SessionId, FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure) const;
 
+    void GetActiveSessions(FOnGetActiveSessionsSuccess OnSuccess, FOnFailure OnFailure) const;
+
     void CreateSession(
         const FString& Title,
         const FString& OwnerId,
@@ -28,13 +31,26 @@ public:
         FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure
     ) const;
     
+
+private:
+    UPROPERTY()
+    UGraphQLDataSource* DataSource;
+    
     /**
      * Returns false if it fails to parse the response and OutErrorReason is populated
      */
     static bool ParseCMSSessionFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSSession& OutSession, FString& OutErrorReason);
 
-private:
-    UPROPERTY()
-    UGraphQLDataSource* DataSource;
+    static bool ParseCMSMultipleSessionsFromResponse(
+        const FString& JsonResponse,
+        const FString& QueryName,
+        TArray<FCMSSession>& OutSessions,
+        FString& OutErrorReason
+    );
 
+    static bool CreateSessionFromSingleSessionJsonObject(
+        const TSharedPtr<FJsonObject>& SessionJsonObject,
+        FCMSSession& OutSession,
+        FString& OutErrorReason
+    );
 };
