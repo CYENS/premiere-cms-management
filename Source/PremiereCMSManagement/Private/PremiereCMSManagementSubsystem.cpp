@@ -41,6 +41,25 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 		OwnerId,
 		PerformanceId,
 		State,
-		OnSuccess, OnFailure
+		OnSuccess,
+		OnFailure
 	);
+}
+
+void UPremiereCMSManagementSubsystem::GetActiveSessions(
+	FOnGetActiveSessionsDelegate OnGetActiveSessions,
+	FOnFailureDelegate OnGetActiveSessionsFailure)
+{
+	FOnGetActiveSessionsSuccess OnSuccess;
+	OnSuccess.BindLambda([OnGetActiveSessions](const TArray<FCMSSession> Sessions)
+	{
+		OnGetActiveSessions.ExecuteIfBound(Sessions);
+	});
+	
+	FOnFailure OnFailure;
+	OnFailure.BindLambda([OnGetActiveSessionsFailure](const FString& ErrorReason)
+	{
+		OnGetActiveSessionsFailure.ExecuteIfBound(ErrorReason);
+	});
+	SessionRepository->GetActiveSessions(OnSuccess, OnFailure);
 }

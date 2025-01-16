@@ -8,6 +8,7 @@
 #include "PremiereCMSManagementSubsystem.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, Session);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, FString, ErrorMessage);
 
 UCLASS(BlueprintType, Config=Engine)
@@ -36,5 +37,11 @@ public:
 		const FString& State,
 		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void GetActiveSessions(
+		FOnGetActiveSessionsDelegate OnGetActiveSessions,
+		FOnFailureDelegate OnGetActiveSessionsFailure
 	);
 };
