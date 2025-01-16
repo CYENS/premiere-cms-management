@@ -18,13 +18,20 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Session Repository")
     void Initialize(UGraphQLDataSource* InDataSource);
 
-    // UFUNCTION(BlueprintCallable, Category = "Session Repository")
     void GetSessionById(const FString& SessionId, FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure) const;
+
+    void CreateSession(
+        const FString& Title,
+        const FString& OwnerId,
+        const FString& PerformanceId,
+        FOnGetSessionSuccess OnSuccess,
+        FOnFailure OnFailure
+    ) const;
     
     /**
      * Returns false if it fails to parse the response and OutErrorReason is populated
      */
-    static bool ParseCMSSessionFromResponse(const FString& JsonResponse, FCMSSession& OutSession, FString& OutErrorReason);
+    static bool ParseCMSSessionFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSSession& OutSession, FString& OutErrorReason);
 
 private:
     UPROPERTY()

@@ -56,7 +56,68 @@ void USessionRepository::GetSessionById(
 		}
 		
 		FString ErrorReason;
-		if (FCMSSession Session; ParseCMSSessionFromResponse(ResponseContent, Session, ErrorReason))
+		if (FCMSSession Session; ParseCMSSessionFromResponse(ResponseContent, TEXT("sessionById"), Session, ErrorReason))
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response to CMSSession"));
+			OnSuccess.ExecuteIfBound(Session);
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Could not parse response to CMSSession. Reason: %s"), *ErrorReason);
+		}
+	});
+	DataSource->ExecuteGraphQLQuery(Query, QueryParams, OnResponse);
+}
+
+void USessionRepository::CreateSession(
+	const FString& Title,
+	const FString& OwnerId,
+	const FString& PerformanceId,
+	FOnGetSessionSuccess OnSuccess,
+	FOnFailure OnFailure
+) const
+{
+	const FString Query = TEXT(R"(
+	mutation CreateSession($title: String!, $ownerId: ID!, $performanceId: ID!) {
+	  createSession(title: $title, ownerId: $ownerId, performanceId: $performanceId) {
+		id
+		title
+		streamingUrl
+		audioData {
+			id
+			fileUrl
+		}
+		performance {
+			id
+			title
+			description
+		}
+	  }
+	}
+	)");
+
+	const TMap<FString, FString> QueryParams = {
+		{"title", Title },
+		{"ownerId", OwnerId },
+		{"performanceId", PerformanceId },
+	};
+	
+	FOnGraphQLResponse OnResponse;
+	OnResponse.BindLambda([OnSuccess, OnFailure](const bool bSuccess, const FString& ResponseContent)
+	{
+		if (!bSuccess)
+		{
+			const FString ErrorMessage = FString::Printf(TEXT("GraphQL request failed. Response: %s"), *ResponseContent);
+			OnFailure.ExecuteIfBound(ErrorMessage);
+			return;
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
+		}
+		
+		FString ErrorReason;
+		if (FCMSSession Session; ParseCMSSessionFromResponse(ResponseContent, TEXT("createSession"), Session, ErrorReason))
 		{
 			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response to CMSSession"));
 			OnSuccess.ExecuteIfBound(Session);
@@ -71,6 +132,7 @@ void USessionRepository::GetSessionById(
 
 bool USessionRepository::ParseCMSSessionFromResponse(
 	const FString& JsonResponse,
+	const FString& QueryName,
 	FCMSSession& OutSession,
 	FString& OutErrorReason
 )
@@ -88,7 +150,7 @@ bool USessionRepository::ParseCMSSessionFromResponse(
 			return false;
 		}
 
-		const TSharedPtr<FJsonObject> SessionByIdObject = DataObject->GetObjectField(TEXT("sessionById"));
+		const TSharedPtr<FJsonObject> SessionByIdObject = DataObject->GetObjectField(QueryName);
 		if (!SessionByIdObject.IsValid())
 		{
 			OutErrorReason = TEXT("sessionById invalid");
