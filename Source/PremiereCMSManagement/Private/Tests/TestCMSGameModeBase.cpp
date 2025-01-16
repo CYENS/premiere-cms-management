@@ -90,6 +90,7 @@ void ATestCMSGameModeBase::CreateSession(
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session ID: %s"), *Session.Id);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
+		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session State: %s"), *Session.State);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData FileUrl: %s"), *Session.AudioDataFileUrl);
 		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
@@ -105,8 +106,8 @@ void ATestCMSGameModeBase::CreateSession(
 		Title,
 		OwnerId,
 		PerformanceId,
-		OnSuccess,
-		OnFailure
+		"inactive",
+		OnSuccess, OnFailure
 	);
 }
 	

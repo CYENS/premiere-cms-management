@@ -21,6 +21,7 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 	const FString& Title,
 	const FString& OwnerId,
 	const FString& PerformanceId,
+	const FString& State,
 	FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 	FOnFailureDelegate OnCreateSessionFailure
 ) 
@@ -39,7 +40,7 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 		Title,
 		OwnerId,
 		PerformanceId,
-		OnSuccess,
-		OnFailure
+		State,
+		OnSuccess, OnFailure
 	);
 }

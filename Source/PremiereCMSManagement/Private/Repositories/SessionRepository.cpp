@@ -23,6 +23,7 @@ void USessionRepository::GetSessionById(
 	  sessionById(id: $id) {
 		id
 		title
+		state
 		streamingUrl
 		audioData {
 			id
@@ -73,15 +74,17 @@ void USessionRepository::CreateSession(
 	const FString& Title,
 	const FString& OwnerId,
 	const FString& PerformanceId,
+	const FString& State,
 	FOnGetSessionSuccess OnSuccess,
 	FOnFailure OnFailure
 ) const
 {
 	const FString Query = TEXT(R"(
-	mutation CreateSession($title: String!, $ownerId: ID!, $performanceId: ID!) {
-	  createSession(title: $title, ownerId: $ownerId, performanceId: $performanceId) {
+	mutation CreateSession($title: String!, $ownerId: ID!, $performanceId: ID!, $state: String!) {
+	  createSession(title: $title, ownerId: $ownerId, performanceId: $performanceId, state: $state) {
 		id
 		title
+		state
 		streamingUrl
 		audioData {
 			id
@@ -100,6 +103,7 @@ void USessionRepository::CreateSession(
 		{"title", Title },
 		{"ownerId", OwnerId },
 		{"performanceId", PerformanceId },
+		{"state", State },
 	};
 	
 	FOnGraphQLResponse OnResponse;
@@ -160,6 +164,7 @@ bool USessionRepository::ParseCMSSessionFromResponse(
 		OutSession.Id = SessionByIdObject->GetStringField(TEXT("id"));
 		OutSession.Title = SessionByIdObject->GetStringField(TEXT("title"));
 		OutSession.StreamingUrl = SessionByIdObject->GetStringField(TEXT("streamingUrl"));
+		OutSession.State = SessionByIdObject->GetStringField(TEXT("state"));
 
 		if (
 			const TSharedPtr<FJsonObject> AudioDataObject = SessionByIdObject->GetObjectField(TEXT("audioData"));

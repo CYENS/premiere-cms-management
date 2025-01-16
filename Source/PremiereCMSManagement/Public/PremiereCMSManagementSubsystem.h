@@ -33,6 +33,7 @@ public:
 		const FString& Title,
 		const FString& OwnerId,
 		const FString& PerformanceId,
+		const FString& State,
 		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
 	);

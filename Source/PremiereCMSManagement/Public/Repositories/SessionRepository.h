@@ -24,8 +24,8 @@ public:
         const FString& Title,
         const FString& OwnerId,
         const FString& PerformanceId,
-        FOnGetSessionSuccess OnSuccess,
-        FOnFailure OnFailure
+        const FString& State,
+        FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure
     ) const;
     
     /**
