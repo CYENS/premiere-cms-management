@@ -182,39 +182,56 @@ bool USessionRepository::ParseCMSMultipleSessionsFromResponse(
 }
 
 void USessionRepository::CreateSession(
-	const FString& Title,
-	const FString& OwnerId,
-	const FString& PerformanceId,
-	const FString& State,
+	const FCMSSession& InSession,
 	FOnGetSessionSuccess OnSuccess,
 	FOnFailure OnFailure
 ) const
 {
 	const FString Query = TEXT(R"(
-	mutation CreateSession($title: String!, $ownerId: ID!, $performanceId: ID!, $state: String!) {
-	  createSession(title: $title, ownerId: $ownerId, performanceId: $performanceId, state: $state) {
+	mutation CreateSession(
+		$title: String!, 
+		$ownerId: ID!, 
+		$performanceId: ID!, 
+		$state: String!, 
+		$streamingUrl: String = "", 
+		$eosSessionId: String = "", 
+		$audioDataId: ID
+	  ) {
+	  createSession(
+		title: $title,
+		ownerId: $ownerId,
+		performanceId: $performanceId,
+		state: $state,
+		streamingUrl: $streamingUrl,
+		eosSessionId: $eosSessionId,
+		audioDataId: $audioDataId
+	  ) {
 		id
+		eosSessionId
 		title
 		state
 		streamingUrl
 		audioData {
-			id
-			fileUrl
+		  id
 		}
 		performance {
-			id
-			title
-			description
+		  id
+		}
+		owner {
+		  id
 		}
 	  }
 	}
 	)");
 
 	const TMap<FString, FString> QueryParams = {
-		{"title", Title },
-		{"ownerId", OwnerId },
-		{"performanceId", PerformanceId },
-		{"state", State },
+		{"eosSessionId", InSession.EosSessionId },
+		{"title", InSession.Title },
+		{"ownerId", InSession.OwnerId },
+		{"performanceId", InSession.PerformanceId },
+		{"state", InSession.State },
+		{"streamingUrl", InSession.StreamingUrl },
+		{"audioDataId", InSession.AudioDataId },
 	};
 	
 	FOnGraphQLResponse OnResponse;
@@ -232,7 +249,8 @@ void USessionRepository::CreateSession(
 		}
 		
 		FString ErrorReason;
-		if (FCMSSession Session; ParseCMSSessionFromResponse(ResponseContent, TEXT("createSession"), Session, ErrorReason))
+		FCMSSession Session;
+		if (ParseCMSSessionFromResponse(ResponseContent, TEXT("createSession"), Session, ErrorReason))
 		{
 			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response to CMSSession"));
 			OnSuccess.ExecuteIfBound(Session);
@@ -252,6 +270,7 @@ bool USessionRepository::CreateSessionFromSingleSessionJsonObject(
 )
 {
 	OutSession.Id = SessionJsonObject->GetStringField(TEXT("id"));
+	OutSession.EosSessionId = SessionJsonObject->GetStringField(TEXT("eosSessionId"));
 	OutSession.Title = SessionJsonObject->GetStringField(TEXT("title"));
 	OutSession.StreamingUrl = SessionJsonObject->GetStringField(TEXT("streamingUrl"));
 	OutSession.State = SessionJsonObject->GetStringField(TEXT("state"));
@@ -262,7 +281,6 @@ bool USessionRepository::CreateSessionFromSingleSessionJsonObject(
 	)
 	{
 		OutSession.AudioDataId = AudioDataObject->GetStringField(TEXT("id"));
-		OutSession.AudioDataFileUrl = AudioDataObject->GetStringField(TEXT("fileUrl"));
 	}
 	else
 	{
@@ -276,14 +294,26 @@ bool USessionRepository::CreateSessionFromSingleSessionJsonObject(
 	)
 	{
 		OutSession.PerformanceId = PerformanceObject->GetStringField(TEXT("id"));
-		OutSession.PerformanceTitle = PerformanceObject->GetStringField(TEXT("title"));
-		OutSession.PerformanceDescription = PerformanceObject->GetStringField(TEXT("description"));
 	}
 	else
 	{
 		OutErrorReason = TEXT("performance invalid");
 		return false;
 	}
+	
+	if (
+		const TSharedPtr<FJsonObject> OwnerObject = SessionJsonObject->GetObjectField(TEXT("owner"));
+		OwnerObject.IsValid()
+	)
+	{
+		OutSession.OwnerId = OwnerObject->GetStringField(TEXT("id"));
+	}
+	else
+	{
+		OutErrorReason = TEXT("owner invalid");
+		return false;
+	}
+	
 	return true;
 }
 

@@ -12,14 +12,17 @@ struct  PREMIERECMSMANAGEMENT_API FCMSSession
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types | CMSSession")
 	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
+	FString EosSessionId;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
 	FString Title;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
-	FString State;
+	FString State = "inactive";
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
 	FString StreamingUrl;
@@ -28,14 +31,9 @@ struct  PREMIERECMSMANAGEMENT_API FCMSSession
 	FString AudioDataId;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
-	FString AudioDataFileUrl;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
 	FString PerformanceId;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
-	FString PerformanceTitle;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
-	FString PerformanceDescription;
+	FString OwnerId;
+
 };

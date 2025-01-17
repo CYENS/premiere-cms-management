@@ -10,6 +10,7 @@ DECLARE_DELEGATE_OneParam(FOnGetSessionSuccess, FCMSSession& /* Session */);
 DECLARE_DELEGATE_OneParam(FOnGetActiveSessionsSuccess, TArray<FCMSSession> /* Sessions */);
 DECLARE_DELEGATE_OneParam(FOnFailure, FString /* ErrorReason */);
 
+
 UCLASS()
 class PREMIERECMSMANAGEMENT_API USessionRepository : public UObject
 {
@@ -24,13 +25,10 @@ public:
     void GetActiveSessions(FOnGetActiveSessionsSuccess OnSuccess, FOnFailure OnFailure) const;
 
     void CreateSession(
-        const FString& Title,
-        const FString& OwnerId,
-        const FString& PerformanceId,
-        const FString& State,
-        FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure
+        const FCMSSession& InSession,
+        FOnGetSessionSuccess OnSuccess,
+        FOnFailure OnFailure
     ) const;
-    
 
 private:
     UPROPERTY()

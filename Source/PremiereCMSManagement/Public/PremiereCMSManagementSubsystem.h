@@ -30,11 +30,11 @@ public:
 	FString GraphQLUrl;
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void TestGraphQlQuery();
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void CreateSession(
-		const FString& Title,
-		const FString& OwnerId,
-		const FString& PerformanceId,
-		const FString& State,
+		FCMSSession Session,
 		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
 	);

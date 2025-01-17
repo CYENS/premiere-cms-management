@@ -20,12 +20,12 @@ class PREMIERECMSMANAGEMENT_API ATestCMSGameModeBase : public AGameModeBase
 	void TestGetActiveSessions() const;
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "TestCMSGameModeBase")
-	void CreateSession(
-		const FString& Title,
-		const FString& OwnerId,
-		const FString& PerformanceId
-	) const;
+	// UFUNCTION(BlueprintCallable, Category = "TestCMSGameModeBase")
+	// void CreateSession(
+	// 	const FString& Title,
+	// 	const FString& OwnerId,
+	// 	const FString& PerformanceId
+	// ) const;
 	
 protected:
 	virtual void BeginPlay() override;

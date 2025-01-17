@@ -15,16 +15,51 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
+
+}
+
+void UPremiereCMSManagementSubsystem::TestGraphQlQuery()
+{
+	FString Query = TEXT(R"(
+		query sdafsdfasdfasdf ($sessionId: ID!, $userId: ID!) {
+		  sessionById(id: $sessionId) {
+			id
+			title
+		  }
+		  users {
+			id
+			name
+		  }
+		  userById(id: $userId) {
+			id
+			eosId
+		  }
+		}
+	)");
+	
+	TMap<FString, FString> Variables = {
+		{"sessionId", TEXT("1")},
+		{"userId", TEXT("1")},
+	};
+	
+	FOnGraphQLResponse OnGraphQLResponse;
+	OnGraphQLResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+	});
+	
+	GraphQlDataSource->ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		OnGraphQLResponse
+	);
 }
 
 void UPremiereCMSManagementSubsystem::CreateSession(
-	const FString& Title,
-	const FString& OwnerId,
-	const FString& PerformanceId,
-	const FString& State,
+	FCMSSession Session,
 	FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 	FOnFailureDelegate OnCreateSessionFailure
-) 
+)
 {
 	FOnGetSessionSuccess OnSuccess;
 	OnSuccess.BindLambda([OnCreateSessionSuccess](const FCMSSession& Session)
@@ -37,10 +72,7 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 		OnCreateSessionFailure.ExecuteIfBound(ErrorReason);
 	});
 	SessionRepository->CreateSession(
-		Title,
-		OwnerId,
-		PerformanceId,
-		State,
+		Session,
 		OnSuccess,
 		OnFailure
 	);
