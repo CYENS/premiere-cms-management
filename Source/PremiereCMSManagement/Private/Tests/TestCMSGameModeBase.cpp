@@ -15,9 +15,9 @@ void ATestCMSGameModeBase::BeginPlay()
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
 	
-	TestExecuteGraphQLQuery();
+	// TestExecuteGraphQLQuery();
 	TestGetSessionById();
-	TestGetActiveSessions();
+	// TestGetActiveSessions();
 }
 
 void ATestCMSGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -70,6 +70,7 @@ void ATestCMSGameModeBase::TestGetSessionById() const
 		UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Failed to get Session By Id %s"), *ErrorReason);
 	});
 	SessionRepository->GetSessionById("1", OnSuccess, OnFailure);
+	SessionRepository->GetSessionById("3", OnSuccess, OnFailure);
 }
 
 void ATestCMSGameModeBase::TestGetActiveSessions() const
@@ -98,7 +99,14 @@ void ATestCMSGameModeBase::LogSession(const FCMSSession& Session)
 	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
 	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
 	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session State: %s"), *Session.State);
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session AudioData Id: %s"), *Session.AudioDataId);
 	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
+	if (Session.AudioDataIds.Num() > 0)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("AudioData Ids:"));
+		for (const FString& Id : Session.AudioDataIds)
+		{
+			UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("%s"), *Id);
+		}
+	}
 }
 

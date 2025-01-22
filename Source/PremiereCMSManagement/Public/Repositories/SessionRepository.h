@@ -51,4 +51,10 @@ private:
         FCMSSession& OutSession,
         FString& OutErrorReason
     );
+    
+    static bool TryExtractIdsFromSessionObject(
+        const TSharedPtr<FJsonObject>& SessionJsonObject,
+        const FString& FieldName,
+        TArray<FString>& Ids
+    );
 };

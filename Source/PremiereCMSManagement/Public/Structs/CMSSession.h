@@ -28,7 +28,7 @@ struct  PREMIERECMSMANAGEMENT_API FCMSSession
 	FString StreamingUrl;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
-	FString AudioDataId;
+	TArray<FString> AudioDataIds;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types | CMSSession")
 	FString PerformanceId;

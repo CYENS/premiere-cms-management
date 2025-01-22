@@ -6,6 +6,7 @@
 #include "Structs/CMSSession.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "Containers/Array.h"
 
 void USessionRepository::Initialize(UGraphQLDataSource* InDataSource)
 {
@@ -27,12 +28,9 @@ void USessionRepository::GetSessionById(
 		streamingUrl
 		audioData {
 			id
-			fileUrl
 		}
 		performance {
 			id
-			title
-			description
 		}
 	  }
 	}
@@ -192,10 +190,9 @@ void USessionRepository::CreateSession(
 		$title: String!, 
 		$ownerId: ID!, 
 		$performanceId: ID!, 
-		$state: String!, 
+		$state: String = "inactive", 
 		$streamingUrl: String = "", 
 		$eosSessionId: String = "", 
-		$audioDataId: ID
 	  ) {
 	  createSession(
 		title: $title,
@@ -204,7 +201,6 @@ void USessionRepository::CreateSession(
 		state: $state,
 		streamingUrl: $streamingUrl,
 		eosSessionId: $eosSessionId,
-		audioDataId: $audioDataId
 	  ) {
 		id
 		eosSessionId
@@ -231,7 +227,6 @@ void USessionRepository::CreateSession(
 		{"performanceId", InSession.PerformanceId },
 		{"state", InSession.State },
 		{"streamingUrl", InSession.StreamingUrl },
-		{"audioDataId", InSession.AudioDataId },
 	};
 	
 	FOnGraphQLResponse OnResponse;
@@ -261,60 +256,6 @@ void USessionRepository::CreateSession(
 		}
 	});
 	DataSource->ExecuteGraphQLQuery(Query, QueryParams, OnResponse);
-}
-
-bool USessionRepository::CreateSessionFromSingleSessionJsonObject(
-	const TSharedPtr<FJsonObject>& SessionJsonObject,
-	FCMSSession& OutSession,
-	FString& OutErrorReason
-)
-{
-	OutSession.Id = SessionJsonObject->GetStringField(TEXT("id"));
-	OutSession.EosSessionId = SessionJsonObject->GetStringField(TEXT("eosSessionId"));
-	OutSession.Title = SessionJsonObject->GetStringField(TEXT("title"));
-	OutSession.StreamingUrl = SessionJsonObject->GetStringField(TEXT("streamingUrl"));
-	OutSession.State = SessionJsonObject->GetStringField(TEXT("state"));
-
-	if (
-		const TSharedPtr<FJsonObject> AudioDataObject = SessionJsonObject->GetObjectField(TEXT("audioData"));
-		AudioDataObject.IsValid()
-	)
-	{
-		OutSession.AudioDataId = AudioDataObject->GetStringField(TEXT("id"));
-	}
-	else
-	{
-		OutErrorReason = TEXT("audioData invalid");
-		return false;
-	}
-		
-	if (
-		const TSharedPtr<FJsonObject> PerformanceObject = SessionJsonObject->GetObjectField(TEXT("performance"));
-		PerformanceObject.IsValid()
-	)
-	{
-		OutSession.PerformanceId = PerformanceObject->GetStringField(TEXT("id"));
-	}
-	else
-	{
-		OutErrorReason = TEXT("performance invalid");
-		return false;
-	}
-	
-	if (
-		const TSharedPtr<FJsonObject> OwnerObject = SessionJsonObject->GetObjectField(TEXT("owner"));
-		OwnerObject.IsValid()
-	)
-	{
-		OutSession.OwnerId = OwnerObject->GetStringField(TEXT("id"));
-	}
-	else
-	{
-		OutErrorReason = TEXT("owner invalid");
-		return false;
-	}
-	
-	return true;
 }
 
 bool USessionRepository::ParseCMSSessionFromResponse(
@@ -354,4 +295,60 @@ bool USessionRepository::ParseCMSSessionFromResponse(
 	}
 		
 	return true;
+}
+
+bool USessionRepository::CreateSessionFromSingleSessionJsonObject(
+	const TSharedPtr<FJsonObject>& SessionJsonObject,
+	FCMSSession& OutSession,
+	FString& OutErrorReason
+)
+{
+	OutSession.Id = SessionJsonObject->GetStringField(TEXT("id"));
+	OutSession.EosSessionId = SessionJsonObject->GetStringField(TEXT("eosSessionId"));
+	OutSession.Title = SessionJsonObject->GetStringField(TEXT("title"));
+	OutSession.StreamingUrl = SessionJsonObject->GetStringField(TEXT("streamingUrl"));
+	OutSession.State = SessionJsonObject->GetStringField(TEXT("state"));
+
+	if (!TryExtractIdsFromSessionObject(SessionJsonObject, TEXT("audioData"), OutSession.AudioDataIds))
+	{
+		UE_LOG(LogPremiereCMSManagement, Warning, TEXT("Field, 'audioData' not found or is not an array"));
+	}
+	
+	if (
+		const TSharedPtr<FJsonObject> OwnerObject = SessionJsonObject->GetObjectField(TEXT("owner"));
+		OwnerObject.IsValid()
+	)
+	{
+		OutSession.OwnerId = OwnerObject->GetStringField(TEXT("id"));
+	}
+	else
+	{
+		OutErrorReason = TEXT("owner invalid");
+		return false;
+	}
+	
+	return true;
+}
+
+bool USessionRepository::TryExtractIdsFromSessionObject(
+	const TSharedPtr<FJsonObject>& SessionJsonObject,
+	const FString& FieldName,
+	TArray<FString>& Ids
+)
+{
+	Ids = {};
+	if (
+		const TArray<TSharedPtr<FJsonValue>>* JsonArray;
+		SessionJsonObject->TryGetArrayField(FieldName, JsonArray)
+	)
+	{
+		for (const auto& JsonValue : *JsonArray)
+		{
+			const TSharedPtr<FJsonObject> JsonObject = JsonValue->AsObject();
+			FString AudioDataId = JsonObject->GetStringField(TEXT("id"));
+			Ids.Add(AudioDataId);
+		}
+		return true;
+	}
+	return false;
 }
