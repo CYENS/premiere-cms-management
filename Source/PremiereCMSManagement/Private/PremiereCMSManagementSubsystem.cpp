@@ -18,7 +18,7 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 
 }
 
-void UPremiereCMSManagementSubsystem::TestGraphQlQuery()
+void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
 {
 	FString Query = TEXT(R"(
 		query sdafsdfasdfasdf ($sessionId: ID!, $userId: ID!) {
@@ -36,10 +36,84 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQuery()
 		  }
 		}
 	)");
-	
-	TMap<FString, FString> Variables = {
+
+	const TMap<FString, FString> Variables = {
 		{"sessionId", TEXT("1")},
 		{"userId", TEXT("1")},
+	};
+	
+	FOnGraphQLResponse OnGraphQlResponse;
+	OnGraphQlResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+	});
+	
+	GraphQlDataSource->ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		OnGraphQlResponse
+	);
+}
+
+void UPremiereCMSManagementSubsystem::TestGraphQlQueryFVariant() const
+{
+	FString Query = TEXT(R"(
+		query sdafsdfasdfasdf ($sessionId: ID!, $userId: ID!) {
+		  sessionById(id: $sessionId) {
+			id
+			title
+		  }
+		  users {
+			id
+			name
+		  }
+		  userById(id: $userId) {
+			id
+			eosId
+		  }
+		}
+	)");
+
+	const TMap<FString, FVariant> Variables = {
+		{"sessionId", TEXT("1")},
+		{"userId", 1},
+	};
+	
+	FOnGraphQLResponse OnGraphQLResponse;
+	OnGraphQLResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+	});
+	
+	GraphQlDataSource->ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		OnGraphQLResponse
+	);
+}
+
+void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
+{
+	FString Query = TEXT(R"(
+		query sdafsdfasdfasdf ($sessionId: ID!, $userId: ID!) {
+		  sessionById(id: $sessionId) {
+			id
+			title
+		  }
+		  users {
+			id
+			name
+		  }
+		  userById(id: $userId) {
+			id
+			eosId
+		  }
+		}
+	)");
+
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"sessionId", MakeShared<FJsonValueString>(TEXT("1"))},
+		{"userId", MakeShared<FJsonValueNumber>(1)},
 	};
 	
 	FOnGraphQLResponse OnGraphQLResponse;

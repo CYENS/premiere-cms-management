@@ -35,7 +35,19 @@ public:
 	virtual void ExecuteGraphQLQuery(
 		const FString& Query,
 		const TMap<FString, FString>& Variables,
-		FOnGraphQLResponse OnComplete
+		const FOnGraphQLResponse OnComplete
+	);
+	
+	virtual void ExecuteGraphQLQuery(
+		const FString& Query,
+		const TMap<FString, FVariant>& Variables,
+		const FOnGraphQLResponse OnComplete
+	);
+	
+	virtual void ExecuteGraphQLQuery(
+		const FString& Query,
+		const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
+		const FOnGraphQLResponse OnComplete
 	);
 
 private:

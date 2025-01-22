@@ -13,7 +13,7 @@ void UGraphQLDataSource::Initialize(FString EndpointUrl)
 void UGraphQLDataSource::ExecuteGraphQLQuery(
     const FString& Query,
     const TMap<FString, FString>& Variables,
-    FOnGraphQLResponse OnComplete
+    const FOnGraphQLResponse OnComplete
 )
 {
     if (Endpoint.IsEmpty())
@@ -22,6 +22,68 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
         return;
     }
 
+    TMap<FString, FVariant> VariantVariables;
+    if (Variables.Num() > 0)
+    {
+        for (const TPair<FString, FString>& Pair : Variables)
+        {
+            FVariant VariantValue = Pair.Value;
+            VariantVariables.Add(Pair.Key, VariantValue);
+        }
+        
+    }
+
+    ExecuteGraphQLQuery(Query, VariantVariables, OnComplete);
+}
+
+void UGraphQLDataSource::ExecuteGraphQLQuery(
+    const FString& Query,
+    const TMap<FString, FVariant>& Variables,
+    FOnGraphQLResponse OnComplete
+)
+{
+    TMap<FString, TSharedPtr<FJsonValue>> VariablesJson;
+    if (Variables.Num() > 0)
+    {
+        const TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
+        for (const TPair<FString, FVariant>& Pair : Variables)
+        {
+            // Check the type of FVariant and set the appropriate JSON field
+            if (Pair.Value.GetType() == EVariantTypes::String)
+            {
+                VariablesJson.Add(Pair.Key, MakeShared<FJsonValueString>(Pair.Value.GetValue<FString>()));
+            }
+            else if (Pair.Value.GetType() == EVariantTypes::Int32)
+            {
+                VariablesJson.Add(Pair.Key, MakeShared<FJsonValueNumber>(Pair.Value.GetValue<int32>()));
+            }
+            else if (Pair.Value.GetType() == EVariantTypes::Float)
+            {
+                VariablesJson.Add(Pair.Key, MakeShared<FJsonValueNumber>(Pair.Value.GetValue<float>()));
+            }
+            else if (Pair.Value.GetType() == EVariantTypes::Bool)
+            {
+                VariablesJson.Add(Pair.Key, MakeShared<FJsonValueBoolean>(Pair.Value.GetValue<bool>()));
+            }
+            // add more types here as we go
+            else
+            {
+                // Handle unsupported type
+                OnComplete.ExecuteIfBound(false, FString::Printf(TEXT("Unsupported variable type for key: %s"), *Pair.Key));
+                return;
+            }
+        }
+    }
+
+    ExecuteGraphQLQuery(Query, VariablesJson, OnComplete);
+}
+
+void UGraphQLDataSource::ExecuteGraphQLQuery(
+    const FString& Query,
+    const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
+    FOnGraphQLResponse OnComplete
+)
+{
     const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
     HttpRequest->SetURL(Endpoint);
     HttpRequest->SetVerb(TEXT("POST"));
@@ -29,20 +91,17 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 
     const TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
     BodyObject->SetStringField(TEXT("query"), Query);
-
+    
     if (Variables.Num() > 0)
     {
         const TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
-        for (const TPair<FString, FString>& Pair : Variables)
+        for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Variables)
         {
-            // GraphQL variables can be of various types (ints, bools, etc.).
-            // For simplicity, we’re just sending them as strings here.
-            VariablesObject->SetStringField(Pair.Key, Pair.Value);
+            VariablesObject->SetField(Pair.Key, Pair.Value);
         }
         BodyObject->SetObjectField(TEXT("variables"), VariablesObject);
     }
 
-    // Serialize the request body to JSON
     FString BodyString;
     TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&BodyString);
     FJsonSerializer::Serialize(BodyObject.ToSharedRef(), Writer);
@@ -54,7 +113,6 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
         &ThisClass::OnRequestComplete,
         OnComplete
     );
-
     HttpRequest->ProcessRequest();
 }
 

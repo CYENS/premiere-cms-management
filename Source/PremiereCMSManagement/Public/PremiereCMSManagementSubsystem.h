@@ -30,7 +30,13 @@ public:
 	FString GraphQLUrl;
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void TestGraphQlQuery();
+	void TestGraphQlQueryFString() const;
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void TestGraphQlQueryFVariant() const;
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void TestGraphQlQueryFJsonValue() const;
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void CreateSession(
