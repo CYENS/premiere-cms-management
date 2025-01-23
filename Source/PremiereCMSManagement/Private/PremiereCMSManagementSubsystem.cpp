@@ -4,6 +4,8 @@
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
 #include "Repositories/SessionRepository.h"
+#include "Repositories/UserRepository.h"
+#include "Structs/CMSUser.h"
 
 UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 {
@@ -15,7 +17,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
-
+	
+	UserRepository = NewObject<UUserRepository>();
+	UserRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -147,6 +151,29 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 	});
 	SessionRepository->CreateSession(
 		Session,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateUser(
+	const FCMSUser& User,
+	FOnCreateUserSuccess OnCreateSessionSuccess,
+	FOnFailureDelegate OnCreateSessionFailure
+)
+{
+	FOnGetUserSuccess OnSuccess;
+	OnSuccess.BindLambda([OnCreateSessionSuccess](const FCMSUser& Session)
+	{
+		OnCreateSessionSuccess.ExecuteIfBound(Session);
+	});
+	FOnFailure OnFailure;
+	OnFailure.BindLambda([OnCreateSessionFailure](const FString& ErrorReason)
+	{
+		OnCreateSessionFailure.ExecuteIfBound(ErrorReason);
+	});
+	UserRepository->CreateUser(
+		User,
 		OnSuccess,
 		OnFailure
 	);

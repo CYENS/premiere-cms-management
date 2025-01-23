@@ -14,26 +14,40 @@ void UUserRepository::Initialize(UGraphQLDataSource* InDataSource)
 
 void UUserRepository::CreateUser(
 	const FCMSUser& InUser,
-	FOnGetUserSessionSuccess OnSuccess,
+	FOnGetUserSuccess OnSuccess,
 	FOnFailure OnFailure
 ) const
 {
 	const FString Query = TEXT(R"(
 	mutation CreateUser($data: UserCreateInput!) {
-	  item: createUser(data: $data) {
+	  createUser(data: $data) {
 		id
+		eosId
 		name
 		email
 		userRole
 		isAdmin
+		performances {
+		  id
+		}
+		avatars {
+		  id
+		}
+		sessionsOwned {
+		  id
+		}
+		sessionsAttending {
+		  id
+		}
 	  }
+	}
 	)");
 
 
 	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
+	DataObject->SetStringField("eosId", InUser.EosId);
 	DataObject->SetStringField("email", InUser.Email);
 	DataObject->SetStringField("name", InUser.Name);
-	DataObject->SetStringField("eosId", InUser.EosId);
 	DataObject->SetStringField("userRole", InUser.UserRole);
 	DataObject->SetBoolField("isSuperAdmin", InUser.IsSuperAdmin);
 	
@@ -57,7 +71,7 @@ void UUserRepository::CreateUser(
 		
 		FString ErrorReason;
 		FCMSUser User;
-		if (ParseCMSUserFromResponse(ResponseContent, TEXT("createSession"), User, ErrorReason))
+		if (ParseCMSUserFromResponse(ResponseContent, TEXT("createUser"), User, ErrorReason))
 		{
 			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response to CMSSession"));
 			OnSuccess.ExecuteIfBound(User);

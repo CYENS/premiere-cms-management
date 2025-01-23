@@ -8,7 +8,7 @@
 
 struct FCMSUser;
 
-DECLARE_DELEGATE_OneParam(FOnGetUserSessionSuccess, FCMSUser& /* Session */);
+DECLARE_DELEGATE_OneParam(FOnGetUserSuccess, FCMSUser& /* Session */);
 // DECLARE_DELEGATE_OneParam(FOnGetActiveSessionsSuccess, TArray<FCMSUser> /* Sessions */);
 DECLARE_DELEGATE_OneParam(FOnFailure, FString /* ErrorReason */);
 
@@ -22,7 +22,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Session Repository")
     void Initialize(UGraphQLDataSource* InDataSource);
     
-    void CreateUser(const FCMSUser& InUser, FOnGetUserSessionSuccess OnSuccess, FOnFailure OnFailure) const;
+    void CreateUser(const FCMSUser& InUser, FOnGetUserSuccess OnSuccess, FOnFailure OnFailure) const;
 
 private:
     UPROPERTY()
