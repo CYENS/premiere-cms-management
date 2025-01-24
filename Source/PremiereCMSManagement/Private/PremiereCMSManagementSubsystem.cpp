@@ -47,9 +47,9 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
 	};
 	
 	FOnGraphQLResponse OnGraphQlResponse;
-	OnGraphQlResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	OnGraphQlResponse.BindLambda([](FGraphQLResult GraphQLResult)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *GraphQLResult.RawResponse)
 	});
 	
 	GraphQlDataSource->ExecuteGraphQLQuery(
@@ -84,9 +84,9 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFVariant() const
 	};
 	
 	FOnGraphQLResponse OnGraphQLResponse;
-	OnGraphQLResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	OnGraphQLResponse.BindLambda([](FGraphQLResult GraphQLResult)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *GraphQLResult.RawResponse)
 	});
 	
 	GraphQlDataSource->ExecuteGraphQLQuery(
@@ -121,9 +121,9 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
 	};
 	
 	FOnGraphQLResponse OnGraphQLResponse;
-	OnGraphQLResponse.BindLambda([](bool bWasSuccesful, FString Response)
+	OnGraphQLResponse.BindLambda([](FGraphQLResult GraphQLResult)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *Response)
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Test %s"), *GraphQLResult.RawResponse)
 	});
 	
 	GraphQlDataSource->ExecuteGraphQLQuery(
