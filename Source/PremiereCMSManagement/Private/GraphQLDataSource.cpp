@@ -4,6 +4,8 @@
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 #include "LogPremiereCMSManagement.h"
+#include "Json.h"
+#include "JsonUtilities.h"
 
 void UGraphQLDataSource::Initialize(FString EndpointUrl)
 {
@@ -16,12 +18,6 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     const FOnGraphQLResponse OnComplete
 )
 {
-    if (Endpoint.IsEmpty())
-    {
-        OnComplete.ExecuteIfBound(false, TEXT("No endpoint configured."));
-        return;
-    }
-
     TMap<FString, FVariant> VariantVariables;
     if (Variables.Num() > 0)
     {
@@ -68,8 +64,10 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
             // add more types here as we go
             else
             {
-                // Handle unsupported type
-                OnComplete.ExecuteIfBound(false, FString::Printf(TEXT("Unsupported variable type for key: %s"), *Pair.Key));
+                FGraphQLResult GraphQLResult;
+                GraphQLResult.GraphQLOutcome = RequestFailed;
+                GraphQLResult.ErrorMessage = FString::Printf(TEXT("Unsupported variable type for key: %s"), *Pair.Key);
+                OnComplete.ExecuteIfBound(GraphQLResult);
                 return;
             }
         }
@@ -84,6 +82,15 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     FOnGraphQLResponse OnComplete
 )
 {
+    if (Endpoint.IsEmpty())
+    {
+        FGraphQLResult Result;
+        Result.GraphQLOutcome = EGraphQLOutcome::HttpError;
+        Result.ErrorMessage = TEXT("No endpoint configured.");
+        OnComplete.ExecuteIfBound(Result);
+        return;
+    }
+
     const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
     HttpRequest->SetURL(Endpoint);
     HttpRequest->SetVerb(TEXT("POST"));
@@ -123,27 +130,93 @@ void UGraphQLDataSource::OnRequestComplete(
     FOnGraphQLResponse OnComplete
 )
 {
-    // Check for general errors
+    FGraphQLResult GraphQlResult;
+    
+    // general request errors
     if (!bWasSuccessful || !Response.IsValid())
     {
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSource: Request failed (no valid response)."));
-        OnComplete.ExecuteIfBound(false, TEXT("Request failed or response is invalid."));
+        GraphQlResult.GraphQLOutcome = RequestFailed;
+        GraphQlResult.ErrorMessage = TEXT("Request failed or response is invalid.");
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("%s"), *GraphQlResult.ErrorMessage);
+        OnComplete.ExecuteIfBound(GraphQlResult);
         return;
     }
+    
+    GraphQlResult.RawResponse = Response->GetContentAsString();
 
-    // Check HTTP status code
-    int32 StatusCode = Response->GetResponseCode();
+    // HTTP status code
+    const int32 StatusCode = Response->GetResponseCode();
+    GraphQlResult.HttpStatus = StatusCode;
     if (StatusCode < 200 || StatusCode >= 300)
     {
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSource: Request failed with status code %d"), StatusCode);
-        OnComplete.ExecuteIfBound(false, Response->GetContentAsString());
+        GraphQlResult.GraphQLOutcome = HttpError;
+        GraphQlResult.ErrorMessage = Response->GetContentAsString();
+        UE_LOG(
+            LogPremiereCMSManagement,
+            Error,
+            TEXT("UGraphQLDataSource: Request failed with status code %d. Reason: %s"),
+            StatusCode,
+            *GraphQlResult.ErrorMessage
+        );
+        OnComplete.ExecuteIfBound(GraphQlResult);
         return;
     }
 
-    // If we got here, we have a successful response (e.g. 200 OK)
     const FString ResponseString = Response->GetContentAsString();
     UE_LOG(LogTemp, Log, TEXT("UGraphQLDataSourceImpl: Response: %s"), *ResponseString);
 
-    // Invoke our callback with the data
-    OnComplete.ExecuteIfBound(true, ResponseString);
+    if (
+        !ParseGraphQLResponse(
+            ResponseString,
+            GraphQlResult
+        )
+    )
+    {
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("Failed to parse Response"));
+    }
+
+    OnComplete.ExecuteIfBound(GraphQlResult);
+}
+
+bool UGraphQLDataSource::ParseGraphQLResponse(
+    const FString& ResponseString,
+    FGraphQLResult& GraphQLResult
+)
+{
+    if (
+        const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseString);
+        
+        FJsonSerializer::Deserialize(
+            Reader,
+            GraphQLResult.ResponseObject
+        ) && GraphQLResult.ResponseObject.IsValid()
+    )
+    {
+        // Check if we have an "errors" array
+        if (GraphQLResult.ResponseObject->HasField("errors"))
+        {
+            GraphQLResult.GraphQLOutcome = GraphQLError;
+            
+            // Make sure there's at least one error object
+            if (
+                TArray<TSharedPtr<FJsonValue>> Errors = GraphQLResult.ResponseObject->GetArrayField("errors");
+                Errors.Num() > 0
+            )
+            {
+                for (const auto& ErrorJsonValue : Errors )
+                {
+                    const TSharedPtr<FJsonObject> ErrorJsonObject = ErrorJsonValue->AsObject();
+                    const FString ErrorMessage = ErrorJsonObject->GetStringField("message");
+                    GraphQLResult.GraphQLErrors.Add(ErrorMessage);
+                }
+                GraphQLResult.ErrorMessage = GraphQLResult.GraphQLErrors[0]; // first error as the message
+            }
+        }
+        else
+        {
+            GraphQLResult.GraphQLOutcome = Success;
+        }
+        return true;
+    }
+    return false;
 }

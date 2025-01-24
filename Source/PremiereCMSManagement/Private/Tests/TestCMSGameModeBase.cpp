@@ -45,9 +45,10 @@ void ATestCMSGameModeBase::TestExecuteGraphQLQuery() const
 	const TMap<FString, FString> Variables;
 	
 	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([](bool bSuccess, const FString& ResponseContent)
+	OnResponse.BindLambda([](FGraphQLResult GraphQLResult)
 	{
-		if (!bSuccess)
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		if (GraphQLResult.GraphQLOutcome != Success)
 		{
 			UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("GraphQL request failed! Response: %s"), *ResponseContent);
 			return;

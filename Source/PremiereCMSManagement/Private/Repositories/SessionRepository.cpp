@@ -41,12 +41,15 @@ void USessionRepository::GetSessionById(
 	};
 	
 	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const bool bSuccess, const FString& ResponseContent)
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
 	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		
 		if (!bSuccess)
 		{
 			const FString ErrorMessage = FString::Printf(TEXT("GraphQL request failed. Response: %s"), *ResponseContent);
-			OnFailure.ExecuteIfBound(ErrorMessage);
+			OnFailure.ExecuteIfBound(GraphQLResult.ErrorMessage);
 			return;
 		}
 		else
@@ -77,17 +80,18 @@ void USessionRepository::GetActiveSessions(
 	query GetSesessionByState ($state: String) {
 	  sessionByState (state: $state) {
 		id
+		eosSessionId
 		title
 		state
 		streamingUrl
 		audioData {
-			id
-			fileUrl
+		  id
 		}
 		performance {
-			id
-			title
-			description
+		  id
+		}
+		owner {
+		  id
 		}
 	  }
 	}
@@ -98,11 +102,14 @@ void USessionRepository::GetActiveSessions(
 	};
 
 	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const bool bSuccess, const FString& ResponseContent)
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
 	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		
 		if (!bSuccess)
 		{
-			const FString ErrorMessage = FString::Printf(TEXT("GraphQL request failed. Response: %s"), *ResponseContent);
+			const FString ErrorMessage = GraphQLResult.ErrorMessage;
 			OnFailure.ExecuteIfBound(ErrorMessage);
 			return;
 		}
@@ -230,12 +237,13 @@ void USessionRepository::CreateSession(
 	};
 	
 	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const bool bSuccess, const FString& ResponseContent)
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
 	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
 		if (!bSuccess)
 		{
-			const FString ErrorMessage = FString::Printf(TEXT("GraphQL request failed. Response: %s"), *ResponseContent);
-			OnFailure.ExecuteIfBound(ErrorMessage);
+			OnFailure.ExecuteIfBound(GraphQLResult.ErrorMessage);
 			return;
 		}
 		else

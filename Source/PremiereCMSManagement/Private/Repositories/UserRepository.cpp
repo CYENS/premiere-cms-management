@@ -56,18 +56,18 @@ void UUserRepository::CreateUser(
 	};
 	
 	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const bool bSuccess, const FString& ResponseContent)
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
 	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		
 		if (!bSuccess)
 		{
-			const FString ErrorMessage = FString::Printf(TEXT("GraphQL request failed. Response: %s"), *ResponseContent);
-			OnFailure.ExecuteIfBound(ErrorMessage);
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL API Error. ErrorMessage: %s"), *GraphQLResult.ErrorMessage);
+			OnFailure.ExecuteIfBound(GraphQLResult.ErrorMessage);
 			return;
 		}
-		else
-		{
-			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
-		}
+		UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
 		
 		FString ErrorReason;
 		FCMSUser User;
