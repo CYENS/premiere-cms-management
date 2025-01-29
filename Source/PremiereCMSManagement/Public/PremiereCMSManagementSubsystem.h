@@ -3,16 +3,21 @@
 
 #include "CoreMinimal.h"
 #include "Structs/CMSSession.h"
+#include "Structs/CMSTypes.h"
 #include "Structs/CMSUser.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
 class UGraphQLDataSource;
-class UUserRepository;
 class USessionRepository;
+class UUserRepository;
+class UPerformanceRepository;
+
+struct FCMSPerformanceCreateInput;
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, FString, ErrorMessage);
 
@@ -32,6 +37,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	UPROPERTY()
 	UUserRepository* UserRepository;
 	
+	UPROPERTY()
+	UPerformanceRepository* PerformanceRepository;
+	
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
 	FString GraphQLUrl;
@@ -50,6 +58,13 @@ public:
 		FCMSSession Session,
 		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void CreatePerformance(
+		FCMSPerformanceCreateInput CreatePerformanceInput,
+		FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
+		FOnFailureDelegate OnCreatePerformanceFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")

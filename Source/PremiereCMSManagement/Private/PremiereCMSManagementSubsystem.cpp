@@ -3,8 +3,10 @@
 
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
+#include "Repositories/PerformanceRepository.h"
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UserRepository.h"
+#include "Structs/CMSInputs.h"
 #include "Structs/CMSUser.h"
 
 UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
@@ -20,6 +22,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	
 	UserRepository = NewObject<UUserRepository>();
 	UserRepository->Initialize(GraphQlDataSource);
+
+	PerformanceRepository = NewObject<UPerformanceRepository>();
+	PerformanceRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -174,6 +179,29 @@ void UPremiereCMSManagementSubsystem::CreateUser(
 	});
 	UserRepository->CreateUser(
 		User,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreatePerformance(
+	FCMSPerformanceCreateInput CreatePerformanceInput,
+	FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
+	FOnFailureDelegate OnCreatePerformanceFailure
+)
+{
+	FOnGetPerformanceSuccess OnSuccess;
+	OnSuccess.BindLambda([OnCreatePerformanceSuccess](const FCMSPerformance& Performance)
+	{
+		OnCreatePerformanceSuccess.ExecuteIfBound(Performance);
+	});
+	FOnFailure OnFailure;
+	OnFailure.BindLambda([OnCreatePerformanceFailure](const FString& ErrorReason)
+	{
+		OnCreatePerformanceFailure.ExecuteIfBound(ErrorReason);
+	});
+	PerformanceRepository->CreatePerformance(
+		CreatePerformanceInput,
 		OnSuccess,
 		OnFailure
 	);
