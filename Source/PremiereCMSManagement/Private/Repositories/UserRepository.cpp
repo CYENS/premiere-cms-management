@@ -12,6 +12,87 @@ void UUserRepository::Initialize(UGraphQLDataSource* InDataSource)
 	DataSource = InDataSource;
 }
 
+void UUserRepository::GetAllUsers(
+	FOnGetUsersSuccess OnSuccess,
+	FOnFailure OnFailure
+) const
+{
+	const FString Query = TEXT(R"(
+	query GetAllUsers {
+	  users {
+		id
+		name
+		email
+		eosId
+		userRole
+		isAdmin
+		isSuperAdmin
+		createdAt
+		performances {
+		  id
+		}
+		avatars {
+		  id
+		}
+		sessionsOwned {
+		  id
+		}
+	  }
+	}
+	)");
+	
+	FOnGraphQLResponse OnResponse;
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
+	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		
+		if (!bSuccess)
+		{
+			const FString ErrorMessage = GraphQLResult.ErrorMessage;
+			OnFailure.ExecuteIfBound(ErrorMessage);
+			return;
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
+		}
+		
+		FString ErrorReason;
+		if (
+			TArray<FCMSUser> Users;
+			ParseMultipleCMSUsersFromResponse(ResponseContent, TEXT("users"), Users, ErrorReason))
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response"));
+			OnSuccess.ExecuteIfBound(Users);
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Could not parse response. Reason: %s"), *ErrorReason);
+		}
+	});
+	DataSource->ExecuteGraphQLQuery(Query, OnResponse);
+}
+
+bool UUserRepository::ParseMultipleCMSUsersFromResponse(
+	const FString& JsonResponse,
+	const FString& QueryName,
+	TArray<FCMSUser>& OutUsers,
+	FString& OutErrorReason
+)
+{
+	return ParseArrayOfItemsFromResponse<FCMSUser>(
+		JsonResponse,
+		QueryName,
+		OutUsers,
+		[&](const TSharedPtr<FJsonObject>& Obj, FCMSUser& User, FString& Error) -> bool
+		{
+			return ParseCMSUserFromSingleUserJsonObject(Obj, User, Error);
+		},
+		OutErrorReason
+	);
+}
+
 void UUserRepository::CreateUser(
 	const FCMSUser& InUser,
 	FOnGetUserSuccess OnSuccess,
@@ -115,7 +196,7 @@ bool UUserRepository::ParseCMSUserFromResponse(
 		return false;
 	};
 
-	if (!CreateSessionFromSingleUserJsonObject(SessionByIdObject, OutUser, OutErrorReason))
+	if (!ParseCMSUserFromSingleUserJsonObject(SessionByIdObject, OutUser, OutErrorReason))
 	{
 		return false;
 	}
@@ -123,7 +204,7 @@ bool UUserRepository::ParseCMSUserFromResponse(
 	return true;
 }
 
-bool UUserRepository::CreateSessionFromSingleUserJsonObject(
+bool UUserRepository::ParseCMSUserFromSingleUserJsonObject(
 	const TSharedPtr<FJsonObject>& SessionJsonObject,
 	FCMSUser& OutUser,
 	FString& OutErrorReason
