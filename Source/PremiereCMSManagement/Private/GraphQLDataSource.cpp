@@ -12,6 +12,13 @@ void UGraphQLDataSource::Initialize(FString EndpointUrl)
     this->Endpoint = EndpointUrl;
 }
 
+void UGraphQLDataSource::ExecuteGraphQLQuery(const FString& Query, const FOnGraphQLResponse OnComplete)
+{
+    // empty variables for when query doesn't require them
+    const TMap<FString, TSharedPtr<FJsonValue>> Variables;
+    ExecuteGraphQLQuery(Query, Variables, OnComplete);
+}
+
 void UGraphQLDataSource::ExecuteGraphQLQuery(
     const FString& Query,
     const TMap<FString, FString>& Variables,

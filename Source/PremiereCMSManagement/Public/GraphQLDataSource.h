@@ -59,6 +59,11 @@ public:
 	FString Endpoint;
 
 	void Initialize(FString EndpointUrl);
+	
+	virtual void ExecuteGraphQLQuery(
+		const FString& Query,
+		const FOnGraphQLResponse OnComplete
+	);
 
 	virtual void ExecuteGraphQLQuery(
 		const FString& Query,
