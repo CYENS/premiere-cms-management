@@ -227,3 +227,57 @@ bool UGraphQLDataSource::ParseGraphQLResponse(
     }
     return false;
 }
+
+template <typename T>
+bool ParseArrayOfItemsFromResponse(
+    const FString& JsonResponse,
+    const FString& QueryName,
+    TArray<T>& OutItems,
+    TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
+    FString& OutErrorReason
+)
+{
+    const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonResponse);
+    TSharedPtr<FJsonObject> JsonObject;
+    if (!FJsonSerializer::Deserialize(JsonReader, JsonObject) || !JsonObject.IsValid())
+    {
+        OutErrorReason = TEXT("Could not deserialize JSON object");
+        return false;
+    }
+
+    // The GraphQL structure typically has a "data" field
+    const TSharedPtr<FJsonObject> DataObject = JsonObject->GetObjectField(TEXT("data"));
+    if (!DataObject.IsValid())
+    {
+        OutErrorReason = TEXT("\"data\" field is missing or invalid");
+        return false;
+    }
+
+    const TArray<TSharedPtr<FJsonValue>>* ItemsArray;
+    if (!DataObject->TryGetArrayField(QueryName, ItemsArray))
+    {
+        OutErrorReason = FString::Printf(TEXT("Array \"%s\" is invalid or missing"), *QueryName);
+        return false;
+    }
+
+    for (const TSharedPtr<FJsonValue>& ItemValue : *ItemsArray)
+    {
+        const TSharedPtr<FJsonObject> ItemObject = ItemValue->AsObject();
+        if (!ItemObject.IsValid())
+        {
+            OutErrorReason = TEXT("Invalid item object in array");
+            return false;
+        }
+
+        T ParsedItem;
+        if (!ParseSingleItem(ItemObject, ParsedItem, OutErrorReason))
+        {
+            // parseSingleItem sets OutErrorReason on failure
+            return false;
+        }
+
+        OutItems.Add(ParsedItem);
+    }
+
+    return true;
+}

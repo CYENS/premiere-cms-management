@@ -110,3 +110,21 @@ private:
 		FGraphQLResult& GraphQLResult
 	);
 };
+
+/**
+ * @tparam T FCMSStruct type of object to create
+ * @param JsonResponse  The JsonResponse with a "data" key with multiple 
+ * @param QueryName The inner query name to retrieve the data
+ * @param OutItems The FCMSStruct objects to be filled
+ * @param ParseSingleItem  The parse function to parse a JsonObject to a
+ * @param OutErrorReason if it fails the reason why it failed
+ * @return  false if it fails
+ */
+template <typename T>
+bool ParseArrayOfItemsFromResponse(
+    const FString& JsonResponse,
+    const FString& QueryName,
+    TArray<T>& OutItems,
+    TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
+    FString& OutErrorReason
+);
