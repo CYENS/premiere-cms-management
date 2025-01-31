@@ -3,6 +3,7 @@
 
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
+#include "JsonObjectConverter.h"
 #include "Structs/CMSSession.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -85,9 +86,104 @@ void UPerformanceRepository::CreatePerformance(
 	
 }
 
-bool UPerformanceRepository::ParseCMSObjectFromResponse(const FString& JsonResponse, const FString& QueryName,
-	FCMSPerformance& OutPerformance, FString& OutErrorReason)
+void UPerformanceRepository::GetAllPerformances(FOnGetPerformancesSuccess OnSuccess, FOnFailure OnFailure) const
+{
+	const FString Query = TEXT(R"(
+	query GetAllPerformances {
+	  performances {
+		id
+		title
+		about
+		owner {
+		  id
+		}
+		members {
+		  id
+		  name
+		  email
+		  eosId
+		  userRole
+		  isAdmin
+		  isSuperAdmin
+		  createdAt
+		  person {
+			artisticName
+			familyName
+			givenName
+		  }
+		}
+		usdScenes {
+		  id
+		}
+		sessions {
+		  id
+		}
+		avatars {
+		  id
+		}
+	  }
+	}
+	)");
+	
+	FOnGraphQLResponse OnResponse;
+	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
+	{
+		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
+		const FString ResponseContent = GraphQLResult.RawResponse;
+		
+		if (!bSuccess)
+		{
+			const FString ErrorMessage = GraphQLResult.ErrorMessage;
+			OnFailure.ExecuteIfBound(ErrorMessage);
+			return;
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
+		}
+		
+		FString ErrorReason;
+		if (
+			TArray<FCMSPerformance> Performances;
+			ParsePerformanceArrayFromResponse(ResponseContent, TEXT("performances"), Performances, ErrorReason))
+		{
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response %d"), Performances.Num());
+			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response"));
+			OnSuccess.ExecuteIfBound(Performances);
+		}
+		else
+		{
+			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Could not parse response. Reason: %s"), *ErrorReason);
+		}
+	});
+	DataSource->ExecuteGraphQLQuery(Query, OnResponse);
+}
 
+bool UPerformanceRepository::ParsePerformanceArrayFromResponse(
+	const FString& ResponseContent,
+	const FString& QueryName,
+	TArray<FCMSPerformance>& OutPerformances,
+	FString& OutErrorReason
+)
+{
+	return ParseArrayOfItemsFromResponse<FCMSPerformance>(
+		ResponseContent,
+		QueryName,
+		OutPerformances,
+		[&](const TSharedPtr<FJsonObject>& JsonObject, FCMSPerformance& Performance, FString& Error) -> bool
+		{
+			return ParsePerformanceFromJsonObject(JsonObject, Performance, Error);
+		},
+		OutErrorReason
+	);
+}
+
+bool UPerformanceRepository::ParseCMSObjectFromResponse(
+	const FString& JsonResponse,
+	const FString& QueryName,
+	FCMSPerformance& OutPerformance,
+	FString& OutErrorReason
+)
 {
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonResponse);
 	TSharedPtr<FJsonObject> JsonObject;
@@ -113,7 +209,7 @@ bool UPerformanceRepository::ParseCMSObjectFromResponse(const FString& JsonRespo
 		return false;
 	};
 
-	if (!CreatePerformanceFromSingleUserJsonObject(SessionByIdObject, OutPerformance, OutErrorReason))
+	if (!ParsePerformanceFromJsonObject(SessionByIdObject, OutPerformance, OutErrorReason))
 	{
 		return false;
 	}
@@ -121,14 +217,17 @@ bool UPerformanceRepository::ParseCMSObjectFromResponse(const FString& JsonRespo
 	return true;
 }
 
-bool UPerformanceRepository::CreatePerformanceFromSingleUserJsonObject(
-	const TSharedPtr<FJsonObject>& SessionJsonObject,
+bool UPerformanceRepository::ParsePerformanceFromJsonObject(
+	const TSharedPtr<FJsonObject>& JsonObject,
 	FCMSPerformance& OutPerformance,
 	FString& OutErrorReason
 )
 {
-	OutPerformance.Id = SessionJsonObject->GetStringField(TEXT("id"));
-	OutPerformance.OwnerId = SessionJsonObject->GetStringField(TEXT("ownerId"));
-	OutPerformance.Title = SessionJsonObject->GetStringField(TEXT("title"));
+	FJsonObjectConverter::JsonObjectToUStruct<FCMSPerformance> (
+		JsonObject.ToSharedRef(),
+		&OutPerformance,
+		0,
+		0
+	);
 	return true;
 }

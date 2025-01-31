@@ -82,7 +82,21 @@ public:
 		const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
 		const FOnGraphQLResponse OnComplete
 	);
+	
+	static bool GetDataObjectFromResponse(
+		const FString& JsonResponse,
+		const FString& QueryName,
+		TSharedPtr<FJsonObject>& OutObject,
+		FString& OutErrorReason
+	);
 
+	static bool GetDataArrayFromResponse(
+		const FString& JsonResponse,
+		const FString& QueryName,
+		const TArray<TSharedPtr<FJsonValue>>*& OutArray,
+		FString& OutErrorReason
+	);
+	
 private:
 	/**
 	 * Bound callback for HTTP request completion.
@@ -127,4 +141,13 @@ bool ParseArrayOfItemsFromResponse(
     TArray<T>& OutItems,
     TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
     FString& OutErrorReason
+);
+
+template <typename T>
+bool ParseSingleItemFromResponse(
+	const FString& JsonResponse,
+	const FString& QueryName,
+	T& OutItem,
+	TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
+	FString& OutErrorReason
 );

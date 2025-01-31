@@ -19,8 +19,9 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&, Users);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, FString, ErrorMessage);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
 
 UCLASS(BlueprintType, Config=Engine)
 class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameInstanceSubsystem
@@ -74,10 +75,15 @@ public:
 		FOnCreateUserSuccess OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void GetAllPerformances(
+		FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
+		FOnFailureDelegate OnGetAllPerformanceFailure
+	);
 
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void GetAllUsers(
-		TArray<FCMSUser>& User,
 		FOnGetAllUsersSuccess OnGetAllUsersSuccess,
 		FOnFailureDelegate OnGetAllUsersFailure
 	);

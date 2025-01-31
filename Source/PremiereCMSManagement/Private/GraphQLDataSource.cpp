@@ -228,6 +228,76 @@ bool UGraphQLDataSource::ParseGraphQLResponse(
     return false;
 }
 
+bool UGraphQLDataSource::GetDataArrayFromResponse(
+    const FString& JsonResponse,
+    const FString& QueryName,
+    const TArray<TSharedPtr<FJsonValue>>*& OutArray,
+    FString& OutErrorReason
+)
+{
+    const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonResponse);
+    TSharedPtr<FJsonObject> RootObject;
+    if (!FJsonSerializer::Deserialize(JsonReader, RootObject) || !RootObject.IsValid())
+    {
+        OutErrorReason = TEXT("could not deserialize json object");
+        return false;
+    }
+
+    const TSharedPtr<FJsonObject> DataObject = RootObject->GetObjectField(TEXT("data"));
+    if (!DataObject.IsValid())
+    {
+        OutErrorReason = TEXT("missing or invalid 'data' field in response");
+        return false;
+    }
+
+    if (!DataObject->TryGetArrayField(QueryName, OutArray))
+    {
+        OutErrorReason = FString::Printf(
+            TEXT("'%s' array is invalid or missing"),
+            *QueryName
+        );
+        return false;
+    }
+
+    return true;
+}
+
+
+bool UGraphQLDataSource::GetDataObjectFromResponse(
+    const FString& JsonResponse,
+    const FString& QueryName,
+    TSharedPtr<FJsonObject>& OutObject,
+    FString& OutErrorReason
+)
+{
+    const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(JsonResponse);
+    TSharedPtr<FJsonObject> RootObject;
+    if (!FJsonSerializer::Deserialize(JsonReader, RootObject) || !RootObject.IsValid())
+    {
+        OutErrorReason = TEXT("could not deserialize json object");
+        return false;
+    }
+
+    const TSharedPtr<FJsonObject> DataObject = RootObject->GetObjectField(TEXT("data"));
+    if (!DataObject.IsValid())
+    {
+        OutErrorReason = TEXT("missing or invalid 'data' field in response");
+        return false;
+    }
+
+    OutObject = DataObject->GetObjectField(QueryName);
+    if (!OutObject.IsValid())
+    {
+        OutErrorReason = FString::Printf(
+            TEXT("'%s' object is invalid or missing"),
+            *QueryName
+        );
+        return false;
+    }
+
+    return true;
+}
+
 template <typename T>
 bool ParseArrayOfItemsFromResponse(
     const FString& JsonResponse,
@@ -280,4 +350,27 @@ bool ParseArrayOfItemsFromResponse(
     }
 
     return true;
+}
+
+template <typename T>
+bool ParseSingleItemFromResponse(
+    const FString& JsonResponse,
+    const FString& QueryName,
+    T& OutItem,
+    TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
+    FString& OutErrorReason
+)
+{
+	TSharedPtr<FJsonObject> ItemObject;
+	if (!UGraphQLDataSource::GetDataObjectFromResponse(JsonResponse, QueryName, ItemObject, OutErrorReason))
+	{
+		return false;
+	}
+
+	if (!ParseSingleItem(ItemObject, OutItem, OutErrorReason))
+	{
+		return false;
+	}
+
+	return true;
 }

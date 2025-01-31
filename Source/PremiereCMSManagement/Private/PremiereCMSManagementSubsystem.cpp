@@ -184,8 +184,30 @@ void UPremiereCMSManagementSubsystem::CreateUser(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::GetAllPerformances(
+	FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
+	FOnFailureDelegate OnGetAllPerformanceFailure
+)
+{
+	FOnGetPerformancesSuccess OnSuccess;
+	OnSuccess.BindLambda([OnGetAllPerformancesSuccess](TArray<FCMSPerformance> Performances)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("PERFORMANCESSISSI %d"), Performances.Num());
+		OnGetAllPerformancesSuccess.Execute(Performances);
+	});
+	FOnFailure OnFailure;
+	OnFailure.BindLambda([OnGetAllPerformanceFailure](const FString& ErrorReason)
+	{
+		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("ERRORROROROR"));
+		OnGetAllPerformanceFailure.ExecuteIfBound(ErrorReason);
+	});
+	PerformanceRepository->GetAllPerformances(
+		OnSuccess,
+		OnFailure
+	);
+}
+
 void UPremiereCMSManagementSubsystem::GetAllUsers(
-	TArray<FCMSUser>& User,
 	FOnGetAllUsersSuccess OnGetAllUsersSuccess,
 	FOnFailureDelegate OnGetAllUsersFailure
 )
