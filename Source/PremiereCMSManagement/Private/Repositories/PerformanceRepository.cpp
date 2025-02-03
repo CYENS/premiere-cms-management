@@ -25,15 +25,65 @@ void UPerformanceRepository::CreatePerformance(
 	const FString Query = TEXT(R"(
 	mutation CreatePerformanceMutation($data: PerformanceCreateInput!) {
 	  createPerformance(data: $data) {
-		id
-		title
-		about
-		owner {
-		  id
-		}
-		members {
-		  id
-		}
+        id
+        title
+        about
+        owner {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+        members {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
 		usdScenes {
 		  id
 		}
@@ -43,7 +93,7 @@ void UPerformanceRepository::CreatePerformance(
 		avatars {
 		  id
 		}
-	  }
+      }
 	}
 	)");
 
@@ -89,29 +139,67 @@ void UPerformanceRepository::CreatePerformance(
 void UPerformanceRepository::GetAllPerformances(FOnGetPerformancesSuccess OnSuccess, FOnFailure OnFailure) const
 {
 	const FString Query = TEXT(R"(
-	query GetAllPerformances {
-	  performances {
-		id
-		title
-		about
-		owner {
-		  id
-		}
-		members {
-		  id
-		  name
-		  email
-		  eosId
-		  userRole
-		  isAdmin
-		  isSuperAdmin
-		  createdAt
-		  person {
-			artisticName
-			familyName
-			givenName
-		  }
-		}
+    query GetAllPerformances {
+      performances {
+        id
+        title
+        about
+        owner {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+        members {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
 		usdScenes {
 		  id
 		}
@@ -121,10 +209,10 @@ void UPerformanceRepository::GetAllPerformances(FOnGetPerformancesSuccess OnSucc
 		avatars {
 		  id
 		}
-	  }
-	}
+      }
+    }
 	)");
-	
+
 	FOnGraphQLResponse OnResponse;
 	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
 	{
@@ -229,5 +317,6 @@ bool UPerformanceRepository::ParsePerformanceFromJsonObject(
 		0,
 		0
 	);
+	OutPerformance.OwnerId = OutPerformance.Owner.Id;
 	return true;
 }

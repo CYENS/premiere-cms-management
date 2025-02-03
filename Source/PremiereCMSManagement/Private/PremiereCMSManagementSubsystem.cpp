@@ -192,13 +192,11 @@ void UPremiereCMSManagementSubsystem::GetAllPerformances(
 	FOnGetPerformancesSuccess OnSuccess;
 	OnSuccess.BindLambda([OnGetAllPerformancesSuccess](TArray<FCMSPerformance> Performances)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("PERFORMANCESSISSI %d"), Performances.Num());
 		OnGetAllPerformancesSuccess.Execute(Performances);
 	});
 	FOnFailure OnFailure;
 	OnFailure.BindLambda([OnGetAllPerformanceFailure](const FString& ErrorReason)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("ERRORROROROR"));
 		OnGetAllPerformanceFailure.ExecuteIfBound(ErrorReason);
 	});
 	PerformanceRepository->GetAllPerformances(

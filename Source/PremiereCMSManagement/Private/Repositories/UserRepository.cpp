@@ -1,9 +1,10 @@
 
 #include "Repositories/UserRepository.h"
 
-#include "Structs/CMSUser.h"
+#include "Structs/CMSTypes.h"
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
+#include "JsonObjectConverter.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
@@ -28,13 +29,19 @@ void UUserRepository::GetAllUsers(
 		isAdmin
 		isSuperAdmin
 		createdAt
+		person {
+		  id
+		}
+		sessionsOwned {
+		  id
+		}
+		sessionAttendance {
+		  id
+		}
 		performances {
 		  id
 		}
 		avatars {
-		  id
-		}
-		sessionsOwned {
 		  id
 		}
 	  }
@@ -210,6 +217,18 @@ bool UUserRepository::ParseCMSUserFromSingleUserJsonObject(
 	FString& OutErrorReason
 )
 {
+	FText OutReason = FText::FromString(*OutErrorReason);
+	FJsonObjectConverter::JsonObjectToUStruct<FCMSUser>(
+		SessionJsonObject.ToSharedRef(),
+		&OutUser,
+		0,
+		0,
+		false,
+		&OutReason
+	);
+	OutErrorReason = OutReason.ToString();
+	SessionJsonObject->GetObjectField("person")->GetStringField(TEXT("id"));
+
 	OutUser.Id = SessionJsonObject->GetStringField(TEXT("id"));
 	OutUser.EosId = SessionJsonObject->GetStringField(TEXT("EosId"));
 	OutUser.Name = SessionJsonObject->GetStringField(TEXT("name"));

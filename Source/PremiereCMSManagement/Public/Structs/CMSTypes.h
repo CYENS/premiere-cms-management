@@ -274,8 +274,11 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString About;
     
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types", meta=(DeprecatedProperty, DeprecationMessage="Use Owner.Id instead"))
     FString OwnerId;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSUser> Members;
