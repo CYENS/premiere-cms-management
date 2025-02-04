@@ -91,6 +91,21 @@ public:
 		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void DeletePerformance(
+		const FCMSPerformanceWhereUniqueInput& Where,
+		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void UpdatePerformance(
+		const FCMSPerformanceWhereUniqueInput& Where,
+		const FCMSPerformanceUpdateInput& Data,
+		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnFailureDelegate OnFailure
+	);
 
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void GetAllUsers(

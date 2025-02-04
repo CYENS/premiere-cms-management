@@ -5,8 +5,10 @@
 #include "Structs/CMSTypes.h"
 #include "PerformanceRepository.generated.h"
 
+struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceCreateInput;
 struct FCMSPerformanceWhereUniqueInput;
+
 class UGraphQLDataSource;
 
 DECLARE_DELEGATE_OneParam(FOnGetPerformanceSuccess, const FCMSPerformance&);
@@ -32,6 +34,20 @@ public:
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
+    
+    void DeletePerformance(
+        const FCMSPerformanceWhereUniqueInput& Where,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    void UpdatePerformance(
+        const FCMSPerformanceWhereUniqueInput& Where,
+	    const FCMSPerformanceUpdateInput& Data,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+
 
 private:
     static bool ParseCMSObjectFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSPerformance& OutPerformance, FString& OutErrorReason);

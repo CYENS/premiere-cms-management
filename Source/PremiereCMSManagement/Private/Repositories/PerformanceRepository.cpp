@@ -347,6 +347,223 @@ void UPerformanceRepository::FindPerformance(
 	);
 }
 
+void UPerformanceRepository::DeletePerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString Query = TEXT(R"(
+	query DeletePerformance($where: PerformanceWhereUniqueInput!) {
+      deletePerformance(where: $where) {
+        id
+        title
+        about
+        owner {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+        members {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+		usdScenes {
+		  id
+		}
+		sessions {
+		  id
+		}
+		avatars {
+		  id
+		}
+      }
+	}
+	)");
+	
+	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
+	WhereObject->SetStringField("id", Where.Id);
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeShared<FJsonValueObject>(WhereObject)}
+	};
+	const FString QueryName = TEXT("performance");
+	ExecuteGraphQLQuery<FCMSPerformance>(
+		Query,
+		Variables,
+		QueryName,
+		[](const FGraphQLResult& GraphQLResult, const FString& QueryName, FCMSPerformance& OutPerformance, FString& OutErrorReason)
+		{
+			
+			const TSharedPtr<FJsonObject> ResponseObject = GraphQLResult.ResponseObject->GetObjectField("data")->GetObjectField(QueryName);
+			return ParsePerformanceFromJsonObject(
+				ResponseObject,
+				OutPerformance,
+				OutErrorReason
+			);
+		},
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPerformanceRepository::UpdatePerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	const FCMSPerformanceUpdateInput& Data,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+{
+	const FString Query = TEXT(R"(
+	mutation UpdatePerformance($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+      updatePerformance(where: $where, data: $data) {
+        id
+        title
+        about
+        owner {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+        members {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+		usdScenes {
+		  id
+		}
+		sessions {
+		  id
+		}
+		avatars {
+		  id
+		}
+      }
+	}
+	)");
+	
+	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
+	WhereObject->SetStringField("id", Where.Id);
+	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
+	DataObject->SetStringField("title", Data.Title);
+	DataObject->SetStringField("about", Data.About);
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeShared<FJsonValueObject>(WhereObject)},
+		{"data", MakeShared<FJsonValueObject>(DataObject)}
+	};
+	
+	const FString QueryName = TEXT("updatePerformance");
+	ExecuteGraphQLQuery<FCMSPerformance>(
+		Query,
+		Variables,
+		QueryName,
+		[](const FGraphQLResult& GraphQLResult, const FString& QueryName, FCMSPerformance& OutPerformance, FString& OutErrorReason)
+		{
+			
+			const TSharedPtr<FJsonObject> ResponseObject = GraphQLResult.ResponseObject->GetObjectField("data")->GetObjectField(QueryName);
+			return ParsePerformanceFromJsonObject(
+				ResponseObject,
+				OutPerformance,
+				OutErrorReason
+			);
+		},
+		OnSuccess,
+		OnFailure
+	);
+}
+
 bool UPerformanceRepository::ParsePerformanceArrayFromResponse(
 	const FString& ResponseContent,
 	const FString& QueryName,

@@ -28,3 +28,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformanceWhereUniqueInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Id;
 };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSPerformanceUpdateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString About;
+};

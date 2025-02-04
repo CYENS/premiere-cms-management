@@ -223,6 +223,43 @@ void UPremiereCMSManagementSubsystem::FindPerformance(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::DeletePerformance(const FCMSPerformanceWhereUniqueInput& Where,
+	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess, FOnFailureDelegate OnFailure)
+{
+	PerformanceRepository->DeletePerformance(
+		Where,
+		[OnGetPerformanceSuccess](const FCMSPerformance& Performance)
+		{
+			OnGetPerformanceSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::UpdatePerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	const FCMSPerformanceUpdateInput& Data,
+	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->UpdatePerformance(
+		Where,
+		Data,
+		[OnGetPerformanceSuccess](const FCMSPerformance& Performance)
+		{
+			OnGetPerformanceSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 
 void UPremiereCMSManagementSubsystem::GetAllUsers(
 	FOnGetAllUsersSuccess OnGetAllUsersSuccess,
