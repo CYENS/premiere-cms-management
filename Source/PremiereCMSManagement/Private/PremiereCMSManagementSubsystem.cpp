@@ -7,7 +7,6 @@
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSInputs.h"
-#include "Structs/CMSUser.h"
 
 UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 {
@@ -204,6 +203,26 @@ void UPremiereCMSManagementSubsystem::GetAllPerformances(
 		OnFailure
 	);
 }
+
+void UPremiereCMSManagementSubsystem::FindPerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->FindPerformance(
+		Where,
+		[OnGetPerformanceSuccess](const FCMSPerformance& Performance)
+		{
+			OnGetPerformanceSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 
 void UPremiereCMSManagementSubsystem::GetAllUsers(
 	FOnGetAllUsersSuccess OnGetAllUsersSuccess,

@@ -4,17 +4,11 @@
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
 #include "JsonObjectConverter.h"
-#include "Structs/CMSSession.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Containers/Array.h"
 #include "Structs/CMSInputs.h"
 #include "Structs/CMSTypes.h"
-
-void UPerformanceRepository::Initialize(UGraphQLDataSource* InDataSource)
-{
-	DataSource = InDataSource;
-}
 
 void UPerformanceRepository::CreatePerformance(
 	const FCMSPerformanceCreateInput& PerformanceCreateInput,
@@ -245,6 +239,112 @@ void UPerformanceRepository::GetAllPerformances(FOnGetPerformancesSuccess OnSucc
 		}
 	});
 	DataSource->ExecuteGraphQLQuery(Query, OnResponse);
+}
+
+void UPerformanceRepository::FindPerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString Query = TEXT(R"(
+	query FindPerformance($where: PerformanceWhereUniqueInput!) {
+      performance(where: $where) {
+        id
+        title
+        about
+        owner {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+        members {
+          id
+          name
+          email
+          eosId
+          userRole
+          isAdmin
+          isSuperAdmin
+          createdAt
+          person {
+            id
+            givenName
+            familyName
+            artisticName
+          }
+          performances {
+            id
+          }
+          avatars {
+            id
+          }
+          sessionsOwned {
+            id
+          }
+          sessionAttendance {
+            id
+          }
+        }
+		usdScenes {
+		  id
+		}
+		sessions {
+		  id
+		}
+		avatars {
+		  id
+		}
+      }
+	}
+	)");
+	
+	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
+	WhereObject->SetStringField("id", Where.Id);
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeShared<FJsonValueObject>(WhereObject)}
+	};
+	const FString QueryName = TEXT("performance");
+	ExecuteGraphQLQuery<FCMSPerformance>(
+		Query,
+		Variables,
+		QueryName,
+		[](const FGraphQLResult& GraphQLResult, const FString& QueryName, FCMSPerformance& OutPerformance, FString& OutErrorReason)
+		{
+			
+			const TSharedPtr<FJsonObject> ResponseObject = GraphQLResult.ResponseObject->GetObjectField("data")->GetObjectField(QueryName);
+			return ParsePerformanceFromJsonObject(
+				ResponseObject,
+				OutPerformance,
+				OutErrorReason
+			);
+		},
+		OnSuccess,
+		OnFailure
+	);
 }
 
 bool UPerformanceRepository::ParsePerformanceArrayFromResponse(

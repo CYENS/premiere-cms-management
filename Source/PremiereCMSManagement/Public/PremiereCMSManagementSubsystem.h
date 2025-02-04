@@ -4,10 +4,11 @@
 #include "CoreMinimal.h"
 #include "Structs/CMSSession.h"
 #include "Structs/CMSTypes.h"
-#include "Structs/CMSUser.h"
+#include "Structs/CMSInputs.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
+struct FCMSPerformanceWhereUniqueInput;
 class UGraphQLDataSource;
 class USessionRepository;
 class UUserRepository;
@@ -18,6 +19,7 @@ struct FCMSPerformanceCreateInput;
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccessDel, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&, Users);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
@@ -75,11 +77,19 @@ public:
 		FOnCreateUserSuccess OnCreateSessionSuccess,
 		FOnFailureDelegate OnCreateSessionFailure
 	);
-	
+
+	/* Performances */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void GetAllPerformances(
 		FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
 		FOnFailureDelegate OnGetAllPerformanceFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void FindPerformance(
+		const FCMSPerformanceWhereUniqueInput& Where,
+		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnFailureDelegate OnFailure
 	);
 
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
