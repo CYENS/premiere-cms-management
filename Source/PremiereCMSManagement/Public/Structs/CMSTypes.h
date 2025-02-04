@@ -210,6 +210,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSUSDScene
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString OwnerId;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FString> MemberIds;
@@ -288,6 +291,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FString> UsdSceneIds;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    TArray<FCMSUSDScene> UsdScenes;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FString> SessionIds;

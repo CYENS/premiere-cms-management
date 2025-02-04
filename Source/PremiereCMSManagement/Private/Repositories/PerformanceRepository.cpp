@@ -80,6 +80,39 @@ void UPerformanceRepository::CreatePerformance(
         }
 		usdScenes {
 		  id
+			pCloudFileId
+			fileUrl
+			title
+			template
+			public
+			owner {
+			  id
+			  name
+			  email
+			  eosId
+			  userRole
+			  isAdmin
+			  isSuperAdmin
+			  createdAt
+			  person {
+				id
+				givenName
+				familyName
+				artisticName
+			  }
+			  performances {
+				id
+			  }
+			  avatars {
+				id
+			  }
+			  sessionsOwned {
+				id
+			  }
+			  sessionAttendance {
+				id
+			  }
+			}
 		}
 		sessions {
 		  id
@@ -195,7 +228,40 @@ void UPerformanceRepository::GetAllPerformances(FOnGetPerformancesSuccess OnSucc
           }
         }
 		usdScenes {
-		  id
+			id
+			pCloudFileId
+			fileUrl
+			title
+			template
+			public
+			owner {
+			  id
+			  name
+			  email
+			  eosId
+			  userRole
+			  isAdmin
+			  isSuperAdmin
+			  createdAt
+			  person {
+				id
+				givenName
+				familyName
+				artisticName
+			  }
+			  performances {
+				id
+			  }
+			  avatars {
+				id
+			  }
+			  sessionsOwned {
+				id
+			  }
+			  sessionAttendance {
+				id
+			  }
+			}
 		}
 		sessions {
 		  id
@@ -311,6 +377,39 @@ void UPerformanceRepository::FindPerformance(
         }
 		usdScenes {
 		  id
+			pCloudFileId
+			fileUrl
+			title
+			template
+			public
+			owner {
+			  id
+			  name
+			  email
+			  eosId
+			  userRole
+			  isAdmin
+			  isSuperAdmin
+			  createdAt
+			  person {
+				id
+				givenName
+				familyName
+				artisticName
+			  }
+			  performances {
+				id
+			  }
+			  avatars {
+				id
+			  }
+			  sessionsOwned {
+				id
+			  }
+			  sessionAttendance {
+				id
+			  }
+			}
 		}
 		sessions {
 		  id
@@ -417,6 +516,39 @@ void UPerformanceRepository::DeletePerformance(
         }
 		usdScenes {
 		  id
+			pCloudFileId
+			fileUrl
+			title
+			template
+			public
+			owner {
+			  id
+			  name
+			  email
+			  eosId
+			  userRole
+			  isAdmin
+			  isSuperAdmin
+			  createdAt
+			  person {
+				id
+				givenName
+				familyName
+				artisticName
+			  }
+			  performances {
+				id
+			  }
+			  avatars {
+				id
+			  }
+			  sessionsOwned {
+				id
+			  }
+			  sessionAttendance {
+				id
+			  }
+			}
 		}
 		sessions {
 		  id
@@ -523,6 +655,39 @@ void UPerformanceRepository::UpdatePerformance(
         }
 		usdScenes {
 		  id
+			pCloudFileId
+			fileUrl
+			title
+			template
+			public
+			owner {
+			  id
+			  name
+			  email
+			  eosId
+			  userRole
+			  isAdmin
+			  isSuperAdmin
+			  createdAt
+			  person {
+				id
+				givenName
+				familyName
+				artisticName
+			  }
+			  performances {
+				id
+			  }
+			  avatars {
+				id
+			  }
+			  sessionsOwned {
+				id
+			  }
+			  sessionAttendance {
+				id
+			  }
+			}
 		}
 		sessions {
 		  id
