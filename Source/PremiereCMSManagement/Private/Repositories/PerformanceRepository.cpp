@@ -453,7 +453,7 @@ void UPerformanceRepository::DeletePerformance(
 ) const
 {
 	const FString Query = TEXT(R"(
-	query DeletePerformance($where: PerformanceWhereUniqueInput!) {
+	mutation DeletePerformance($where: PerformanceWhereUniqueInput!) {
       deletePerformance(where: $where) {
         id
         title

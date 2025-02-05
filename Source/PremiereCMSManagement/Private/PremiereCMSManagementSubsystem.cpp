@@ -223,8 +223,11 @@ void UPremiereCMSManagementSubsystem::FindPerformance(
 	);
 }
 
-void UPremiereCMSManagementSubsystem::DeletePerformance(const FCMSPerformanceWhereUniqueInput& Where,
-	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess, FOnFailureDelegate OnFailure)
+void UPremiereCMSManagementSubsystem::DeletePerformance(
+	const FCMSPerformanceWhereUniqueInput& Where,
+	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnFailureDelegate OnFailure
+)
 {
 	PerformanceRepository->DeletePerformance(
 		Where,
