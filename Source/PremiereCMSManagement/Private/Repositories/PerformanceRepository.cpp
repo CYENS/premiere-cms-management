@@ -565,7 +565,7 @@ void UPerformanceRepository::DeletePerformance(
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
 		{"where", MakeShared<FJsonValueObject>(WhereObject)}
 	};
-	const FString QueryName = TEXT("performance");
+	const FString QueryName = TEXT("deletePerformance");
 	ExecuteGraphQLQuery<FCMSPerformance>(
 		Query,
 		Variables,
