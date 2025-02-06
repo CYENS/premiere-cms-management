@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Structs/CMSSession.h"
 
 #include "CMSTypes.generated.h"
 
@@ -277,9 +278,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString About;
     
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types", meta=(DeprecatedProperty, DeprecationMessage="Use Owner.Id instead"))
-    FString OwnerId;
-	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser Owner;
     
@@ -287,19 +285,13 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     TArray<FCMSUser> Members;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> MemberIds;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> UsdSceneIds;
-	
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSUSDScene> UsdScenes;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> SessionIds;
+    TArray<FCMSSession> Sessions;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> AvatarIds;
+    TArray<FCMSAvatar> Avatars;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")

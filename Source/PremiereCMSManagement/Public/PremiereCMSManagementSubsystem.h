@@ -83,7 +83,7 @@ public:
 	void GetAllPerformances(
 		FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
 		FOnFailureDelegate OnGetAllPerformanceFailure
-	);
+	) const;
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void FindPerformance(

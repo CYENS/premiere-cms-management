@@ -3,11 +3,60 @@
 #include "Repositories/BaseRepository.h"
 
 #include "GraphQLDataSource.h"
+#include "JsonObjectConverter.h"
 #include "LogPremiereCMSManagement.h"
 
 void UBaseRepository::Initialize(UGraphQLDataSource* InDataSource)
 {
     DataSource = InDataSource;
+}
+
+template <typename T>
+void UBaseRepository::ExecuteGraphQLQuery(
+    const FString& Query,
+    const FString& QueryName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure) const
+{
+    const TMap<FString, TSharedPtr<FJsonValue>> EmptyVariables;
+    ExecuteGraphQLQuery<T>(
+        Query,
+        EmptyVariables,
+        QueryName,
+        OnSuccess,
+        OnFailure
+    );
+}
+
+template <typename T>
+void UBaseRepository::ExecuteGraphQLQuery(
+    const FString& Query,
+    const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
+    const FString& QueryName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure) const
+{
+    ExecuteGraphQLQuery<T>(
+        Query,
+        Variables,
+        QueryName,
+        [](const FGraphQLResult& Result, const FString& QueryName, T& OutStruct, FString& OutError)
+        {
+            FText OutErrorText;
+            FJsonObjectConverter::JsonObjectToUStruct<T>(
+                Result.ResponseObject->GetObjectField(TEXT("data"))->GetObjectField(QueryName).ToSharedRef(),
+                &OutStruct,
+                0,
+                0,
+                false,
+                &OutErrorText
+            );
+            OutError = OutErrorText.ToString();
+            return true;
+        },
+        OnSuccess,
+        OnFailure
+    );
 }
 
 /** Handles Single Object Response */
@@ -44,6 +93,67 @@ void UBaseRepository::ExecuteGraphQLQuery(
     });
 
     DataSource->ExecuteGraphQLQuery(Query, Variables, OnResponse);
+}
+
+
+template <typename T>
+void UBaseRepository::ExecuteGraphQLQuery(
+    const FString& Query,
+    const FString& QueryName,
+    TFunction<void(const TArray<T>&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+) const
+{
+    const TMap<FString, TSharedPtr<FJsonValue>> EmptyVariables;
+    ExecuteGraphQLQuery<T>(
+        Query,
+        EmptyVariables,
+        QueryName,
+        OnSuccess,
+        OnFailure
+    );
+}
+
+template <typename T>
+void UBaseRepository::ExecuteGraphQLQuery(
+    const FString& Query,
+    const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
+    const FString& QueryName,
+    TFunction<void(const TArray<T>&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+)
+const
+{
+    ExecuteGraphQLQuery<T>(
+        Query,
+        Variables,
+        QueryName,
+        [](const FGraphQLResult& Result, const FString& QueryName, TArray<T>& OutStructs , FString& OutError)
+        {
+            for (
+                const auto JsonArray = Result.ResponseObject->GetObjectField(TEXT("data"))->GetArrayField(QueryName);
+                const TSharedPtr<FJsonValue>& JsonValue : JsonArray
+            )
+            {
+                const TSharedPtr<FJsonObject> JsonObject = JsonValue->AsObject();
+                T OutStruct;
+                FText OutErrorText;
+                FJsonObjectConverter::JsonObjectToUStruct<T>(
+                    JsonObject.ToSharedRef(),
+                    &OutStruct,
+                    0,
+                    0,
+                    false,
+                    &OutErrorText
+                );
+                OutError = OutErrorText.ToString();
+                OutStructs.Add(OutStruct);
+            }
+            return true;
+        },
+        OnSuccess,
+        OnFailure
+    );
 }
 
 /** Handles Array Response */

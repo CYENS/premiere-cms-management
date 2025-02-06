@@ -186,21 +186,17 @@ void UPremiereCMSManagementSubsystem::CreateUser(
 void UPremiereCMSManagementSubsystem::GetAllPerformances(
 	FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
 	FOnFailureDelegate OnGetAllPerformanceFailure
-)
+) const
 {
-	FOnGetPerformancesSuccess OnSuccess;
-	OnSuccess.BindLambda([OnGetAllPerformancesSuccess](TArray<FCMSPerformance> Performances)
-	{
-		OnGetAllPerformancesSuccess.Execute(Performances);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnGetAllPerformanceFailure](const FString& ErrorReason)
-	{
-		OnGetAllPerformanceFailure.ExecuteIfBound(ErrorReason);
-	});
 	PerformanceRepository->GetAllPerformances(
-		OnSuccess,
-		OnFailure
+		[OnGetAllPerformancesSuccess](const TArray<FCMSPerformance>& Performances)
+		{
+			OnGetAllPerformancesSuccess.ExecuteIfBound(Performances);
+		},
+		[OnGetAllPerformanceFailure](const FString& ErrorReason)
+		{
+			OnGetAllPerformanceFailure.ExecuteIfBound(ErrorReason);
+		}
 	);
 }
 
@@ -291,20 +287,16 @@ void UPremiereCMSManagementSubsystem::CreatePerformance(
 	FOnFailureDelegate OnCreatePerformanceFailure
 )
 {
-	FOnGetPerformanceSuccess OnSuccess;
-	OnSuccess.BindLambda([OnCreatePerformanceSuccess](const FCMSPerformance& Performance)
-	{
-		OnCreatePerformanceSuccess.ExecuteIfBound(Performance);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnCreatePerformanceFailure](const FString& ErrorReason)
-	{
-		OnCreatePerformanceFailure.ExecuteIfBound(ErrorReason);
-	});
 	PerformanceRepository->CreatePerformance(
 		CreatePerformanceInput,
-		OnSuccess,
-		OnFailure
+		[OnCreatePerformanceSuccess](const FCMSPerformance& Performance)
+		{
+			OnCreatePerformanceSuccess.ExecuteIfBound(Performance);
+		},
+		[OnCreatePerformanceFailure](const FString& ErrorReason)
+		{
+			OnCreatePerformanceFailure.ExecuteIfBound(ErrorReason);
+		}
 	);
 }
 

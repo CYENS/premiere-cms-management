@@ -23,11 +23,14 @@ class PREMIERECMSMANAGEMENT_API UPerformanceRepository : public UBaseRepository
 public:
     void CreatePerformance(
         const FCMSPerformanceCreateInput& PerformanceCreateInput,
-        FOnGetPerformanceSuccess OnSuccess,
-        FOnFailure OnFailure
-    );
+	    const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
 
-    void GetAllPerformances(FOnGetPerformancesSuccess OnSuccess, FOnFailure OnFailure) const;
+    void GetAllPerformances(
+	    const TFunction<void(const TArray<FCMSPerformance>& Performances)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
     
     void FindPerformance(
         const FCMSPerformanceWhereUniqueInput& Where,
@@ -48,21 +51,5 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
 
-
-private:
-    static bool ParseCMSObjectFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSPerformance& OutPerformance, FString& OutErrorReason);
-
-    static bool ParsePerformanceArrayFromResponse(
-        const FString& ResponseContent,
-        const FString& QueryName,
-        TArray<FCMSPerformance>& OutPerformances,
-        FString& OutErrorReason
-    );
-
-    static bool ParsePerformanceFromJsonObject(
-        const TSharedPtr<FJsonObject>& JsonObject,
-        FCMSPerformance& OutPerformance,
-        FString& OutErrorReason
-    );
-    
 };
+
