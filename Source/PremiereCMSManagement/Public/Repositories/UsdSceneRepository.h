@@ -30,15 +30,15 @@ public:
     ) const;
     
     void Find(
-        const FCMSPerformanceWhereUniqueInput& Where,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
+		const FCMSUsdSceneWhereUniqueInput& Where,
+		const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
     void Delete(
-        const FCMSPerformanceWhereUniqueInput& Where,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
+		const FCMSUsdSceneWhereUniqueInput& Where,
+		const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
     void Update(

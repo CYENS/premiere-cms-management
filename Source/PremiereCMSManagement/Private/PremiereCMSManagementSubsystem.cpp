@@ -417,3 +417,41 @@ void UPremiereCMSManagementSubsystem::UpdateUsdScene(
 		}
 	);
 }
+
+void UPremiereCMSManagementSubsystem::FindUsdScene(
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	UsdSceneRepository->Find(
+		Where,
+		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
+		{
+			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::DeleteUsdScene(
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	UsdSceneRepository->Delete(
+		Where,
+		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
+		{
+			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}

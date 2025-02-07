@@ -69,32 +69,30 @@ void UUsdSceneRepository::GetAll(
 }
 
 void UUsdSceneRepository::Find(
-	const FCMSPerformanceWhereUniqueInput& Where,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString QueryName = TEXT("performance");
+	const FString QueryName = TEXT("usdScene");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	query Find ($where: PerformanceWhereUniqueInput!) {
+	query Find ($where: UsdSceneWhereUniqueInput!) {
       %s (where: $where) {
 		%s
-      }
+	  }
 	}
 	)"),
-	*GQLUserFragment,
+	*GQLUsdSceneFragments,
 	*QueryName,
-	*GQLPerformance
+	*GQLUsdScene
 	);
 	
-	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
-	WhereObject->SetStringField("id", Where.Id);
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeShared<FJsonValueObject>(WhereObject)}
+		{"where", MakeWhereValue(Where)}
 	};
 	
-	ExecuteGraphQLQuery<FCMSPerformance>(
+	ExecuteGraphQLQuery(
 		Query,
 		Variables,
 		QueryName,
@@ -104,29 +102,29 @@ void UUsdSceneRepository::Find(
 }
 
 void UUsdSceneRepository::Delete(
-	const FCMSPerformanceWhereUniqueInput& Where,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
+	const FString QueryName = TEXT("deleteUsdScene");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation DeletePerformance($where: PerformanceWhereUniqueInput!) {
-      deletePerformance(where: $where) {
+	mutation DeleteUsdScene($where: UsdSceneWhereUniqueInput!) {
+      %s (where: $where) {
 		%s
 	  }
 	}
 	)"),
-	*GQLUserFragment,
-	*GQLPerformance
+	*GQLUsdSceneFragments,
+	*QueryName,
+	*GQLUsdScene
 	);
 	
-	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
-	WhereObject->SetStringField("id", Where.Id);
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeShared<FJsonValueObject>(WhereObject)}
+		{"where", MakeWhereValue(Where)}
 	};
-	const FString QueryName = TEXT("deletePerformance");
+	
 	ExecuteGraphQLQuery(
 		Query,
 		Variables,

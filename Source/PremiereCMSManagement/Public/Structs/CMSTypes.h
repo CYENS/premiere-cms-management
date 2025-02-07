@@ -6,6 +6,9 @@
 
 #include "CMSTypes.generated.h"
 
+struct FCMSUsdScene;
+struct FCMSPerformance;
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSDateTime
 {
@@ -210,22 +213,16 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdScene
     FString Title;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString OwnerId;
+    bool Template;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    bool Public;
 	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser Owner;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> MemberIds;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    bool Template;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    bool Public;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FString> PerformanceIds;
+    TArray<FCMSUser> Members;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")

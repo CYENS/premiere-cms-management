@@ -140,23 +140,37 @@ public:
 	);
 	
 	/* UsdScenes */
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void GetAllUsdScenes(
 		FOnGetAllUsdScenesSuccess OnGetAllUsdScenesSuccess,
 		FOnFailureDelegate OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void CreateUsdScene(
 		const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void UpdateUsdScene(
 		const FCMSUsdSceneWhereUniqueInput& Where,
 		const FCMSUsdSceneUpdateInput& Data,
+		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
+	void FindUsdScene(
+		const FCMSUsdSceneWhereUniqueInput& Where,
+		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+	    FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
+	void DeleteUsdScene(
+		const FCMSUsdSceneWhereUniqueInput& Where,
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
