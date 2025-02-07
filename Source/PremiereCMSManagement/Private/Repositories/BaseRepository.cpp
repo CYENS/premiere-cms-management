@@ -195,11 +195,23 @@ void UBaseRepository::ExecuteGraphQLQuery(
 template <typename T>
 TSharedPtr<FJsonValueObject> UBaseRepository::MakeWhereValue(const T& WhereStruct)
 {
+    return MakeJsonValueObjectFromUStruct(WhereStruct);
+}
+
+template <typename T>
+TSharedPtr<FJsonValueObject> UBaseRepository::MakeDataValue(const T& WhereStruct)
+{
+    return MakeJsonValueObjectFromUStruct(WhereStruct);
+}
+
+template <typename T>
+TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(const T& UStruct)
+{
     TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
     if (!FJsonObjectConverter::UStructToJsonObject(
             T::StaticStruct(),
-            &WhereStruct,
+            &UStruct,
             JsonObject.ToSharedRef(),
             0,
             0

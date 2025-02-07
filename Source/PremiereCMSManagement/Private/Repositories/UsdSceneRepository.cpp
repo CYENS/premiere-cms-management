@@ -9,31 +9,27 @@
 #include "Structs/CMSTypes.h"
 
 void UUsdSceneRepository::Create(
-	const FCMSPerformanceCreateInput& PerformanceCreateInput,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+	const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
+	const FString QueryName = TEXT("createUsdScene");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation CreatePerformanceMutation($data: PerformanceCreateInput!) {
-	  createPerformance(data: $data) {
+	mutation CreatePerformanceMutation ($data: UsdSceneCreateInput!) {
+	  %s (data: $data) {
 		%s
       }
 	}
 	)"),
-	*GQLUserFragment,
-	*GQLPerformance
+	*GQLUsdSceneFragments,
+	*QueryName,
+	*GQLUsdScene
 	);
-	const FString QueryName = TEXT("createPerformance");
 
-	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
-	DataObject->SetStringField("title", PerformanceCreateInput.Title);
-	DataObject->SetStringField("ownerId", PerformanceCreateInput.OwnerId);
-	DataObject->SetStringField("about", PerformanceCreateInput.About);
-	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"data", MakeShared<FJsonValueObject>(DataObject)}
+		{"data", MakeDataValue(UsdSceneCreateInput)}
 	};
 	
 	ExecuteGraphQLQuery(

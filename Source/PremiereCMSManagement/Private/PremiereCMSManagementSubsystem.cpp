@@ -360,15 +360,35 @@ void UPremiereCMSManagementSubsystem::GetActiveSessions(
 	SessionRepository->GetActiveSessions(OnSuccess, OnFailure);
 }
 
+/** UsdScenes **/
 void UPremiereCMSManagementSubsystem::GetAllUsdScenes(
 	FOnGetAllUsdScenesSuccess OnGetAllUsdScenesSuccess,
 	FOnFailureDelegate OnFailure
-) const
+)
 {
 	UsdSceneRepository->GetAll(
 		[OnGetAllUsdScenesSuccess](const TArray<FCMSUsdScene>& UsdScenes)
 		{
 			OnGetAllUsdScenesSuccess.ExecuteIfBound(UsdScenes);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateUsdScene(
+	const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+	FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	UsdSceneRepository->Create(
+		UsdSceneCreateInput,
+		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
+		{
+			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{

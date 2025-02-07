@@ -80,6 +80,13 @@ protected:
         TFunction<void(const FString&)> OnFailure
     ) const;
     
+    
     template <typename T>
     static TSharedPtr<FJsonValueObject> MakeWhereValue(const T& WhereStruct);
+    
+    template <typename T>
+    static TSharedPtr<FJsonValueObject> MakeDataValue(const T& WhereStruct);
+    
+    template <typename T>
+    static TSharedPtr<FJsonValueObject> MakeJsonValueObjectFromUStruct(const T& UStruct);
 };

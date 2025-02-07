@@ -23,6 +23,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&, Users);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUsdScene>&, UsdScenes);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdSceneSuccess, const FCMSUsdScene&, UsdScene);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
@@ -138,10 +139,17 @@ public:
 		FOnFailureDelegate OnGetActiveSessionsFailure
 	);
 	
-	/* Performances */
+	/* UsdScenes */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void GetAllUsdScenes(
 		FOnGetAllUsdScenesSuccess OnGetAllUsdScenesSuccess,
 		FOnFailureDelegate OnFailure
-	) const;
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void CreateUsdScene(
+		const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+		FOnFailureDelegate OnFailure
+	);
 };

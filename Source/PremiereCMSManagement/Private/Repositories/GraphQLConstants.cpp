@@ -11,20 +11,20 @@ fragment personFragment on Person {
 )");
 
 const FString GQLUserFragment = TEXT(R"(
-		fragment userFragment on User {
-		  id
-		  name
-		  email
-		  eosId
-		  userRole
-		  isAdmin
-		  isSuperAdmin
-		  createdAt
-		  person {
-			...personFragment
-		  } 
-		}
-	)");
+	fragment userFragment on User {
+	  id
+	  name
+	  email
+	  eosId
+	  userRole
+	  isAdmin
+	  isSuperAdmin
+	  createdAt
+	  person {
+		...personFragment
+	  } 
+	}
+)");
 
 const FString GQLPerformanceFragment = TEXT(R"(
 fragment performanceFragment on Performance {
@@ -152,10 +152,12 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 );
 
 const FString GQLUsdSceneFragments = FString::Printf(TEXT(R"(
-	%s
-	%s
+%s
+%s
+%s
 )")
 ,
+*GQLPersonFragment,
 *GQLUserFragment,
 *GQLPerformanceFragment
 );
@@ -167,7 +169,7 @@ const FString GQLUsdScene = FString::Printf(TEXT(R"(
     title
     template
     public
-        owner {
+    owner {
       ...userFragment  
     }
     members {
