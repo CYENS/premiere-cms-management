@@ -194,7 +194,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSPropMotionData
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSUSDScene
+struct PREMIERECMSMANAGEMENT_API FCMSUsdScene
 {
     GENERATED_BODY()
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
@@ -285,7 +285,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     TArray<FCMSUser> Members;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FCMSUSDScene> UsdScenes;
+    TArray<FCMSUsdScene> UsdScenes;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSSession> Sessions;

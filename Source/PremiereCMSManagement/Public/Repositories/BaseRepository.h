@@ -79,4 +79,7 @@ protected:
         TFunction<void(const TArray<T>&)> OnSuccess,
         TFunction<void(const FString&)> OnFailure
     ) const;
+    
+    template <typename T>
+    static TSharedPtr<FJsonValueObject> MakeWhereValue(const T& WhereStruct);
 };

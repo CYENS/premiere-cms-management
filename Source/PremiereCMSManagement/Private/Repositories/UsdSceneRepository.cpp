@@ -1,5 +1,5 @@
 
-#include "Repositories/PerformanceRepository.h"
+#include "Repositories/UsdSceneRepository.h"
 
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -8,7 +8,7 @@
 #include "Structs/CMSInputs.h"
 #include "Structs/CMSTypes.h"
 
-void UPerformanceRepository::CreatePerformance(
+void UUsdSceneRepository::Create(
 	const FCMSPerformanceCreateInput& PerformanceCreateInput,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -22,7 +22,7 @@ void UPerformanceRepository::CreatePerformance(
       }
 	}
 	)"),
-	*GQLPerformanceFragments,
+	*GQLUserFragment,
 	*GQLPerformance
 	);
 	const FString QueryName = TEXT("createPerformance");
@@ -45,25 +45,26 @@ void UPerformanceRepository::CreatePerformance(
 	);
 }
 
-void UPerformanceRepository::GetAllPerformances(
-	const TFunction<void(const TArray<FCMSPerformance>& Performances)>& OnSuccess,
+void UUsdSceneRepository::GetAll(
+	const TFunction<void(const TArray<FCMSUsdScene>& UsdScenes)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString QueryName = TEXT("performances");
+	const FString QueryName = TEXT("usdScenes");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-    query GetAllPerformances {
+    query GetAll {
       %s {
 		%s
       }
 	}
 	)"),
-	*GQLPerformanceFragments,
+	*GQLUsdSceneFragments,
 	*QueryName,
-	*GQLPerformance
+	*GQLUsdScene
 	);
-	ExecuteGraphQLQuery<FCMSPerformance>(
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *Query);
+	ExecuteGraphQLQuery<FCMSUsdScene>(
 		Query,
 		QueryName,
 		OnSuccess,
@@ -71,7 +72,7 @@ void UPerformanceRepository::GetAllPerformances(
 	);
 }
 
-void UPerformanceRepository::FindPerformance(
+void UUsdSceneRepository::Find(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -80,13 +81,13 @@ void UPerformanceRepository::FindPerformance(
 	const FString QueryName = TEXT("performance");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	query FindPerformance($where: PerformanceWhereUniqueInput!) {
+	query Find ($where: PerformanceWhereUniqueInput!) {
       %s (where: $where) {
 		%s
       }
 	}
 	)"),
-	*GQLPerformanceFragments,
+	*GQLUserFragment,
 	*QueryName,
 	*GQLPerformance
 	);
@@ -106,7 +107,7 @@ void UPerformanceRepository::FindPerformance(
 	);
 }
 
-void UPerformanceRepository::DeletePerformance(
+void UUsdSceneRepository::Delete(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -120,7 +121,7 @@ void UPerformanceRepository::DeletePerformance(
 	  }
 	}
 	)"),
-	*GQLPerformanceFragments,
+	*GQLUserFragment,
 	*GQLPerformance
 	);
 	
@@ -139,7 +140,7 @@ void UPerformanceRepository::DeletePerformance(
 	);
 }
 
-void UPerformanceRepository::UpdatePerformance(
+void UUsdSceneRepository::Update(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	const FCMSPerformanceUpdateInput& Data,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
@@ -154,7 +155,7 @@ void UPerformanceRepository::UpdatePerformance(
       }
 	}
 	)"),
-	*GQLPerformanceFragments,
+	*GQLUserFragment,
 	*QueryName,
 	*GQLPerformance
 	);
@@ -170,70 +171,6 @@ void UPerformanceRepository::UpdatePerformance(
 	};
 	
 	ExecuteGraphQLQuery<FCMSPerformance>(
-		Query,
-		Variables,
-		QueryName,
-		OnSuccess,
-		OnFailure
-	);
-}
-
-void UPerformanceRepository::AddUsdScene(
-	const FCMSUsdScenePerformanceWhereInput& Where,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure
-) const
-{
-	const FString QueryName = TEXT("addUsdSceneToPerformance");
-	const FString Query = FString::Printf(TEXT(R"(
-	%s
-	mutation AddUsdSceneToPerformance ($where: UsdScenePerformanceWhereInput!) {
-	  %s (where: $where) {
-		%s
-	  }
-	}
-	)"),
-	*GQLPerformanceFragments,
-	*QueryName,
-	*GQLPerformance
-	);
-	
-	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
-	};
-	ExecuteGraphQLQuery(
-		Query,
-		Variables,
-		QueryName,
-		OnSuccess,
-		OnFailure
-	);
-}
-
-void UPerformanceRepository::RemoveUsdScene(
-	const FCMSUsdScenePerformanceWhereInput& Where,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure
-) const
-{
-	const FString QueryName = TEXT("removeUsdSceneFromPerformance");
-	const FString Query = FString::Printf(TEXT(R"(
-	%s
-	mutation RemoveUsdSceneFromPerformance ($where: UsdScenePerformanceWhereInput!) {
-	  %s (where: $where) {
-		%s
-	  }
-	}
-	)"),
-	*GQLPerformanceFragments,
-	*QueryName,
-	*GQLPerformance
-	);
-	
-	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
-	};
-	ExecuteGraphQLQuery(
 		Query,
 		Variables,
 		QueryName,

@@ -8,6 +8,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
+class UUsdSceneRepository;
 struct FCMSPerformanceWhereUniqueInput;
 class UGraphQLDataSource;
 class USessionRepository;
@@ -19,8 +20,9 @@ struct FCMSPerformanceCreateInput;
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccessDel, FCMSPerformance, Performance);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&, Users);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUsdScene>&, UsdScenes);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
@@ -43,6 +45,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UPerformanceRepository* PerformanceRepository;
+	
+	UPROPERTY()
+	UUsdSceneRepository* UsdSceneRepository;
 	
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
@@ -88,14 +93,28 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void FindPerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
-		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void AddUsdSceneToPerformance(
+		const FCMSUsdScenePerformanceWhereInput& Where,
+	    FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
+	    FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void RemoveUsdSceneFromPerformance(
+		const FCMSUsdScenePerformanceWhereInput& Where,
+	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
+	    FOnFailureDelegate OnFailure
+	);
+
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void DeletePerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
-		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
 	
@@ -103,7 +122,7 @@ public:
 	void UpdatePerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
 		const FCMSPerformanceUpdateInput& Data,
-		FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
 
@@ -118,4 +137,11 @@ public:
 		FOnGetActiveSessionsDelegate OnGetActiveSessions,
 		FOnFailureDelegate OnGetActiveSessionsFailure
 	);
+	
+	/* Performances */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void GetAllUsdScenes(
+		FOnGetAllUsdScenesSuccess OnGetAllUsdScenesSuccess,
+		FOnFailureDelegate OnFailure
+	) const;
 };

@@ -3,59 +3,45 @@
 #include "CoreMinimal.h"
 #include "BaseRepository.h"
 #include "Structs/CMSTypes.h"
-#include "PerformanceRepository.generated.h"
+
+#include "UsdSceneRepository.generated.h"
 
 struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceCreateInput;
 struct FCMSPerformanceWhereUniqueInput;
-struct FCMSUsdScenePerformanceWhereInput;
-
-class UGraphQLDataSource;
 
 UCLASS()
-class PREMIERECMSMANAGEMENT_API UPerformanceRepository : public UBaseRepository
+class PREMIERECMSMANAGEMENT_API UUsdSceneRepository : public UBaseRepository
 {
     GENERATED_BODY()
 
 public:
-    void CreatePerformance(
+    void Create(
         const FCMSPerformanceCreateInput& PerformanceCreateInput,
 	    const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
 
-    void GetAllPerformances(
-	    const TFunction<void(const TArray<FCMSPerformance>& Performances)>& OnSuccess,
+    void GetAll(
+	    const TFunction<void(const TArray<FCMSUsdScene>& UsdScenes)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void FindPerformance(
+    void Find(
         const FCMSPerformanceWhereUniqueInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void DeletePerformance(
+    void Delete(
         const FCMSPerformanceWhereUniqueInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void UpdatePerformance(
+    void Update(
         const FCMSPerformanceWhereUniqueInput& Where,
 	    const FCMSPerformanceUpdateInput& Data,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
-    ) const;
-    
-    void AddUsdScene(
-        const FCMSUsdScenePerformanceWhereInput& Where,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
-    ) const;
-    
-    void RemoveUsdScene(
-        const FCMSUsdScenePerformanceWhereInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

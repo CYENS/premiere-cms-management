@@ -5,6 +5,7 @@
 #include "LogPremiereCMSManagement.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/SessionRepository.h"
+#include "Repositories/UsdSceneRepository.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSInputs.h"
 
@@ -24,6 +25,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 
 	PerformanceRepository = NewObject<UPerformanceRepository>();
 	PerformanceRepository->Initialize(GraphQlDataSource);
+	
+	UsdSceneRepository = NewObject<UUsdSceneRepository>();
+	UsdSceneRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -202,7 +206,7 @@ void UPremiereCMSManagementSubsystem::GetAllPerformances(
 
 void UPremiereCMSManagementSubsystem::FindPerformance(
 	const FCMSPerformanceWhereUniqueInput& Where,
-	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 	FOnFailureDelegate OnFailure
 )
 {
@@ -219,9 +223,47 @@ void UPremiereCMSManagementSubsystem::FindPerformance(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::AddUsdSceneToPerformance(
+	const FCMSUsdScenePerformanceWhereInput& Where,
+	FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->AddUsdScene(
+		Where,
+		[OnUsdSceneAddSuccess](const FCMSPerformance& Performance)
+		{
+			OnUsdSceneAddSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
+	const FCMSUsdScenePerformanceWhereInput& Where,
+	FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->RemoveUsdScene(
+		Where,
+		[OnUsdSceneRemoveSuccess](const FCMSPerformance& Performance)
+		{
+			OnUsdSceneRemoveSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::DeletePerformance(
 	const FCMSPerformanceWhereUniqueInput& Where,
-	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 	FOnFailureDelegate OnFailure
 )
 {
@@ -241,7 +283,7 @@ void UPremiereCMSManagementSubsystem::DeletePerformance(
 void UPremiereCMSManagementSubsystem::UpdatePerformance(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	const FCMSPerformanceUpdateInput& Data,
-	FOnGetPerformanceSuccessDel OnGetPerformanceSuccess,
+	FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 	FOnFailureDelegate OnFailure
 )
 {
@@ -316,4 +358,21 @@ void UPremiereCMSManagementSubsystem::GetActiveSessions(
 		OnGetActiveSessionsFailure.ExecuteIfBound(ErrorReason);
 	});
 	SessionRepository->GetActiveSessions(OnSuccess, OnFailure);
+}
+
+void UPremiereCMSManagementSubsystem::GetAllUsdScenes(
+	FOnGetAllUsdScenesSuccess OnGetAllUsdScenesSuccess,
+	FOnFailureDelegate OnFailure
+) const
+{
+	UsdSceneRepository->GetAll(
+		[OnGetAllUsdScenesSuccess](const TArray<FCMSUsdScene>& UsdScenes)
+		{
+			OnGetAllUsdScenesSuccess.ExecuteIfBound(UsdScenes);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
 }
