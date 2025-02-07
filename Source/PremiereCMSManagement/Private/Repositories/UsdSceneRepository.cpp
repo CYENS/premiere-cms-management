@@ -137,36 +137,32 @@ void UUsdSceneRepository::Delete(
 }
 
 void UUsdSceneRepository::Update(
-	const FCMSPerformanceWhereUniqueInput& Where,
-	const FCMSPerformanceUpdateInput& Data,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	const FCMSUsdSceneUpdateInput& Data,
+	const TFunction<void(const FCMSUsdScene& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
 {
-	const FString QueryName = TEXT("performance");
+	const FString QueryName = TEXT("updateUsdScene");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation UpdatePerformance($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	mutation UpdatePerformance($where: UsdSceneWhereUniqueInput!, $data: UsdSceneUpdateInput!) {
       %s (where: $where, data: $data) {
 		%s
       }
 	}
 	)"),
-	*GQLUserFragment,
+	*GQLUsdSceneFragments,
 	*QueryName,
-	*GQLPerformance
+	*GQLUsdScene
 	);
 	
-	const TSharedPtr<FJsonObject> WhereObject = MakeShareable(new FJsonObject());
-	WhereObject->SetStringField("id", Where.Id);
-	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
-	DataObject->SetStringField("title", Data.Title);
-	DataObject->SetStringField("about", Data.About);
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeShared<FJsonValueObject>(WhereObject)},
-		{"data", MakeShared<FJsonValueObject>(DataObject)}
+		{"where", MakeWhereValue(Where)},
+		{"data", MakeDataValue(Data)}
 	};
 	
-	ExecuteGraphQLQuery<FCMSPerformance>(
+	ExecuteGraphQLQuery(
 		Query,
 		Variables,
 		QueryName,

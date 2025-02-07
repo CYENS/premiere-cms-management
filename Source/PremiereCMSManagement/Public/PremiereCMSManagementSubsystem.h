@@ -152,4 +152,12 @@ public:
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	void UpdateUsdScene(
+		const FCMSUsdSceneWhereUniqueInput& Where,
+		const FCMSUsdSceneUpdateInput& Data,
+		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+		FOnFailureDelegate OnFailure
+	);
 };

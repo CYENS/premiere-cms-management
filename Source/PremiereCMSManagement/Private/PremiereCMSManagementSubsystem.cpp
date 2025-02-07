@@ -396,3 +396,24 @@ void UPremiereCMSManagementSubsystem::CreateUsdScene(
 		}
 	);
 }
+
+void UPremiereCMSManagementSubsystem::UpdateUsdScene(
+	const FCMSUsdSceneWhereUniqueInput& Where,
+	const FCMSUsdSceneUpdateInput& Data,
+	FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	UsdSceneRepository->Update(
+		Where,
+		Data,
+		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
+		{
+			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}

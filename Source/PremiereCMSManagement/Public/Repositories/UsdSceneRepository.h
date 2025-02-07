@@ -9,6 +9,8 @@
 struct FCMSUsdSceneCreateInput;
 struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceWhereUniqueInput;
+struct FCMSUsdSceneUpdateInput;
+struct FCMSUsdSceneWhereUniqueInput;
 
 UCLASS()
 class PREMIERECMSMANAGEMENT_API UUsdSceneRepository : public UBaseRepository
@@ -40,11 +42,10 @@ public:
     ) const;
     
     void Update(
-        const FCMSPerformanceWhereUniqueInput& Where,
-	    const FCMSPerformanceUpdateInput& Data,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
+		const FCMSUsdSceneWhereUniqueInput& Where,
+		const FCMSUsdSceneUpdateInput& Data,
+		const TFunction<void(const FCMSUsdScene& Performance)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
-
 };
 
