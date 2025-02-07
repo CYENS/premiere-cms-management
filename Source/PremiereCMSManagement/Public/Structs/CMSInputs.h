@@ -113,3 +113,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdScenePerformanceWhereInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString PerformanceId;
 };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUserPerformanceWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString UserId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString PerformanceId;
+};

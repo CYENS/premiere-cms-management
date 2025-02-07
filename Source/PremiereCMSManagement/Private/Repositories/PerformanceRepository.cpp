@@ -241,3 +241,67 @@ void UPerformanceRepository::RemoveUsdScene(
 		OnFailure
 	);
 }
+
+void UPerformanceRepository::AddMember(
+	const FCMSUserPerformanceWhereUniqueInput& Where,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("addUserToPerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation AddUserToPerformance ($where: UserPerformanceWhereUniqueInput!) {
+	  %s (where: $where) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(Where)}
+	};
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPerformanceRepository::RemoveMember(
+	const FCMSUserPerformanceWhereUniqueInput& Where,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("removeUserFromPerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation RemoveUserFromPerformance ($where: UserPerformanceWhereUniqueInput!) {
+	  %s (where: $where) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(Where)}
+	};
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}

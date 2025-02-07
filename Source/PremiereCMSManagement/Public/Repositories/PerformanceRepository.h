@@ -9,6 +9,7 @@ struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceCreateInput;
 struct FCMSPerformanceWhereUniqueInput;
 struct FCMSUsdScenePerformanceWhereInput;
+struct FCMSUserPerformanceWhereUniqueInput;
 
 class UGraphQLDataSource;
 
@@ -56,6 +57,18 @@ public:
     
     void RemoveUsdScene(
         const FCMSUsdScenePerformanceWhereInput& Where,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    void AddMember(
+	    const FCMSUserPerformanceWhereUniqueInput& Where,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    void RemoveMember(
+	    const FCMSUserPerformanceWhereUniqueInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

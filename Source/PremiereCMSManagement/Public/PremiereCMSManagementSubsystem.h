@@ -90,7 +90,6 @@ public:
 		FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
 		FOnFailureDelegate OnCreatePerformanceFailure
 	);
-
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void FindPerformance(
@@ -121,11 +120,25 @@ public:
 	    FOnFailureDelegate OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void RemoveUsdSceneFromPerformance(
 		const FCMSUsdScenePerformanceWhereInput& Where,
 	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
 	    FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void AddUserToPerformance(
+		const FCMSUserPerformanceWhereUniqueInput& Where,
+		FOnGetPerformanceSuccess OnUserAddSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void RemoveUserFromPerformance(
+		const FCMSUserPerformanceWhereUniqueInput& Where,
+		FOnGetPerformanceSuccess OnUserRemoveSuccess,
+		FOnFailureDelegate OnFailure
 	);
 
 	/* Session */
@@ -177,4 +190,5 @@ public:
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
+	
 };

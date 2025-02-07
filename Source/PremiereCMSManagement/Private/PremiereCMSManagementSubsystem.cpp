@@ -261,6 +261,44 @@ void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::AddUserToPerformance(
+	const FCMSUserPerformanceWhereUniqueInput& Where,
+	FOnGetPerformanceSuccess OnUserAddSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->AddMember(
+		Where,
+		[OnUserAddSuccess](const FCMSPerformance& Performance)
+		{
+			OnUserAddSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::RemoveUserFromPerformance(
+	const FCMSUserPerformanceWhereUniqueInput& Where,
+	FOnGetPerformanceSuccess OnUserRemoveSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	PerformanceRepository->RemoveMember(
+		Where,
+		[OnUserRemoveSuccess](const FCMSPerformance& Performance)
+		{
+			OnUserRemoveSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::DeletePerformance(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	FOnGetPerformanceSuccess OnGetPerformanceSuccess,
