@@ -59,7 +59,6 @@ void UUsdSceneRepository::GetAll(
 	*QueryName,
 	*GQLUsdScene
 	);
-	UE_LOG(LogTemp, Warning, TEXT("%s"), *Query);
 	ExecuteGraphQLQuery<FCMSUsdScene>(
 		Query,
 		QueryName,
