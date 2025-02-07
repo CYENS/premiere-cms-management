@@ -63,18 +63,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void TestGraphQlQueryFJsonValue() const;
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void CreateSession(
-		FCMSSession Session,
-		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
-		FOnFailureDelegate OnCreateSessionFailure
-	);
-	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void CreatePerformance(
-		FCMSPerformanceCreateInput CreatePerformanceInput,
-		FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
-		FOnFailureDelegate OnCreatePerformanceFailure
+	/* User */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void GetAllUsers(
+		FOnGetAllUsersSuccess OnGetAllUsersSuccess,
+		FOnFailureDelegate OnGetAllUsersFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
@@ -84,59 +77,69 @@ public:
 		FOnFailureDelegate OnCreateSessionFailure
 	);
 
-	/* Performances */
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	/* Performance */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void GetAllPerformances(
 		FOnGetAllPerformancesSuccess OnGetAllPerformancesSuccess,
 		FOnFailureDelegate OnGetAllPerformanceFailure
 	) const;
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void CreatePerformance(
+		FCMSPerformanceCreateInput CreatePerformanceInput,
+		FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
+		FOnFailureDelegate OnCreatePerformanceFailure
+	);
+
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void FindPerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
 		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
-	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void AddUsdSceneToPerformance(
-		const FCMSUsdScenePerformanceWhereInput& Where,
-	    FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
-	    FOnFailureDelegate OnFailure
-	);
-	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void RemoveUsdSceneFromPerformance(
-		const FCMSUsdScenePerformanceWhereInput& Where,
-	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
-	    FOnFailureDelegate OnFailure
-	);
 
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void DeletePerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
 		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void UpdatePerformance(
 		const FCMSPerformanceWhereUniqueInput& Where,
 		const FCMSPerformanceUpdateInput& Data,
 		FOnGetPerformanceSuccess OnGetPerformanceSuccess,
 		FOnFailureDelegate OnFailure
 	);
-
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
-	void GetAllUsers(
-		FOnGetAllUsersSuccess OnGetAllUsersSuccess,
-		FOnFailureDelegate OnGetAllUsersFailure
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void AddUsdSceneToPerformance(
+		const FCMSUsdScenePerformanceWhereInput& Where,
+	    FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
+	    FOnFailureDelegate OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void RemoveUsdSceneFromPerformance(
+		const FCMSUsdScenePerformanceWhereInput& Where,
+	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
+	    FOnFailureDelegate OnFailure
 	);
 
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	/* Session */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void GetActiveSessions(
 		FOnGetActiveSessionsDelegate OnGetActiveSessions,
 		FOnFailureDelegate OnGetActiveSessionsFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void CreateSession(
+		FCMSSession Session,
+		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
+		FOnFailureDelegate OnCreateSessionFailure
 	);
 	
 	/* UsdScenes */
