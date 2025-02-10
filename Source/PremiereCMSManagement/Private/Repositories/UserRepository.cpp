@@ -8,77 +8,30 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
-void UUserRepository::Initialize(UGraphQLDataSource* InDataSource)
-{
-	DataSource = InDataSource;
-}
-
-void UUserRepository::GetAllUsers(
-	FOnGetUsersSuccess OnSuccess,
-	FOnFailure OnFailure
+void UUserRepository::GetAll(
+	const TFunction<void(const TArray<FCMSUser>& Users)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString Query = TEXT(R"(
+	const FString QueryName = TEXT("users");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
 	query GetAllUsers {
-	  users {
-		id
-		name
-		email
-		eosId
-		userRole
-		isAdmin
-		isSuperAdmin
-		createdAt
-		person {
-		  id
-		}
-		sessionsOwned {
-		  id
-		}
-		sessionAttendance {
-		  id
-		}
-		performances {
-		  id
-		}
-		avatars {
-		  id
-		}
+	  %s {
+		%s
 	  }
 	}
-	)");
-	
-	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
-	{
-		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
-		const FString ResponseContent = GraphQLResult.RawResponse;
-		
-		if (!bSuccess)
-		{
-			const FString ErrorMessage = GraphQLResult.ErrorMessage;
-			OnFailure.ExecuteIfBound(ErrorMessage);
-			return;
-		}
-		else
-		{
-			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
-		}
-		
-		FString ErrorReason;
-		if (
-			TArray<FCMSUser> Users;
-			ParseMultipleCMSUsersFromResponse(ResponseContent, TEXT("users"), Users, ErrorReason))
-		{
-			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response"));
-			OnSuccess.ExecuteIfBound(Users);
-		}
-		else
-		{
-			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Could not parse response. Reason: %s"), *ErrorReason);
-		}
-	});
-	DataSource->ExecuteGraphQLQuery(Query, OnResponse);
+	)"),
+	*GQLUserFragments,
+	*QueryName,
+	*GQLUser
+	);
+	ExecuteGraphQLQuery<FCMSUser>(
+		Query,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
 }
 
 bool UUserRepository::ParseMultipleCMSUsersFromResponse(

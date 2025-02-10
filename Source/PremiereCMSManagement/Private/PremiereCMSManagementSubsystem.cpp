@@ -342,22 +342,18 @@ void UPremiereCMSManagementSubsystem::UpdatePerformance(
 
 void UPremiereCMSManagementSubsystem::GetAllUsers(
 	FOnGetAllUsersSuccess OnGetAllUsersSuccess,
-	FOnFailureDelegate OnGetAllUsersFailure
+	FOnFailureDelegate OnFailure
 )
 {
-	FOnGetUsersSuccess OnSuccess;
-	OnSuccess.BindLambda([OnGetAllUsersSuccess](TArray<FCMSUser> Performance)
-	{
-		OnGetAllUsersSuccess.ExecuteIfBound(Performance);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnGetAllUsersFailure](const FString& ErrorReason)
-	{
-		OnGetAllUsersFailure.ExecuteIfBound(ErrorReason);
-	});
-	UserRepository->GetAllUsers(
-		OnSuccess,
-		OnFailure
+	UserRepository->GetAll(
+		[OnGetAllUsersSuccess](const TArray<FCMSUser>& Users)
+		{
+			OnGetAllUsersSuccess.ExecuteIfBound(Users);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
 	);
 }
 

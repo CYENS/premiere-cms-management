@@ -130,6 +130,31 @@ fragment motionFragment on AvatarMotionData {
 }
 )");
 
+const FString GQLUserFragments = FString::Printf(TEXT(R"(
+	%s
+	%s
+)"),
+    *GQLPersonFragment,
+    *GQLAvatarFragment
+);
+
+const FString GQLUser = FString::Printf(TEXT(R"(
+    id
+    name
+    email
+    eosId
+    userRole
+    isAdmin
+    isSuperAdmin
+    createdAt
+    person {
+		...personFragment
+    }
+    avatars {
+      ...avatarFragment
+    }
+)"));
+
 const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 	%s
 	%s

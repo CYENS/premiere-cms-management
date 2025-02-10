@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 
-extern const FString GQLUserFragment;
+extern const FString GQLUserFragments;
+extern const FString GQLUser;
 extern const FString GQLPerformanceFragments;
 extern const FString GQLPerformance;
 extern const FString GQLSessionFragments;
