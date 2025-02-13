@@ -7,26 +7,28 @@
 
 void ATestCMSGameModeBase::BeginPlay()
 {
-	Super::BeginPlay();
-
+	DeveloperSettings = GetMutableDefault<UPremiereCMSDeveloperSettings>();
+	GraphQLUrl = DeveloperSettings->GraphQLUrl;
+	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
-	GraphQlDataSource->Initialize("http://localhost:4000/");
+	GraphQlDataSource->Initialize(GraphQLUrl);
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
 	
-	// TestExecuteGraphQLQuery();
-	TestGetSessionById();
-	// TestGetActiveSessions();
+	UserRepository = NewObject<UUserRepository>();
+	UserRepository->Initialize(GraphQlDataSource);
+
+	PerformanceRepository = NewObject<UPerformanceRepository>();
+	PerformanceRepository->Initialize(GraphQlDataSource);
+	
+	UsdSceneRepository = NewObject<UUsdSceneRepository>();
+	UsdSceneRepository->Initialize(GraphQlDataSource);
+	
+	Super::BeginPlay();
 }
 
-void ATestCMSGameModeBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-	GraphQlDataSource = nullptr;
-}
-
-void ATestCMSGameModeBase::TestExecuteGraphQLQuery() const
+void ATestCMSGameModeBase::TestExecuteGraphQLQuery()
 {
 	const FString Query = TEXT(R"(
 	query {
@@ -58,56 +60,41 @@ void ATestCMSGameModeBase::TestExecuteGraphQLQuery() const
 	GraphQlDataSource->ExecuteGraphQLQuery(Query, Variables, OnResponse);
 }
 
-void ATestCMSGameModeBase::TestGetSessionById() const
+
+void ATestCMSGameModeBase::TestGetActiveSessions() 
 {
-	FOnGetSessionSuccess OnSuccess;
-	OnSuccess.BindLambda([](const FCMSSession& Session)
-	{
-		LogSession(Session);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([](const FString& ErrorReason)
-	{
-		UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Failed to get Session By Id %s"), *ErrorReason);
-	});
-	SessionRepository->GetSessionById("1", OnSuccess, OnFailure);
-	SessionRepository->GetSessionById("3", OnSuccess, OnFailure);
+	SessionRepository->GetActiveSessions(
+		LogUStructs<FCMSSession>,
+		LogError
+	);
 }
 
-void ATestCMSGameModeBase::TestGetActiveSessions() const
+void ATestCMSGameModeBase::LogError(const FString& ErrorReason)
 {
-	FOnGetActiveSessionsSuccess OnGetActiveSessions;
-	OnGetActiveSessions.BindLambda([](const TArray<FCMSSession> Sessions)
-	{
-		for (auto Session : Sessions)
-		{
-			LogSession(Session);
-		}
-	});
-	
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([](const FString& ErrorReason)
-	{
-		UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Failed to get active sessions. Reason: %s"), *ErrorReason);
-	});
-	SessionRepository->GetActiveSessions(OnGetActiveSessions, OnFailure);
+	UE_LOG(LogPremiereCMSManagementTest, Error, TEXT("Error: %s"), *ErrorReason);
 }
-	
-void ATestCMSGameModeBase::LogSession(const FCMSSession& Session)
+
+template <typename U>
+void ATestCMSGameModeBase::LogUStructs(const TArray<U>& Structs)
 {
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("-- Session --"));
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session ID: %s"), *Session.Id);
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Title: %s"), *Session.Title);
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session StreamingUrl: %s"), *Session.StreamingUrl);
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session State: %s"), *Session.State);
-	UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("Session Performance Id: %s"), *Session.PerformanceId);
-	if (Session.AudioDataIds.Num() > 0)
+	for (const U& Struct : Structs)
 	{
-		UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("AudioData Ids:"));
-		for (const FString& Id : Session.AudioDataIds)
-		{
-			UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("%s"), *Id);
-		}
+		LogUStruct(Struct);
 	}
 }
 
+template <typename U>
+void ATestCMSGameModeBase::LogUStruct(const U& Struct)
+{
+	const TSharedPtr<FJsonObject> JsonObject = FJsonObjectConverter::UStructToJsonObject(
+		Struct,
+		0,
+		0
+	);
+	
+	FString StructAsString;
+	const TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&StructAsString);
+	FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *StructAsString);
+}

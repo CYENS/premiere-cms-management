@@ -144,25 +144,75 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
 }
 
 void UPremiereCMSManagementSubsystem::CreateSession(
-	FCMSSession Session,
-	FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
-	FOnFailureDelegate OnCreateSessionFailure
+	const FCMSSessionCreateInput& Data,
+	const FString& SessionState,
+	const TArray<FString>& AudioDataWhereIds,
+	const TArray<FString>& FaceDataWhereIds,
+	FOnGetSession OnCreateSessionSuccess,
+	FOnFailureDelegate OnFailure
 )
 {
-	FOnGetSessionSuccess OnSuccess;
-	OnSuccess.BindLambda([OnCreateSessionSuccess](const FCMSSession& Session)
+	TArray<FCMSIdInput> FaceDataWhereIdStructs;
+	for (const auto& Id : FaceDataWhereIds)
 	{
-		OnCreateSessionSuccess.ExecuteIfBound(Session);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnCreateSessionFailure](const FString& ErrorReason)
+		FaceDataWhereIdStructs.Add({Id});
+	}
+	
+	TArray<FCMSIdInput> AudioDataWhereIdStructs;
+	for (const auto& Id : AudioDataWhereIds)
 	{
-		OnCreateSessionFailure.ExecuteIfBound(ErrorReason);
-	});
+		AudioDataWhereIdStructs.Add({Id});
+	}
+	
 	SessionRepository->CreateSession(
-		Session,
-		OnSuccess,
-		OnFailure
+		Data,
+		{ SessionState },
+		AudioDataWhereIdStructs,
+		FaceDataWhereIdStructs,
+		[OnCreateSessionSuccess](const FCMSSession& Session)
+		{
+			OnCreateSessionSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::GetAllSessions(
+	const FOnGetSessions& OnGetAllSessionsSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->GetAll(
+		[OnGetAllSessionsSuccess](const TArray<FCMSSession>& Sessions)
+		{
+			OnGetAllSessionsSuccess.ExecuteIfBound(Sessions);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::FindSession(
+	const FCMSSessionWhereUniqueInput Where,
+	FOnGetSessions OnGetSessionsSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	SessionRepository->FindSession(
+		Where,
+		[OnGetSessionsSuccess] (const TArray<FCMSSession>& Sessions)
+		{
+			OnGetSessionsSuccess.ExecuteIfBound(Sessions);
+		},
+		[OnFailure] (const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
 	);
 }
 
@@ -379,21 +429,23 @@ void UPremiereCMSManagementSubsystem::CreatePerformance(
 }
 
 void UPremiereCMSManagementSubsystem::GetActiveSessions(
-	FOnGetActiveSessionsDelegate OnGetActiveSessions,
-	FOnFailureDelegate OnGetActiveSessionsFailure)
+	const FOnGetSessions& OnGetActiveSessions,
+	const FOnFailureDelegate& OnFailure
+)
 {
-	FOnGetActiveSessionsSuccess OnSuccess;
-	OnSuccess.BindLambda([OnGetActiveSessions](const TArray<FCMSSession> Sessions)
-	{
-		OnGetActiveSessions.ExecuteIfBound(Sessions);
-	});
-	
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnGetActiveSessionsFailure](const FString& ErrorReason)
-	{
-		OnGetActiveSessionsFailure.ExecuteIfBound(ErrorReason);
-	});
-	SessionRepository->GetActiveSessions(OnSuccess, OnFailure);
+	SessionRepository->GetActiveSessions(
+		[OnGetActiveSessions](const TArray<FCMSSession>& Sessions)
+		{
+			UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("SessionRepository->GetActiveSessions"));
+			OnGetActiveSessions.ExecuteIfBound(Sessions);
+			UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("SessionRepository->GetActiveSessions %d"), Sessions.Num());
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			UE_LOG(LogPremiereCMSManagementTest, Log, TEXT("SessionRepository->GetActiveSessions Failed"));
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
 }
 
 /** UsdScenes **/

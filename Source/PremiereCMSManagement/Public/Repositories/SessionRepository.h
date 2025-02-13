@@ -1,59 +1,44 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseRepository.h"
 #include "UObject/NoExportTypes.h"
-#include "GraphQLDataSource.h"
-#include "Structs/CMSSession.h"
+
 #include "SessionRepository.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnGetSessionSuccess, FCMSSession& /* Session */);
-DECLARE_DELEGATE_OneParam(FOnGetActiveSessionsSuccess, TArray<FCMSSession> /* Sessions */);
-DECLARE_DELEGATE_OneParam(FOnFailure, FString /* ErrorReason */);
+struct FCMSSession;
+struct FCMSSessionCreateInput;
+struct FCMSSessionWhereUniqueInput;
+struct FCMSIdInput;
 
 UCLASS()
-class PREMIERECMSMANAGEMENT_API USessionRepository : public UObject
+class PREMIERECMSMANAGEMENT_API USessionRepository : public UBaseRepository
 {
     GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintCallable, Category = "Session Repository")
-    void Initialize(UGraphQLDataSource* InDataSource);
-
-    void GetSessionById(const FString& SessionId, FOnGetSessionSuccess OnSuccess, FOnFailure OnFailure) const;
-
-    void GetActiveSessions(FOnGetActiveSessionsSuccess OnSuccess, FOnFailure OnFailure) const;
-
-    void CreateSession(
-        const FCMSSession& InSession,
-        FOnGetSessionSuccess OnSuccess,
-        FOnFailure OnFailure
+    void GetAll(
+        const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
 
-private:
-    UPROPERTY()
-    UGraphQLDataSource* DataSource;
+    void FindSession(
+        const FCMSSessionWhereUniqueInput& Where,
+        const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
     
-    /**
-     * Returns false if it fails to parse the response and OutErrorReason is populated
-     */
-    static bool ParseCMSSessionFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSSession& OutSession, FString& OutErrorReason);
+    void GetActiveSessions(
+        const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
 
-    static bool ParseCMSMultipleSessionsFromResponse(
-        const FString& JsonResponse,
-        const FString& QueryName,
-        TArray<FCMSSession>& OutSessions,
-        FString& OutErrorReason
-    );
-
-    static bool CreateSessionFromSingleSessionJsonObject(
-        const TSharedPtr<FJsonObject>& SessionJsonObject,
-        FCMSSession& OutSession,
-        FString& OutErrorReason
-    );
-    
-    static bool TryExtractIdsFromSessionObject(
-        const TSharedPtr<FJsonObject>& SessionJsonObject,
-        const FString& FieldName,
-        TArray<FString>& Ids
-    );
+    void CreateSession(
+        const FCMSSessionCreateInput& Data,
+	    const FCMSIdInput& SessionStateWhereId,
+	    const TArray<FCMSIdInput>& AudioDataWhereIds,
+        const TArray<FCMSIdInput>& FaceDataWhereIds,
+        const TFunction<void(const FCMSSession& Sessions)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
 };

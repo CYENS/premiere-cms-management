@@ -3,7 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "JsonObjectConverter.h"
+#include "PremiereCMSDeveloperSettings.h"
 #include "GameFramework/GameModeBase.h"
+#include "Repositories/PerformanceRepository.h"
+#include "Repositories/UsdSceneRepository.h"
+#include "Repositories/UserRepository.h"
 #include "TestCMSGameModeBase.generated.h"
 
 struct FCMSSession;
@@ -15,29 +20,45 @@ class PREMIERECMSMANAGEMENT_API ATestCMSGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	void TestExecuteGraphQLQuery() const;
-	void TestGetSessionById() const;
-	void TestGetActiveSessions() const;
-	
 public:
-	// UFUNCTION(BlueprintCallable, Category = "TestCMSGameModeBase")
-	// void CreateSession(
-	// 	const FString& Title,
-	// 	const FString& OwnerId,
-	// 	const FString& PerformanceId
-	// ) const;
+	UFUNCTION(BlueprintCallable)
+	void TestGetActiveSessions();
+	
+	UFUNCTION(BlueprintCallable)
+	void TestExecuteGraphQLQuery();
 	
 protected:
 	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+	UPROPERTY()
+	UPremiereCMSDeveloperSettings* DeveloperSettings;
+	
+	UPROPERTY()
+	FString GraphQLUrl;
+	
 	UPROPERTY()
 	UGraphQLDataSource* GraphQlDataSource;
 	
 	UPROPERTY()
 	USessionRepository* SessionRepository;
+	
+	UPROPERTY()
+	UUserRepository* UserRepository;
+	
+	UPROPERTY()
+	UPerformanceRepository* PerformanceRepository;
+	
+	UPROPERTY()
+	UUsdSceneRepository* UsdSceneRepository;
+	
+	template<typename U>
+	static void LogUStructs(const TArray<U>& Structs);
+	
+	template<typename U>
+	static void LogUStruct(const U& Struct);
+	
+	static void LogError(const FString& ErrorReason);
 
-	static void LogSession(const FCMSSession& Session);
-	 
 };
+

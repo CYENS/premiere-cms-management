@@ -2,22 +2,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Structs/CMSSession.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
-class UUsdSceneRepository;
 struct FCMSPerformanceWhereUniqueInput;
+class UUsdSceneRepository;
 class UGraphQLDataSource;
 class USessionRepository;
 class UUserRepository;
 class UPerformanceRepository;
 
+class UPremiereCMSDeveloperSettings;
+
 struct FCMSPerformanceCreateInput;
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateSessionSuccessDelegate, FCMSSession, Session);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSession, const FCMSSession&, Session);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessions, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
@@ -25,7 +27,6 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUsdScene>&, UsdScenes);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdSceneSuccess, const FCMSUsdScene&, UsdScene);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetActiveSessionsDelegate, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
 
 UCLASS(BlueprintType, Config=Engine)
@@ -49,6 +50,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UUsdSceneRepository* UsdSceneRepository;
+	
+	UPROPERTY()
+	const UPremiereCMSDeveloperSettings* DeveloperSettings;
 	
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
@@ -143,18 +147,39 @@ public:
 
 	/* Session */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
-	void GetActiveSessions(
-		FOnGetActiveSessionsDelegate OnGetActiveSessions,
-		FOnFailureDelegate OnGetActiveSessionsFailure
+	void GetAllSessions(
+		const FOnGetSessions& OnGetAllSessionsSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void FindSession(
+		FCMSSessionWhereUniqueInput Where,
+		FOnGetSessions OnGetSessionsSuccess,
+		FOnFailureDelegate OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
-	void CreateSession(
-		FCMSSession Session,
-		FOnCreateSessionSuccessDelegate OnCreateSessionSuccess,
-		FOnFailureDelegate OnCreateSessionFailure
+	void GetActiveSessions(
+		const FOnGetSessions& OnGetActiveSessions,
+		const FOnFailureDelegate& OnFailure
 	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session", meta=(AutoCreateRefTerm="FaceDataWhereIds,AudioDataWhereIds"))
+	void CreateSession(
+		const FCMSSessionCreateInput& Data,
+		const FString& SessionState,
+		const TArray<FString>& AudioDataWhereIds,
+		const TArray<FString>& FaceDataWhereIds,
+		FOnGetSession OnCreateSessionSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	void GetAllSessions(
+		const FOnGetSessions& OnGetAllPerformancesSuccess,
+		const FOnFailureDelegate& OnFailure
+	) const;
+
 	/* UsdScenes */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void GetAllUsdScenes(
