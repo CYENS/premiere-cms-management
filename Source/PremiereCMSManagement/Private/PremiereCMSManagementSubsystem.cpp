@@ -3,6 +3,7 @@
 
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
+#include "PremiereCMSDeveloperSettings.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UsdSceneRepository.h"

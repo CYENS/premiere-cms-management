@@ -29,6 +29,7 @@ public class PremiereCMSManagement : ModuleRules
 				"HTTP",
 				"Json",
 				"JsonUtilities",
+				"DeveloperSettings"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
