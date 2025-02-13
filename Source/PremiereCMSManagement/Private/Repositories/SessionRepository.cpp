@@ -1,7 +1,6 @@
 
 #include "Repositories/SessionRepository.h"
 
-#include "LogPremiereCMSManagement.h"
 #include "DataObjectBuilder.h"
 #include "Repositories/GraphQLConstants.h"
 #include "Structs/CMSInputs.h"
