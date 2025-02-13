@@ -42,7 +42,7 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 void UGraphQLDataSource::ExecuteGraphQLQuery(
     const FString& Query,
     const TMap<FString, FVariant>& Variables,
-    FOnGraphQLResponse OnComplete
+    const FOnGraphQLResponse OnComplete
 )
 {
     TMap<FString, TSharedPtr<FJsonValue>> VariablesJson;
@@ -86,7 +86,45 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 void UGraphQLDataSource::ExecuteGraphQLQuery(
     const FString& Query,
     const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
-    FOnGraphQLResponse OnComplete
+    const FOnGraphQLResponse OnComplete
+)
+{
+    const TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
+    if (Variables.Num() > 0)
+    {
+        for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Variables)
+        {
+            VariablesObject->SetField(Pair.Key, Pair.Value);
+        }
+    }
+    
+    ExecuteGraphQLQuery(Query, VariablesObject,OnComplete);
+}
+
+void UGraphQLDataSource::ExecuteGraphQLQuery(
+    const FString& Query,
+    const FString& Variables,
+    const FOnGraphQLResponse OnComplete
+)
+{
+    TSharedPtr<FJsonObject> VariablesJsonObject;
+    TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Variables);
+    if (!FJsonSerializer::Deserialize(JsonReader, VariablesJsonObject) ||  !VariablesJsonObject.IsValid())
+    {
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("Failed to deserialize variable: %s"), *Variables);
+        FGraphQLResult GraphQLResult;
+        GraphQLResult.GraphQLOutcome = ParseError;
+        GraphQLResult.ErrorMessage = FString::Printf(TEXT("Failed to parse variable: %s"), *Variables);
+        OnComplete.ExecuteIfBound(GraphQLResult);
+    }
+    
+    ExecuteGraphQLQuery(Query, VariablesJsonObject, OnComplete);
+}
+
+void UGraphQLDataSource::ExecuteGraphQLQuery(
+    const FString& Query,
+    const TSharedPtr<FJsonObject> Variables,
+    const FOnGraphQLResponse OnComplete
 )
 {
     if (Endpoint.IsEmpty())
@@ -106,15 +144,7 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     const TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
     BodyObject->SetStringField(TEXT("query"), Query);
     
-    if (Variables.Num() > 0)
-    {
-        const TSharedPtr<FJsonObject> VariablesObject = MakeShareable(new FJsonObject());
-        for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Variables)
-        {
-            VariablesObject->SetField(Pair.Key, Pair.Value);
-        }
-        BodyObject->SetObjectField(TEXT("variables"), VariablesObject);
-    }
+    BodyObject->SetObjectField(TEXT("variables"), Variables);
 
     FString BodyString;
     TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&BodyString);

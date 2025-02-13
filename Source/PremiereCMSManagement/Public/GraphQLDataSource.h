@@ -15,7 +15,8 @@ enum EGraphQLOutcome
 	Success,
 	RequestFailed,
 	HttpError,
-	GraphQLError
+	GraphQLError,
+	ParseError,
 };
 
 USTRUCT()
@@ -80,6 +81,18 @@ public:
 	virtual void ExecuteGraphQLQuery(
 		const FString& Query,
 		const TMap<FString, TSharedPtr<FJsonValue>>& Variables,
+		const FOnGraphQLResponse OnComplete
+	);
+	
+	virtual void ExecuteGraphQLQuery(
+		const FString& Query,
+		const FString& Variables,
+		const FOnGraphQLResponse OnComplete
+	);
+	
+	virtual void ExecuteGraphQLQuery(
+		const FString& Query,
+		const TSharedPtr<FJsonObject> Variables,
 		const FOnGraphQLResponse OnComplete
 	);
 	

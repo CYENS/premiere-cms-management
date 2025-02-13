@@ -79,6 +79,24 @@ protected:
         TFunction<void(const FString&)> OnFailure
     ) const;
     
+    template <typename T>
+    void ExecuteGraphQLQuery(
+        const FString& Query,
+        const FString& Variables,
+        const FString& QueryName,
+        const TFunction<void(const TArray<T>&)>& OnSuccess,
+        const TFunction<void(const FString&)>& OnFailure
+    ) const;
+    
+    template <typename T>
+    void ExecuteGraphQLQuery(
+        const FString& Query,
+        const FString& Variables,
+        const FString& QueryName,
+        const TFunction<bool(const FGraphQLResult&, const FString&, TArray<T>&, FString&)> ParseFunction,
+        const TFunction<void(const TArray<T>&)> OnSuccess,
+        const TFunction<void(const FString&)> OnFailure
+    ) const;
     
     template <typename T>
     static TSharedPtr<FJsonValueObject> MakeWhereValue(const T& WhereStruct);
