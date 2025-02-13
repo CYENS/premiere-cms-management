@@ -125,3 +125,46 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserPerformanceWhereUniqueInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString PerformanceId;
 };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionCreateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs | Session")
+    FString EosSessionId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs | Session")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs | Session")
+    FString PerformanceStreamingUrl;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSIdInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};
+
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct FCMSSessionStateWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};
