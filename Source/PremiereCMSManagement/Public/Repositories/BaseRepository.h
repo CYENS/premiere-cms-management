@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GraphQLDataSource.h"
-#include "Structs/CMSTypes.h"
 #include "BaseRepository.generated.h"
 
 struct FCMSPerformanceCreateInput;
