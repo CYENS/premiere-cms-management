@@ -145,11 +145,11 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
 
 void UPremiereCMSManagementSubsystem::CreateSession(
 	const FCMSSessionCreateInput& Data,
-	const FString& SessionState,
+	const EGQLSessionState SessionState,
 	const TArray<FString>& AudioDataWhereIds,
 	const TArray<FString>& FaceDataWhereIds,
-	FOnGetSession OnCreateSessionSuccess,
-	FOnFailureDelegate OnFailure
+	const FOnGetSession& OnCreateSessionSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
 	TArray<FCMSIdInput> FaceDataWhereIdStructs;
@@ -164,9 +164,11 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 		AudioDataWhereIdStructs.Add({Id});
 	}
 	
+	const FString SessionStateId = GetSessionStateId(SessionState);
+	
 	SessionRepository->CreateSession(
 		Data,
-		{ SessionState },
+		{ SessionStateId  },
 		AudioDataWhereIdStructs,
 		FaceDataWhereIdStructs,
 		[OnCreateSessionSuccess](const FCMSSession& Session)

@@ -308,3 +308,19 @@ const FString GQLPerformance = TEXT(R"(
 		  name
 		}
 	)");
+
+const FString GQLSessionStateActiveId = TEXT("cm72gu40i000eb8k0m455shc1");
+const FString GQLSessionStateInactiveId = TEXT("cm72gtx55000db8k07ud4xz0x");
+
+FString GetSessionStateId(const EGQLSessionState& SessionState)
+{
+	switch (SessionState)
+	{
+		case EGQLSessionState::Inactive:
+			return GQLSessionStateInactiveId;
+		case EGQLSessionState::Active:
+			return GQLSessionStateActiveId;
+		default: 
+			return GQLSessionStateInactiveId;
+	}
+}

@@ -13,6 +13,7 @@ class UGraphQLDataSource;
 class USessionRepository;
 class UUserRepository;
 class UPerformanceRepository;
+enum class EGQLSessionState : uint8;
 
 class UPremiereCMSDeveloperSettings;
 
@@ -168,11 +169,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session", meta=(AutoCreateRefTerm="FaceDataWhereIds,AudioDataWhereIds"))
 	void CreateSession(
 		const FCMSSessionCreateInput& Data,
-		const FString& SessionState,
+		const EGQLSessionState SessionState,
 		const TArray<FString>& AudioDataWhereIds,
 		const TArray<FString>& FaceDataWhereIds,
-		FOnGetSession OnCreateSessionSuccess,
-		FOnFailureDelegate OnFailure
+		const FOnGetSession& OnCreateSessionSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
 	void GetAllSessions(
