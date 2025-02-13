@@ -11,8 +11,9 @@
 
 UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 {
-	const FString DefaultGraphQlUrl = TEXT("https://premierecmsdev.medidata.pt/api/graphql");
-	GraphQLUrl = GConfig->GetStringOrDefault(TEXT("CMSSettings"), TEXT("GraphQLUrl"), DefaultGraphQlUrl, GEngineIni);
+	DeveloperSettings = GetMutableDefault<UPremiereCMSDeveloperSettings>();
+	
+	GraphQLUrl = DeveloperSettings->GraphQLUrl;
 	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
 	GraphQlDataSource->Initialize(GraphQLUrl);
