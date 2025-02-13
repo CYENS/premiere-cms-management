@@ -58,10 +58,10 @@ fragment faceDataFragment on FaceData {
 	fileUrl
 	session {
 		...sessionFragment
-	  }
+	}
 	avatar {
 		...avatarFragment
-	  }
+	}
 }
 )");
 
@@ -126,16 +126,14 @@ fragment motionFragment on AvatarMotionData {
 	initialRotationZ
 	avatar {
 		...avatarFragment
-	  }
+	}
 }
 )");
 
 const FString GQLUserFragments = FString::Printf(TEXT(R"(
 	%s
-	%s
 )"),
-    *GQLPersonFragment,
-    *GQLAvatarFragment
+    *GQLPersonFragment
 );
 
 const FString GQLUser = FString::Printf(TEXT(R"(
@@ -150,10 +148,17 @@ const FString GQLUser = FString::Printf(TEXT(R"(
     person {
 		...personFragment
     }
-    avatars {
-      ...avatarFragment
-    }
 )"));
+  //   avatars {
+		// ...avatarFragment
+  //   }
+
+const FString GQLSessionStateFragment = TEXT(R"(
+	fragment sessionStateFragment on SessionState {
+		id
+		name
+	}
+)");
 
 const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 	%s
@@ -164,10 +169,16 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
 	%s
+	%s
+	%s
+	%s
 )")
 ,
+*GQLPersonFragment,
 *GQLUserFragment,
+*GQLSessionStateFragment,
 *GQLSessionFragment,
+*GQLPerformanceFragment,
 *GQLAvatarFragment,
 *GQLFaceDataFragment,
 *GQLAudioDataFragment,
@@ -209,7 +220,9 @@ const FString GQLSession = TEXT(R"(
     id
     eosSessionId
     title
-    state
+    state {
+	  ...sessionStateFragment
+	}
     owner {
       ...userFragment
     }
