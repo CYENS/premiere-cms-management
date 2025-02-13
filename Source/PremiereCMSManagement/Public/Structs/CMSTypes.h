@@ -2,12 +2,51 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Structs/CMSSession.h"
-
 #include "CMSTypes.generated.h"
 
 struct FCMSUsdScene;
 struct FCMSPerformance;
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionState
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Name;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSession
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString EosSessionId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString Title;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString StreamingUrl;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FString> AudioDataIds;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString PerformanceId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString OwnerId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSSessionState State;
+};
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSDateTime
@@ -289,15 +328,4 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSAvatar> Avatars;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSSessionState
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Name;
 };

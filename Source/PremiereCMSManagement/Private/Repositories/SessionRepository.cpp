@@ -3,7 +3,7 @@
 
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
-#include "Structs/CMSSession.h"
+#include "Structs/CMSTypes.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Containers/Array.h"
