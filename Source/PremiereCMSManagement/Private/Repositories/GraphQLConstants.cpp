@@ -33,7 +33,35 @@ fragment performanceFragment on Performance {
 	about
 	owner {
 		...userFragment
-	  }
+	}
+}
+)");
+
+const FString GQLUsdXrLiveFragment = TEXT(R"(
+fragment xrLiveFragment on XR_Live {
+	id
+	about
+	approved
+	dataStatus
+	dataUrl
+	performanceOrRehearsal
+	quality
+	streamingUrl
+}
+)");
+
+const FString GQLUsdSceneFragment = TEXT(R"(
+fragment usdSceneFragment on UsdScene {
+    id
+    title
+    fileUrl
+    uploadAt
+    pCloudFileId
+    public
+    template
+    owner {
+      ...userFragment  
+    }
 }
 )");
 
@@ -41,6 +69,22 @@ const FString GQLSessionFragment = TEXT(R"(
 fragment sessionFragment on Session {
 	id
 	eosSessionId
+	title
+	state {
+		...sessionStateFragment
+	}
+	owner {
+		...userFragment
+	}
+    scene {
+	  ...usdSceneFragment
+    }
+    xrLive {
+	  ...xrLiveFragment
+    }
+    performance {
+      ...performanceFragment
+    }
   }
 )");
 
@@ -172,8 +216,12 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
 	%s
+	%s
+	%s
 )")
 ,
+*GQLUsdXrLiveFragment,
+*GQLUsdSceneFragment,
 *GQLPersonFragment,
 *GQLUserFragment,
 *GQLSessionStateFragment,
@@ -200,9 +248,9 @@ const FString GQLUsdSceneFragments = FString::Printf(TEXT(R"(
 
 const FString GQLUsdScene = FString::Printf(TEXT(R"(
     id
+    title
     pCloudFileId
     fileUrl
-    title
     template
     public
     owner {
@@ -213,6 +261,16 @@ const FString GQLUsdScene = FString::Printf(TEXT(R"(
     }
     performances {
       ...performanceFragment
+    }
+    xrLive {
+      id
+      about
+      approved
+      dataStatus
+      dataUrl
+      performanceOrRehearsal
+      quality
+      streamingUrl
     }
 )"));
 
@@ -238,8 +296,7 @@ const FString GQLSession = TEXT(R"(
       }
     }
     xrLive {
-      id
-      streamingUrl
+	  ...xrLiveFragment
     }
     performance {
       ...performanceFragment
@@ -267,8 +324,18 @@ const FString GQLSession = TEXT(R"(
 const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
+	%s
+	%s
+	%s
+	%s
+	%s
 )")
 ,
+*GQLPerformanceFragment,
+*GQLUsdXrLiveFragment,
+*GQLUsdSceneFragment,
+*GQLSessionStateFragment,
+*GQLSessionFragment,
 *GQLPersonFragment,
 *GQLUserFragment
 );
@@ -295,13 +362,7 @@ const FString GQLPerformance = TEXT(R"(
 		  public
 		}
 		sessions {
-		  id
-		  eosSessionId
-		  title
-		  state
-		  owner {
-			...userFragment
-		  }
+			...sessionFragment
 		}
 		avatars {
 		  id
@@ -309,8 +370,8 @@ const FString GQLPerformance = TEXT(R"(
 		}
 	)");
 
-const FString GQLSessionStateActiveId = TEXT("cm72gu40i000eb8k0m455shc1");
-const FString GQLSessionStateInactiveId = TEXT("cm72gtx55000db8k07ud4xz0x");
+const FString GQLSessionStateActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
+const FString GQLSessionStateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
 
 FString GetSessionStateId(const EGQLSessionState& SessionState)
 {

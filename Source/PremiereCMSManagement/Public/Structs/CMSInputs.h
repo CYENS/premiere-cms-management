@@ -11,9 +11,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformanceCreateInput
     GENERATED_BODY()
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString OwnerId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Title;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")

@@ -29,7 +29,6 @@ void UPerformanceRepository::CreatePerformance(
 
 	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
 	DataObject->SetStringField("title", PerformanceCreateInput.Title);
-	DataObject->SetStringField("ownerId", PerformanceCreateInput.OwnerId);
 	DataObject->SetStringField("about", PerformanceCreateInput.About);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
@@ -145,7 +144,7 @@ void UPerformanceRepository::UpdatePerformance(
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
 {
-	const FString QueryName = TEXT("performance");
+	const FString QueryName = TEXT("updatePerformance");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
 	mutation UpdatePerformance($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
