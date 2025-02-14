@@ -34,6 +34,36 @@ void UUserRepository::GetAll(
 	);
 }
 
+void UUserRepository::Find(const FCMSIdInput& Where, const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+{
+	const FString QueryName = TEXT("user");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	query Find {
+	  %s {
+		%s
+	  }
+	}
+	)"),
+	*GQLUserFragments,
+	*QueryName,
+	*GQLUser
+	);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(Where)}
+	};
+	
+	ExecuteGraphQLQuery<FCMSUser>(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
 bool UUserRepository::ParseMultipleCMSUsersFromResponse(
 	const FString& JsonResponse,
 	const FString& QueryName,

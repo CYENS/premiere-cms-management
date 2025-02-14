@@ -6,6 +6,7 @@
 #include "GraphQLDataSource.h"
 #include "UserRepository.generated.h"
 
+struct FCMSIdInput;
 struct FCMSUser;
 
 DECLARE_DELEGATE_OneParam(FOnGetUserSuccess, FCMSUser&);
@@ -21,6 +22,12 @@ public:
     
 	void GetAll(
 		const TFunction<void(const TArray<FCMSUser>& Users)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
+	
+	void Find(
+		const FCMSIdInput& Where,
+		const TFunction<void(const FCMSUser& User)>& OnSuccess,
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
 	) const;
 	

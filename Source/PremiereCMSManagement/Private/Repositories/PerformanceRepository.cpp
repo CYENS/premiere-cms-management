@@ -1,6 +1,7 @@
 
 #include "Repositories/PerformanceRepository.h"
 
+#include "DataObjectBuilder.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Containers/Array.h"
@@ -10,6 +11,7 @@
 
 void UPerformanceRepository::CreatePerformance(
 	const FCMSPerformanceCreateInput& PerformanceCreateInput,
+	const FCMSIdInput& OwnerWhereUniqueInput,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
@@ -27,12 +29,14 @@ void UPerformanceRepository::CreatePerformance(
 	);
 	const FString QueryName = TEXT("createPerformance");
 
-	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
-	DataObject->SetStringField("title", PerformanceCreateInput.Title);
-	DataObject->SetStringField("about", PerformanceCreateInput.About);
+	FDataObjectBuilder DataObjectBuilder = FDataObjectBuilder();
+	DataObjectBuilder.AddUStruct(PerformanceCreateInput);
+	DataObjectBuilder.AddConnect("owner", OwnerWhereUniqueInput);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"data", MakeShared<FJsonValueObject>(DataObject)}
+		{
+			"data", DataObjectBuilder.BuildAsJsonValue()
+		}
 	};
 	
 	ExecuteGraphQLQuery(

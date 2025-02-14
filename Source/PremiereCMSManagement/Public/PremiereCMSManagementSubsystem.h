@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Repositories/UserRepository.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
 #include "Subsystems/GameInstanceSubsystem.h"
@@ -21,6 +22,7 @@ struct FCMSPerformanceCreateInput;
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSession, const FCMSSession&, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessions, const TArray<FCMSSession>&, Sessions);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSingleUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
@@ -75,6 +77,12 @@ public:
 		FOnFailureDelegate OnGetAllUsersFailure
 	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void FindUser(
+		const FCMSIdInput& Where,
+		const FOnGetSingleUserSuccess& OnFindUserSuccess, const FOnFailureDelegate& OnFailure
+	);
+	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void CreateUser(
 		const FCMSUser& User,
@@ -91,9 +99,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void CreatePerformance(
-		FCMSPerformanceCreateInput CreatePerformanceInput,
-		FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
-		FOnFailureDelegate OnCreatePerformanceFailure
+		const FCMSPerformanceCreateInput& CreatePerformanceInput,
+		const FString& OwnerId,
+		const FOnCreatePerformanceSuccess& OnCreatePerformanceSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")

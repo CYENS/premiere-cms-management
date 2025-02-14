@@ -5,6 +5,7 @@
 #include "Structs/CMSTypes.h"
 #include "PerformanceRepository.generated.h"
 
+struct FCMSIdInput;
 struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceCreateInput;
 struct FCMSPerformanceWhereUniqueInput;
@@ -21,6 +22,7 @@ class PREMIERECMSMANAGEMENT_API UPerformanceRepository : public UBaseRepository
 public:
     void CreatePerformance(
         const FCMSPerformanceCreateInput& PerformanceCreateInput,
+        const FCMSIdInput& OwnerWhereUniqueInput,
 	    const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

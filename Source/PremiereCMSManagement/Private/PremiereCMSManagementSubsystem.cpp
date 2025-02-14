@@ -413,21 +413,42 @@ void UPremiereCMSManagementSubsystem::GetAllUsers(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::FindUser(
+	const FCMSIdInput& Where,	
+	const FOnGetSingleUserSuccess& OnFindUserSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UserRepository->Find(
+		Where,
+		[OnFindUserSuccess](const FCMSUser& User)
+		{
+			OnFindUserSuccess.ExecuteIfBound(User);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::CreatePerformance(
-	FCMSPerformanceCreateInput CreatePerformanceInput,
-	FOnCreatePerformanceSuccess OnCreatePerformanceSuccess,
-	FOnFailureDelegate OnCreatePerformanceFailure
+	const FCMSPerformanceCreateInput& CreatePerformanceInput,
+	const FString& OwnerId,
+	const FOnCreatePerformanceSuccess& OnCreatePerformanceSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
 	PerformanceRepository->CreatePerformance(
 		CreatePerformanceInput,
+		{OwnerId},
 		[OnCreatePerformanceSuccess](const FCMSPerformance& Performance)
 		{
 			OnCreatePerformanceSuccess.ExecuteIfBound(Performance);
 		},
-		[OnCreatePerformanceFailure](const FString& ErrorReason)
+		[OnFailure](const FString& ErrorReason)
 		{
-			OnCreatePerformanceFailure.ExecuteIfBound(ErrorReason);
+			OnFailure.ExecuteIfBound(ErrorReason);
 		}
 	);
 }
