@@ -36,6 +36,7 @@ public:
     void CreateSession(
         const FCMSSessionCreateInput& Data,
 	    const FCMSIdInput& SessionStateWhereId,
+	    const FCMSIdInput& OwnerWhereId,
 	    const TArray<FCMSIdInput>& AudioDataWhereIds,
         const TArray<FCMSIdInput>& FaceDataWhereIds,
         const TFunction<void(const FCMSSession& Sessions)>& OnSuccess,

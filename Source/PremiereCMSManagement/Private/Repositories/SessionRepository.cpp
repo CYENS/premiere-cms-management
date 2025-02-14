@@ -109,6 +109,7 @@ void USessionRepository::GetActiveSessions(
 void USessionRepository::CreateSession(
 	const FCMSSessionCreateInput& Data,
 	const FCMSIdInput& SessionStateWhereId,
+	const FCMSIdInput& OwnerWhereId,
 	const TArray<FCMSIdInput>& AudioDataWhereIds,
 	const TArray<FCMSIdInput>& FaceDataWhereIds,
 	const TFunction<void(const FCMSSession& Sessions)>& OnSuccess,
@@ -135,6 +136,7 @@ void USessionRepository::CreateSession(
 	ObjectBuilder.AddConnect("state", SessionStateWhereId);
 	ObjectBuilder.AddConnect("faceData", FaceDataWhereIds);
 	ObjectBuilder.AddConnect("audioData", AudioDataWhereIds);
+	ObjectBuilder.AddConnect("owner", OwnerWhereId);
 	ObjectBuilder.AddUStruct(Data);
 
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {

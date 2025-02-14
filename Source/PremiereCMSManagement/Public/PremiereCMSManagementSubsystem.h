@@ -169,6 +169,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session", meta=(AutoCreateRefTerm="FaceDataWhereIds,AudioDataWhereIds"))
 	void CreateSession(
 		const FCMSSessionCreateInput& Data,
+		const FString& OwnerWhereId,
 		const EGQLSessionState SessionState,
 		const TArray<FString>& AudioDataWhereIds,
 		const TArray<FString>& FaceDataWhereIds,

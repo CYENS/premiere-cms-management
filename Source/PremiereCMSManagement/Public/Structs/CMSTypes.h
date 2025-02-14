@@ -19,6 +19,55 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionState
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSPerson
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString GivenName;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString FamilyName;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString ArtisticName;
+};
+
+
+USTRUCT(BlueprintType, Category = "PremiereCMS")
+struct  PREMIERECMSMANAGEMENT_API FCMSUser
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString EosId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString Email;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString Name;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString UserRole = "Read";
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	bool IsAdmin;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	bool IsSuperAdmin;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FCMSPerson Person; 
+};
+
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSSession
 {
 	GENERATED_BODY()
@@ -42,7 +91,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSSession
 	FString PerformanceId;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString OwnerId;
+	FCMSUser Owner;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FCMSSessionState State;
@@ -54,64 +103,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSDateTime
     GENERATED_BODY()
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Value;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSPerson
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString GivenName;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString FamilyName;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString ArtisticName;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSUserAttendance
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString UserId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString SessionId;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS")
-struct  PREMIERECMSMANAGEMENT_API FCMSUser
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS")
-	FString Id;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	FString EosId;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	FString Email;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	FString Name;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	FString UserRole = "Read";
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	bool IsAdmin;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	bool IsSuperAdmin;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	FCMSPerson Person; 
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
