@@ -370,18 +370,24 @@ const FString GQLPerformance = TEXT(R"(
 		}
 	)");
 
-const FString GQLSessionStateActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
-const FString GQLSessionStateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
+const FString GQLSessionStatePrivateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
+const FString GQLSessionStatePublicActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
+const FString GQLSessionStatePrivateActiveId = TEXT("cm74t2qzv0026juc7cw14fvwj");
+const FString GQLSessionStatePublicInactiveId = TEXT("cm74tay4f0027juc7pnuje2ac");
 
 FString GetSessionStateId(const EGQLSessionState& SessionState)
 {
 	switch (SessionState)
 	{
-		case EGQLSessionState::Inactive:
-			return GQLSessionStateInactiveId;
-		case EGQLSessionState::Active:
-			return GQLSessionStateActiveId;
+		case EGQLSessionState::PrivateInactive:
+			return GQLSessionStatePrivateInactiveId;
+		case EGQLSessionState::PublicActive:
+			return GQLSessionStatePublicActiveId;
+		case EGQLSessionState::PrivateActive:
+			return GQLSessionStatePrivateActiveId;
+		case EGQLSessionState::PublicInactive:
+			return GQLSessionStatePublicInactiveId;
 		default: 
-			return GQLSessionStateInactiveId;
+			return GQLSessionStatePrivateInactiveId;
 	}
 }

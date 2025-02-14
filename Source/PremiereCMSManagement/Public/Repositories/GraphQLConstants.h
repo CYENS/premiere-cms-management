@@ -13,14 +13,16 @@ extern const FString GQLSession;
 extern const FString GQLUsdSceneFragments;
 extern const FString GQLUsdScene;
 
-extern const FString GQLSessionStateActiveId;
-extern const FString GQLSessionStateInactiveId;
+extern const FString GQLSessionStatePublicActiveId;
+extern const FString GQLSessionStatePrivateInactiveId;
 
 UENUM(BlueprintType)
 enum class EGQLSessionState: uint8
 {
-	Inactive,
-	Active,
+	PrivateInactive,
+	PublicActive,
+	PrivateActive,
+	PublicInactive,
 };
 
 FString GetSessionStateId(const EGQLSessionState& SessionState);
