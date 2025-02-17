@@ -80,10 +80,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void FindUser(
 		const FCMSIdInput& Where,
-		const FOnGetSingleUserSuccess& OnFindUserSuccess, const FOnFailureDelegate& OnFailure
+		const FOnGetSingleUserSuccess& OnFindUserSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void CreateUser(
 		const FCMSUser& User,
 		FOnCreateUserSuccess OnCreateSessionSuccess,

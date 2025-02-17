@@ -34,14 +34,17 @@ void UUserRepository::GetAll(
 	);
 }
 
-void UUserRepository::Find(const FCMSIdInput& Where, const TFunction<void(const FCMSUser& User)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+void UUserRepository::Find(
+	const FCMSIdInput& Where,
+	const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
 {
 	const FString QueryName = TEXT("user");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	query Find {
-	  %s {
+	query Find ($where: UserWhereUniqueInput!) {
+	  %s(where: $where) {
 		%s
 	  }
 	}
