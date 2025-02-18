@@ -117,6 +117,28 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserPerformanceWhereUniqueInput
     FString PerformanceId;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUserWhereUniqueInput
+{
+    GENERATED_BODY()
+
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString UserRole;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Email;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString EosId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    bool IsAdmin;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    bool IsSuperAdmin;
+    
+};
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")
 struct PREMIERECMSMANAGEMENT_API FCMSSessionWhereUniqueInput
 {
@@ -158,4 +180,28 @@ struct FCMSSessionStateWhereUniqueInput
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Id;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Name;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Email;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString EosId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    bool IsAdmin;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    bool IsSuperAdmin;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString UserRole = "Read";
 };
