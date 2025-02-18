@@ -269,19 +269,19 @@ void UBaseRepository::ExecuteGraphQLQuery(
 }
 
 template <typename T>
-TSharedPtr<FJsonValueObject> UBaseRepository::MakeWhereValue(const T& WhereStruct)
+TSharedPtr<FJsonValueObject> UBaseRepository::MakeWhereValue(const T& WhereStruct, const bool OmitEmptyFields)
+{
+    return MakeJsonValueObjectFromUStruct(WhereStruct, OmitEmptyFields);
+}
+
+template <typename T>
+TSharedPtr<FJsonValueObject> UBaseRepository::MakeDataValue(const T& WhereStruct, const bool OmitEmptyFields)
 {
     return MakeJsonValueObjectFromUStruct(WhereStruct);
 }
 
 template <typename T>
-TSharedPtr<FJsonValueObject> UBaseRepository::MakeDataValue(const T& WhereStruct)
-{
-    return MakeJsonValueObjectFromUStruct(WhereStruct);
-}
-
-template <typename T>
-TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(const T& UStruct)
+TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(const T& UStruct, const bool OmitEmptyFields)
 {
     TSharedPtr<FJsonObject> JsonObject = MakeShared<FJsonObject>();
 
@@ -297,5 +297,32 @@ TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(con
         return nullptr;
     }
     
+    if (OmitEmptyFields)
+    {
+        RemoveEmptyStringsFromJson(JsonObject);
+    }
+    
     return MakeShared<FJsonValueObject>(JsonObject);
+}
+
+void UBaseRepository::RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject)
+{
+    if (!JsonObject.IsValid())
+    {
+        return;
+    }
+
+    TArray<FString> KeysToRemove;
+    for (const auto& Pair : JsonObject->Values)
+    {
+        if (Pair.Value->Type == EJson::String && Pair.Value->AsString().TrimStartAndEnd().IsEmpty())
+        {
+            KeysToRemove.Add(Pair.Key);
+        }
+    }
+
+    for (const FString& Key : KeysToRemove)
+    {
+        JsonObject->Values.Remove(Key);
+    }
 }

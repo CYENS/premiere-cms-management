@@ -17,6 +17,8 @@ class PREMIERECMSMANAGEMENT_API UBaseRepository : public UObject
 public:
     UFUNCTION(BlueprintCallable, Category = "PremiereCMS")
     void Initialize(UGraphQLDataSource* InDataSource);
+    
+    static void RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject);
 
 protected:
     UPROPERTY()
@@ -99,11 +101,11 @@ protected:
     ) const;
     
     template <typename T>
-    static TSharedPtr<FJsonValueObject> MakeWhereValue(const T& WhereStruct);
+    static TSharedPtr<FJsonValueObject> MakeWhereValue(const T& WhereStruct, const bool OmitEmptyFields=true);
     
     template <typename T>
-    static TSharedPtr<FJsonValueObject> MakeDataValue(const T& WhereStruct);
+    static TSharedPtr<FJsonValueObject> MakeDataValue(const T& WhereStruct, const bool OmitEmptyFields=true);
     
     template <typename T>
-    static TSharedPtr<FJsonValueObject> MakeJsonValueObjectFromUStruct(const T& UStruct);
+    static TSharedPtr<FJsonValueObject> MakeJsonValueObjectFromUStruct(const T& UStruct, const bool OmitEmptyFields = true);
 };
