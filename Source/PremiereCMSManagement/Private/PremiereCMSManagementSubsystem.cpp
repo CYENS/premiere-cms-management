@@ -221,25 +221,29 @@ void UPremiereCMSManagementSubsystem::FindSession(
 }
 
 void UPremiereCMSManagementSubsystem::CreateUser(
-	const FCMSUser& User,
-	FOnCreateUserSuccess OnCreateSessionSuccess,
-	FOnFailureDelegate OnCreateSessionFailure
+	const FCMSUserCreateInput& Data,
+	const FString& PersonId,
+	const FOnGetUserSuccess& OnCreateUserSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
-	FOnGetUserSuccess OnSuccess;
-	OnSuccess.BindLambda([OnCreateSessionSuccess](const FCMSUser& Session)
+	TOptional<FCMSIdInput> PersonIdStruct;
+	if (!PersonId.TrimStartAndEnd().IsEmpty())
 	{
-		OnCreateSessionSuccess.ExecuteIfBound(Session);
-	});
-	FOnFailure OnFailure;
-	OnFailure.BindLambda([OnCreateSessionFailure](const FString& ErrorReason)
-	{
-		OnCreateSessionFailure.ExecuteIfBound(ErrorReason);
-	});
-	UserRepository->CreateUser(
-		User,
-		OnSuccess,
-		OnFailure
+		PersonIdStruct = { PersonId.TrimStartAndEnd() };
+	}
+	
+	UserRepository->Create(
+		Data,
+		PersonIdStruct,
+		[OnCreateUserSuccess](const FCMSUser& User)
+		{
+			OnCreateUserSuccess.ExecuteIfBound(User);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
 	);
 }
 
@@ -415,7 +419,7 @@ void UPremiereCMSManagementSubsystem::GetAllUsers(
 
 void UPremiereCMSManagementSubsystem::FindUser(
 	const FCMSIdInput& Where,	
-	const FOnGetSingleUserSuccess& OnFindUserSuccess,
+	const FOnGetUserSuccess& OnFindUserSuccess,
 	const FOnFailureDelegate& OnFailure
 )
 {
@@ -493,12 +497,21 @@ void UPremiereCMSManagementSubsystem::GetAllUsdScenes(
 
 void UPremiereCMSManagementSubsystem::CreateUsdScene(
 	const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+	const FString& OwnerId,
 	FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 	FOnFailureDelegate OnFailure
 )
 {
+	TOptional<FCMSIdInput> OwnerIdStruct;
+	if (!OwnerId.TrimStartAndEnd().IsEmpty())
+	{
+		OwnerIdStruct = { OwnerId.TrimStartAndEnd() };
+	}
+	
+	
 	UsdSceneRepository->Create(
 		UsdSceneCreateInput,
+		OwnerIdStruct,
 		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
 		{
 			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);

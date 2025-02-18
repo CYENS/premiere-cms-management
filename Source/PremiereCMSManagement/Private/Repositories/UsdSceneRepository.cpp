@@ -1,6 +1,8 @@
 
 #include "Repositories/UsdSceneRepository.h"
 
+#include "DataObjectBuilder.h"
+#include "JsonDomBuilder.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Containers/Array.h"
@@ -10,6 +12,7 @@
 
 void UUsdSceneRepository::Create(
 	const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+	const TOptional<FCMSIdInput>& OwnerUniqueWhereInput,
 	const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
@@ -28,8 +31,12 @@ void UUsdSceneRepository::Create(
 	*GQLUsdScene
 	);
 
+	FDataObjectBuilder ObjectBuilder {};
+	ObjectBuilder.AddUStruct(UsdSceneCreateInput);
+	ObjectBuilder.AddConnect("owner", OwnerUniqueWhereInput);
+	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"data", MakeDataValue(UsdSceneCreateInput)}
+		{"data", ObjectBuilder.BuildAsJsonValue()}
 	};
 	
 	ExecuteGraphQLQuery(

@@ -1,10 +1,14 @@
 
 #include "Repositories/UserRepository.h"
 
+#include "DataObjectBuilder.h"
+#include "EditorCategoryUtils.h"
 #include "Structs/CMSTypes.h"
+#include "Structs/CMSInputs.h"
 #include "LogPremiereCMSManagement.h"
 #include "GraphQLDataSource.h"
 #include "JsonObjectConverter.h"
+#include "Repositories/GraphQLConstants.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
@@ -86,76 +90,51 @@ bool UUserRepository::ParseMultipleCMSUsersFromResponse(
 	);
 }
 
-void UUserRepository::CreateUser(
-	const FCMSUser& InUser,
-	FOnGetUserSuccess OnSuccess,
-	FOnFailure OnFailure
+void UUserRepository::Create(
+	const FCMSUserCreateInput& Data,
+	const TOptional<FCMSIdInput>& PersonWhereId,
+	const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString Query = TEXT(R"(
+	const FString QueryName = TEXT("createUser");
+	const FString Query = FString::Printf(
+		TEXT(R"(
+	%s
 	mutation CreateUser($data: UserCreateInput!) {
-	  createUser(data: $data) {
-		id
-		eosId
-		name
-		email
-		userRole
-		isAdmin
-		performances {
-		  id
-		}
-		avatars {
-		  id
-		}
-		sessionsOwned {
-		  id
-		}
-		sessionsAttending {
-		  id
-		}
+	  %s(data: $data) {
+		%s
 	  }
 	}
-	)");
+	)"),
+	*GQLUserFragments,
+	*QueryName,
+	*GQLUser
+	);
 
-
-	const TSharedPtr<FJsonObject> DataObject = MakeShareable(new FJsonObject());
-	DataObject->SetStringField("eosId", InUser.EosId);
-	DataObject->SetStringField("email", InUser.Email);
-	DataObject->SetStringField("name", InUser.Name);
-	DataObject->SetStringField("userRole", InUser.UserRole);
-	DataObject->SetBoolField("isSuperAdmin", InUser.IsSuperAdmin);
-	
-	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"data", MakeShared<FJsonValueObject>(DataObject)}
-	};
-	
-	FOnGraphQLResponse OnResponse;
-	OnResponse.BindLambda([OnSuccess, OnFailure](const FGraphQLResult GraphQLResult)
+	FDataObjectBuilder DataObjectBuilder = FDataObjectBuilder();
+	DataObjectBuilder.AddUStruct(Data);
+	if (PersonWhereId.IsSet())
 	{
-		const bool bSuccess = GraphQLResult.GraphQLOutcome == Success;
-		const FString ResponseContent = GraphQLResult.RawResponse;
-		
-		if (!bSuccess)
+		DataObjectBuilder.AddConnect("person", PersonWhereId.GetValue());
+	}
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
 		{
-			UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL API Error. ErrorMessage: %s"), *GraphQLResult.ErrorMessage);
-			OnFailure.ExecuteIfBound(GraphQLResult.ErrorMessage);
-			return;
+		"data", DataObjectBuilder.BuildAsJsonValue()
 		}
-		UE_LOG(LogPremiereCMSManagement, Log, TEXT("GraphQL request succeeded. Response: %s"), *ResponseContent);
-		
-		FString ErrorReason;
-		FCMSUser User;
-		if (ParseCMSUserFromResponse(ResponseContent, TEXT("createUser"), User, ErrorReason))
-		{
-			UE_LOG(LogPremiereCMSManagement, Log, TEXT("Successfully parsed response to CMSSession"));
-			OnSuccess.ExecuteIfBound(User);
-		}
-		else
-		{
-			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Could not parse response to CMSSession. Reason: %s"), *ErrorReason);
-		}
-	});
-	DataSource->ExecuteGraphQLQuery(Query, Variables, OnResponse);
+	};
+	UE_LOG(LogPremiereCMSManagement, Error, TEXT("%s"), *Query);
+	ExecuteGraphQLQuery(Query, Variables, QueryName, OnSuccess, OnFailure);
+}
+
+void UUserRepository::Update(
+	const FCMSIdInput& Where,
+	const FCMSPerformanceUpdateInput& Data,
+	const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	
 }
 
 bool UUserRepository::ParseCMSUserFromResponse(

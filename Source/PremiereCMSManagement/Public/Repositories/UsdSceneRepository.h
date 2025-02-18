@@ -6,6 +6,7 @@
 
 #include "UsdSceneRepository.generated.h"
 
+struct FCMSIdInput;
 struct FCMSUsdSceneCreateInput;
 struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceWhereUniqueInput;
@@ -20,6 +21,7 @@ class PREMIERECMSMANAGEMENT_API UUsdSceneRepository : public UBaseRepository
 public:
     void Create(
 	    const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+		const TOptional<FCMSIdInput>& OwnerUniqueWhereInput,
 	    const TFunction<void(const FCMSUsdScene& UsdScene)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

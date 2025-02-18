@@ -2,16 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "BaseRepository.h"
-#include "GraphQLConstants.h"
-#include "GraphQLDataSource.h"
 #include "UserRepository.generated.h"
 
+struct FCMSPerformanceUpdateInput;
 struct FCMSIdInput;
 struct FCMSUser;
-
-DECLARE_DELEGATE_OneParam(FOnGetUserSuccess, FCMSUser&);
-DECLARE_DELEGATE_OneParam(FOnGetUsersSuccess, TArray<FCMSUser>&);
-DECLARE_DELEGATE_OneParam(FOnFailure, FString);
+struct FCMSUserUpdateInput;
+struct FCMSUserCreateInput;
 
 UCLASS()
 class PREMIERECMSMANAGEMENT_API UUserRepository : public UBaseRepository
@@ -31,7 +28,19 @@ public:
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
 	) const;
 	
-    void CreateUser(const FCMSUser& InUser, FOnGetUserSuccess OnSuccess, FOnFailure OnFailure) const;
+    void Create(
+		const FCMSUserCreateInput& Data,
+		const TOptional<FCMSIdInput>& PersonWhereId,
+		const TFunction<void(const FCMSUser& User)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+	
+	void Update(
+		const FCMSIdInput& Where,
+		const FCMSPerformanceUpdateInput& Data,
+		const TFunction<void(const FCMSUser& User)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
 
 private:
     static bool ParseCMSUserFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSUser& OutUser, FString& OutErrorReason);

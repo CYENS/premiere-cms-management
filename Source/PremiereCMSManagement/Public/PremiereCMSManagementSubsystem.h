@@ -22,7 +22,7 @@ struct FCMSPerformanceCreateInput;
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSession, const FCMSSession&, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessions, const TArray<FCMSSession>&, Sessions);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSingleUserSuccess, FCMSUser, User);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreateUserSuccess, FCMSUser, User);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
@@ -80,15 +80,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void FindUser(
 		const FCMSIdInput& Where,
-		const FOnGetSingleUserSuccess& OnFindUserSuccess,
+		const FOnGetUserSuccess& OnFindUserSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void CreateUser(
-		const FCMSUser& User,
-		FOnCreateUserSuccess OnCreateSessionSuccess,
-		FOnFailureDelegate OnCreateSessionFailure
+		const FCMSUserCreateInput& Data,
+		const FString& PersonId,
+		const FOnGetUserSuccess& OnCreateUserSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 
 	/* Performance */
@@ -202,6 +203,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void CreateUsdScene(
 		const FCMSUsdSceneCreateInput& UsdSceneCreateInput,
+		const FString& OwnerId,
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
