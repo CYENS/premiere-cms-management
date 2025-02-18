@@ -146,8 +146,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void AddUserToPerformance(
 		const FCMSUserPerformanceWhereUniqueInput& Where,
-		FOnGetPerformanceSuccess OnUserAddSuccess,
-		FOnFailureDelegate OnFailure
+		const FOnGetPerformanceSuccess& OnUserAddSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")

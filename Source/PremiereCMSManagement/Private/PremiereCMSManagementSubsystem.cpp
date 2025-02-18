@@ -326,12 +326,14 @@ void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
 
 void UPremiereCMSManagementSubsystem::AddUserToPerformance(
 	const FCMSUserPerformanceWhereUniqueInput& Where,
-	FOnGetPerformanceSuccess OnUserAddSuccess,
-	FOnFailureDelegate OnFailure
+	const FOnGetPerformanceSuccess& OnUserAddSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
-	PerformanceRepository->AddMember(
-		Where,
+	const TArray<FCMSIdInput> MembersToConnect { { Where.UserId } };
+	PerformanceRepository->ConnectMembers(
+		{Where.PerformanceId },
+		MembersToConnect,
 		[OnUserAddSuccess](const FCMSPerformance& Performance)
 		{
 			OnUserAddSuccess.ExecuteIfBound(Performance);

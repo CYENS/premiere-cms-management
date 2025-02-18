@@ -64,6 +64,13 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
+    void ConnectMembers(
+        const FCMSIdInput& PerformanceWhereUniqueInput,
+        const TArray<FCMSIdInput>& MembersToConnectUsdSceneWhereUniqueInputs,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
     void AddMember(
 	    const FCMSUserPerformanceWhereUniqueInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
