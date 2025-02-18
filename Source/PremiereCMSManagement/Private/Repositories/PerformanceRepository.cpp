@@ -181,17 +181,18 @@ void UPerformanceRepository::UpdatePerformance(
 	);
 }
 
-void UPerformanceRepository::AddUsdScene(
-	const FCMSUsdScenePerformanceWhereInput& Where,
+void UPerformanceRepository::ConnectUsdScenes(
+	const FCMSIdInput& PerformanceWhereUniqueInput,
+	const TArray<FCMSIdInput>& UsdScenesToConnectUsdSceneWhereUniqueInputs,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString QueryName = TEXT("addUsdSceneToPerformance");
+	const FString QueryName = TEXT("updatePerformance");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation AddUsdSceneToPerformance ($where: UsdScenePerformanceWhereInput!) {
-	  %s (where: $where) {
+	mutation ConnectUsdScenesToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
 		%s
 	  }
 	}
@@ -200,9 +201,13 @@ void UPerformanceRepository::AddUsdScene(
 	*QueryName,
 	*GQLPerformance
 	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddConnect("usdScenes", UsdScenesToConnectUsdSceneWhereUniqueInputs);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
+		{"where", MakeWhereValue(PerformanceWhereUniqueInput)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
 	};
 	ExecuteGraphQLQuery(
 		Query,

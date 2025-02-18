@@ -289,8 +289,11 @@ void UPremiereCMSManagementSubsystem::AddUsdSceneToPerformance(
 	FOnFailureDelegate OnFailure
 )
 {
-	PerformanceRepository->AddUsdScene(
-		Where,
+	// connect a single scene
+	const TArray<FCMSIdInput> UsdScenesToConnect { { Where.UsdSceneId } };
+	PerformanceRepository->ConnectUsdScenes(
+		{ Where.PerformanceId },
+		UsdScenesToConnect,
 		[OnUsdSceneAddSuccess](const FCMSPerformance& Performance)
 		{
 			OnUsdSceneAddSuccess.ExecuteIfBound(Performance);

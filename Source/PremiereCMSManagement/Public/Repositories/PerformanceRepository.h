@@ -51,8 +51,9 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void AddUsdScene(
-        const FCMSUsdScenePerformanceWhereInput& Where,
+    void ConnectUsdScenes(
+        const FCMSIdInput& PerformanceWhereUniqueInput,
+        const TArray<FCMSIdInput>& UsdScenesToConnectUsdSceneWhereUniqueInputs,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
