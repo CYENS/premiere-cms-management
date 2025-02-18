@@ -23,9 +23,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdSceneCreateInput
     GENERATED_BODY()
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString OwnerId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString PCloudFileId;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
@@ -45,9 +42,6 @@ USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSUsdSceneUpdateInput
 {
     GENERATED_BODY()
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString OwnerId;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString PCloudFileId;
