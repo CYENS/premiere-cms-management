@@ -49,14 +49,23 @@ public:
      */
     template <typename T>
     FDataObjectBuilder& AddConnect(const FString& Key, const T& SingleItem);
+    
+    template <class T>
+    FDataObjectBuilder& AddConnect(const FString& Key, const TOptional<T>& SingleItem);
 
+    template <typename T>
+    FDataObjectBuilder& AddCreate(const FString& Key, const T& Items);
+    
+    template <typename T>
+    FDataObjectBuilder& AddCreate(const FString& Key, const TArray<T>& Items);
+    
     /**
      * Merge *all fields* of a UStruct T directly into the *top-level* of the JSON object.
      *
      * If T has fields { foo = X, bar = Y } => the JSON object gets "foo": X, "bar": Y
      */
     template <typename T>
-    FDataObjectBuilder& AddUStruct(const T& StructValue);
+    FDataObjectBuilder& AddUStruct(const T& StructValue, const bool OmitEmptyFields = true);
 
     /**
      * Finish building and return the underlying JSON object.
