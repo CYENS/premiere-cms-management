@@ -76,9 +76,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdSceneWhereUniqueInput
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString PCloudFileId;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
