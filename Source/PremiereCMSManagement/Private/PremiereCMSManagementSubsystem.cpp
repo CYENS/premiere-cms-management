@@ -422,6 +422,50 @@ void UPremiereCMSManagementSubsystem::RemoveUserFromPerformance(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::AddAvatarToPerformance(
+	const FCMSIdInput& PerformanceWhere,
+	const FCMSIdInput& AvatarWhere,
+	const FOnGetPerformanceSuccess& OnAvatarAddSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	const TArray<FCMSIdInput> AvatarsToConnect { { AvatarWhere.Id } };
+	PerformanceRepository->ConnectAvatars(
+		{ PerformanceWhere.Id },
+		AvatarsToConnect,
+		[OnAvatarAddSuccess](const FCMSPerformance& Performance)
+		{
+			OnAvatarAddSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::RemoveAvatarFromPerformance(
+	const FCMSIdInput& PerformanceWhere,
+	const FCMSIdInput& AvatarWhere,
+	const FOnGetPerformanceSuccess& OnAvatarRemoveSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	const TArray<FCMSIdInput> AvatarsToConnect { { AvatarWhere.Id } };
+	PerformanceRepository->DisconnectAvatars(
+		{ PerformanceWhere.Id },
+		AvatarsToConnect,
+		[OnAvatarRemoveSuccess](const FCMSPerformance& Performance)
+		{
+			OnAvatarRemoveSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::DeletePerformance(
 	const FCMSPerformanceWhereUniqueInput& Where,
 	FOnGetPerformanceSuccess OnGetPerformanceSuccess,

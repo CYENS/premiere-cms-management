@@ -95,6 +95,19 @@ public:
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
-
+    
+    void ConnectAvatars(
+        const FCMSIdInput& PerformanceWhere,
+        const TArray<FCMSIdInput>& AvatarsWhere,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    void DisconnectAvatars(
+        const FCMSIdInput& PerformanceWhere,
+        const TArray<FCMSIdInput>& AvatarsWhere,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
 };
 

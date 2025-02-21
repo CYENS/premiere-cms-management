@@ -421,3 +421,78 @@ void UPerformanceRepository::RemoveMember(
 		OnFailure
 	);
 }
+
+void UPerformanceRepository::ConnectAvatars(
+	const FCMSIdInput& PerformanceWhere,
+	const TArray<FCMSIdInput>& AvatarsWhere,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("updatePerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation ConnectAvatarToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddConnect("avatars", AvatarsWhere);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(PerformanceWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+	
+}
+
+void UPerformanceRepository::DisconnectAvatars(
+	const FCMSIdInput& PerformanceWhere,
+	const TArray<FCMSIdInput>& AvatarsWhere,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("updatePerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation ConnectAvatarToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddDisconnect("avatars", AvatarsWhere);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(PerformanceWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}

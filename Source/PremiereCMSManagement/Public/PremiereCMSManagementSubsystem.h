@@ -172,6 +172,24 @@ public:
 		FOnFailureDelegate OnFailure
 	);
 
+	/* Avatars */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void AddAvatarToPerformance(
+		const FCMSIdInput& PerformanceWhere,
+		const FCMSIdInput& AvatarWhere,
+		const FOnGetPerformanceSuccess& OnAvatarAddSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void RemoveAvatarFromPerformance(
+		const FCMSIdInput& PerformanceWhere,
+		const FCMSIdInput& AvatarWhere,
+	    const FOnGetPerformanceSuccess& OnUsdSceneRemoveSuccess,
+	    const FOnFailureDelegate& OnFailure
+	);
+	
+
 	/* Session */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void GetAllSessions(
@@ -245,5 +263,4 @@ public:
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
 		FOnFailureDelegate OnFailure
 	);
-	
 };
