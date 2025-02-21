@@ -65,6 +65,12 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
+    void DisconnectSessions(const FCMSIdInput& PerformanceWhereUniqueInput,
+        const TArray<FCMSIdInput>& SessionsWhere,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
     void RemoveUsdScene(
         const FCMSUsdScenePerformanceWhereInput& Where,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,

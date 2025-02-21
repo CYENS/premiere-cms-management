@@ -36,6 +36,9 @@ public:
      */
     template <typename T>
     FDataObjectBuilder& AddConnect(const FString& Key, const TArray<T>& Items);
+    
+    template <typename T>
+    FDataObjectBuilder& AddDisconnect(const FString& Key, const TArray<T>& Items);
 
     /**
      * Add "Key": { "connect": { ... } } given a single USTRUCT

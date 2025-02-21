@@ -31,6 +31,31 @@ FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const TAr
 }
 
 template <typename T>
+FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const TArray<T>& Items)
+{
+    {
+        if (Items.Num() == 0)
+        {
+            // If desired, skip entirely when empty. 
+            // Or create an empty connect array. Adjust as needed.
+            return *this;
+        }
+
+        const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
+        TArray<TSharedPtr<FJsonValue>> ConnectArray;
+        for (const T& Item : Items)
+        {
+            TSharedPtr<FJsonObject> StructObj = MakeShareable(new FJsonObject());
+            FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &Item, StructObj.ToSharedRef(), 0, 0);
+            ConnectArray.Add(MakeShareable(new FJsonValueObject(StructObj)));
+        }
+        ConnectObject->SetArrayField(TEXT("disconnect"), ConnectArray);
+
+        RootObject->SetObjectField(Key, ConnectObject);
+        return *this;
+    }
+}
+template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& SingleItem)
 {
     // Convert single item

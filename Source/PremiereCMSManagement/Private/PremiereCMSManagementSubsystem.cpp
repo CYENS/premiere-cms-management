@@ -341,6 +341,28 @@ void UPremiereCMSManagementSubsystem::AddSessionToPerformance(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::RemoveSessionFromPerformance(
+	const FCMSIdInput& PerformanceWhere,
+	const FCMSIdInput& SessionWhere,
+	const FOnGetPerformanceSuccess& OnUsdSceneRemoveSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	const TArray<FCMSIdInput> SessionsToConnect { { SessionWhere.Id } };
+	PerformanceRepository->DisconnectSessions(
+		{ PerformanceWhere.Id },
+		SessionsToConnect,
+		[OnUsdSceneRemoveSuccess](const FCMSPerformance& Performance)
+		{
+			OnUsdSceneRemoveSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
 	const FCMSUsdScenePerformanceWhereInput& Where,
 	FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,

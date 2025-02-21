@@ -253,6 +253,43 @@ void UPerformanceRepository::ConnectSessions(const FCMSIdInput& PerformanceWhere
 	);
 }
 
+void UPerformanceRepository::DisconnectSessions(const FCMSIdInput& PerformanceWhereUniqueInput,
+	const TArray<FCMSIdInput>& SessionsWhere,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("updatePerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation ConnectUsdScenesToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddDisconnect("sessions", SessionsWhere);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(PerformanceWhereUniqueInput)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
 void UPerformanceRepository::RemoveUsdScene(
 	const FCMSUsdScenePerformanceWhereInput& Where,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
