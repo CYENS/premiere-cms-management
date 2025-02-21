@@ -137,6 +137,14 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void AddSessionToPerformance(
+		const FCMSIdInput& PerformanceWhere,
+		const FCMSIdInput& SessionWhere,
+		const FOnGetPerformanceSuccess& OnUsdSceneAddSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void RemoveUsdSceneFromPerformance(
 		const FCMSUsdScenePerformanceWhereInput& Where,
 	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,

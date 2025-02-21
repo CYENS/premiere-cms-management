@@ -304,11 +304,32 @@ void UPremiereCMSManagementSubsystem::AddUsdSceneToPerformance(
 	FOnFailureDelegate OnFailure
 )
 {
-	// connect a single scene
 	const TArray<FCMSIdInput> UsdScenesToConnect { { Where.UsdSceneId } };
 	PerformanceRepository->ConnectUsdScenes(
 		{ Where.PerformanceId },
 		UsdScenesToConnect,
+		[OnUsdSceneAddSuccess](const FCMSPerformance& Performance)
+		{
+			OnUsdSceneAddSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::AddSessionToPerformance(
+	const FCMSIdInput& PerformanceWhere,
+	const FCMSIdInput& SessionWhere,
+	const FOnGetPerformanceSuccess& OnUsdSceneAddSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	const TArray<FCMSIdInput> SessionsToConnect { { SessionWhere.Id } };
+	PerformanceRepository->ConnectSessions(
+		{ PerformanceWhere.Id },
+		SessionsToConnect,
 		[OnUsdSceneAddSuccess](const FCMSPerformance& Performance)
 		{
 			OnUsdSceneAddSuccess.ExecuteIfBound(Performance);
