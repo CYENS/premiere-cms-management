@@ -34,11 +34,12 @@ public:
     ) const;
 
     void CreateSession(
-        const FCMSSessionCreateInput& Data,
-	    const FCMSIdInput& SessionStateWhereId,
-	    const FCMSIdInput& OwnerWhereId,
-	    const TArray<FCMSIdInput>& AudioDataWhereIds,
-        const TArray<FCMSIdInput>& FaceDataWhereIds,
+		const FCMSSessionCreateInput& Data,
+		const FCMSIdInput& SessionStateWhereId,
+		const TOptional<FCMSIdInput>& OwnerWhere,
+		const TOptional<FCMSIdInput>& UsdSceneWhere,
+		const TArray<FCMSIdInput>& AudioDataWhereIds,
+		const TArray<FCMSIdInput>& FaceDataWhereIds,
         const TFunction<void(const FCMSSession& Sessions)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

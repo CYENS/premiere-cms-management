@@ -181,6 +181,7 @@ public:
 	void CreateSession(
 		const FCMSSessionCreateInput& Data,
 		const FString& OwnerWhereId,
+		const FString& UsdSceneWhereId,
 		const EGQLSessionState SessionState,
 		const TArray<FString>& AudioDataWhereIds,
 		const TArray<FString>& FaceDataWhereIds,

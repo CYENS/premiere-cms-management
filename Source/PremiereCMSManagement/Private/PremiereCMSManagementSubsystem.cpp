@@ -4,6 +4,7 @@
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
 #include "PremiereCMSDeveloperSettings.h"
+#include "Repositories/GraphQLConstants.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UsdSceneRepository.h"
@@ -146,6 +147,7 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
 void UPremiereCMSManagementSubsystem::CreateSession(
 	const FCMSSessionCreateInput& Data,
 	const FString& OwnerWhereId,
+	const FString& UsdSceneWhereId,
 	const EGQLSessionState SessionState,
 	const TArray<FString>& AudioDataWhereIds,
 	const TArray<FString>& FaceDataWhereIds,
@@ -164,13 +166,26 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 	{
 		AudioDataWhereIdStructs.Add({Id});
 	}
-	
+
 	const FString SessionStateId = GetSessionStateId(SessionState);
+	
+	TOptional<FCMSIdInput> OwnerWhere;
+	if (!OwnerWhereId.TrimStartAndEnd().IsEmpty())
+	{
+		OwnerWhere =  {OwnerWhereId.TrimStartAndEnd()} ;
+	}
+	
+	TOptional<FCMSIdInput> UsdSceneWhere;
+	if (!UsdSceneWhereId.TrimStartAndEnd().IsEmpty())
+	{
+		UsdSceneWhere =  {UsdSceneWhereId.TrimStartAndEnd()} ;
+	}
 	
 	SessionRepository->CreateSession(
 		Data,
 		{ SessionStateId  },
-		{ OwnerWhereId  },
+	    OwnerWhere,
+	    UsdSceneWhere,
 		AudioDataWhereIdStructs,
 		FaceDataWhereIdStructs,
 		[OnCreateSessionSuccess](const FCMSSession& Session)
