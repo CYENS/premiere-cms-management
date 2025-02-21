@@ -4,9 +4,6 @@
 #include "CoreMinimal.h"
 #include "CMSTypes.generated.h"
 
-struct FCMSUsdScene;
-struct FCMSPerformance;
-
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSSessionState
 {
@@ -66,36 +63,6 @@ struct  PREMIERECMSMANAGEMENT_API FCMSUser
 	FCMSPerson Person; 
 };
 
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSSession
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
-	FString Id;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString EosSessionId;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString Title;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString StreamingUrl;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	TArray<FString> AudioDataIds;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString PerformanceId;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FCMSUser Owner;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FCMSSessionState State;
-};
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSDateTime
@@ -291,6 +258,53 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatar
     FString Name;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionCastForSession
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FCMSAvatar Avatar;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FCMSUser User;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSession
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString EosSessionId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString Title;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString StreamingUrl;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FString> AudioDataIds;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString PerformanceId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSSessionState State;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FCMSSessionCastForSession> CastAvatars;
+};
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSPerformance

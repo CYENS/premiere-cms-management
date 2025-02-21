@@ -193,9 +193,22 @@ const FString GQLUser = FString::Printf(TEXT(R"(
 		...personFragment
     }
 )"));
-  //   avatars {
-		// ...avatarFragment
-  //   }
+
+const FString GQLSessionCastFragment = TEXT(R"(
+fragment sessionCastFragment on SessionCast {
+  id
+  label
+  avatar {
+	...avatarFragment
+  }
+  user {
+	...userFragment
+  }
+  session {
+	...sessionFragment
+  }
+}
+)");
 
 const FString GQLSessionStateFragment = TEXT(R"(
 	fragment sessionStateFragment on SessionState {
@@ -205,6 +218,7 @@ const FString GQLSessionStateFragment = TEXT(R"(
 )");
 
 const FString GQLSessionFragments = FString::Printf(TEXT(R"(
+	%s
 	%s
 	%s
 	%s
@@ -232,7 +246,8 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 *GQLAudioDataFragment,
 *GQLLightDataFragment,
 *GQLPropMotionDataFragment,
-*GQLAvatarMotionDataFragment
+*GQLAvatarMotionDataFragment,
+*GQLSessionCastFragment
 );
 
 const FString GQLUsdSceneFragments = FString::Printf(TEXT(R"(
@@ -262,6 +277,9 @@ const FString GQLUsdScene = FString::Printf(TEXT(R"(
     performances {
       ...performanceFragment
     }
+	castAvatars {
+	  ...sessionCastFragment
+	}
     xrLive {
       id
       about
@@ -319,6 +337,9 @@ const FString GQLSession = TEXT(R"(
     attendees {
       ...userFragment  
     }
+	castAvatars {
+	  ...sessionCastFragment
+	}
 )");
 
 const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
