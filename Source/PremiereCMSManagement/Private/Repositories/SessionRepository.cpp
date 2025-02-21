@@ -34,15 +34,15 @@ void USessionRepository::GetAll(
 
 void USessionRepository::FindSession(
 	const FCMSSessionWhereUniqueInput& Where,
-	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+	const TFunction<void(const FCMSSession& Session)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
 	const FString QueryName = TEXT("session");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-    query FindSession {
-      %s {
+    query FindSession($where: SessionWhereUniqueInput!){
+      %s (where: $where) {
 		%s
       }
 	}

@@ -24,7 +24,7 @@ public:
 
     void FindSession(
         const FCMSSessionWhereUniqueInput& Where,
-        const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+	    const TFunction<void(const FCMSSession& Session)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     

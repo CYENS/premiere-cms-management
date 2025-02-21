@@ -166,9 +166,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void FindSession(
-		FCMSSessionWhereUniqueInput Where,
-		FOnGetSessions OnGetSessionsSuccess,
-		FOnFailureDelegate OnFailure
+		const FCMSSessionWhereUniqueInput& Where,
+		const FOnGetSession& OnGetSessionSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")

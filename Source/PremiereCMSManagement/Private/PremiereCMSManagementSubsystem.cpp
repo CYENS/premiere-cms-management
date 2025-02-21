@@ -202,16 +202,16 @@ void UPremiereCMSManagementSubsystem::GetAllSessions(
 }
 
 void UPremiereCMSManagementSubsystem::FindSession(
-	const FCMSSessionWhereUniqueInput Where,
-	FOnGetSessions OnGetSessionsSuccess,
-	FOnFailureDelegate OnFailure
+	const FCMSSessionWhereUniqueInput& Where,
+	const FOnGetSession& OnGetSessionSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
 	SessionRepository->FindSession(
 		Where,
-		[OnGetSessionsSuccess] (const TArray<FCMSSession>& Sessions)
+		[OnGetSessionSuccess] (const FCMSSession& Session)
 		{
-			OnGetSessionsSuccess.ExecuteIfBound(Sessions);
+			OnGetSessionSuccess.ExecuteIfBound(Session);
 		},
 		[OnFailure] (const FString& ErrorReason)
 		{
