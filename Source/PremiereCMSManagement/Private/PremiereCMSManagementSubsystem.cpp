@@ -270,6 +270,33 @@ void UPremiereCMSManagementSubsystem::CreateUser(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateUser(
+	const FCMSUserWhereUniqueInput& WhereUser,
+	const FCMSUserUpdateInput& Data,
+	const FString& PersonId,
+	const FOnGetUserSuccess& OnCreateUserSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	TOptional<FCMSPersonWhereUniqueInput> PersonIdStruct;
+	if (!PersonId.TrimStartAndEnd().IsEmpty())
+	{
+		PersonIdStruct = { PersonId.TrimStartAndEnd() };
+	}
+	UserRepository->Update(
+		WhereUser,
+		Data,
+		PersonIdStruct,
+		[OnCreateUserSuccess](const FCMSUser& User)
+		{
+			OnCreateUserSuccess.ExecuteIfBound(User);
+		},
+		[OnFailure](const FString& ErrorReason) {
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::AddPersonToUser(
 	const FCMSUserWhereUniqueInput& UserWhere,
 	const FCMSPersonWhereUniqueInput& PersonWhere,

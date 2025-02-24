@@ -104,6 +104,15 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void UpdateUser(
+		const FCMSUserWhereUniqueInput& WhereUser,
+		const FCMSUserUpdateInput& Data,
+		const FString& PersonId,
+		const FOnGetUserSuccess& OnCreateUserSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void AddPersonToUser(
 		const FCMSUserWhereUniqueInput& UserWhere,
 		const FCMSPersonWhereUniqueInput& PersonWhere,

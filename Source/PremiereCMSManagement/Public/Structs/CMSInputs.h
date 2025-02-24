@@ -167,6 +167,21 @@ struct FCMSSessionStateWhereUniqueInput
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUserUpdateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString UserRole;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Email;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString EosId;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
 {
     GENERATED_BODY()

@@ -128,12 +128,37 @@ void UUserRepository::Create(
 }
 
 void UUserRepository::Update(
-	const FCMSIdInput& Where,
-	const FCMSPerformanceUpdateInput& Data,
+	const FCMSUserWhereUniqueInput& WhereUser,
+	const FCMSUserUpdateInput& Data,
+	const TOptional<FCMSPersonWhereUniqueInput>& PersonWhere,
 	const TFunction<void(const FCMSUser& User)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
+	const FString QueryName = TEXT("updateUser");
+	const FString Query = FString::Printf(
+		TEXT(R"(
+	%s
+	mutation UpdateUser ($where: UserWhereUniqueInput!, $data: UserUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLUserFragments,
+	*QueryName,
+	*GQLUser
+	);
+
+	FDataObjectBuilder DataObjectBuilder = FDataObjectBuilder();
+	DataObjectBuilder.AddUStruct(Data);
+	DataObjectBuilder.AddConnect("person", PersonWhere);
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables {
+		{ "where", MakeWhereValue(WhereUser) },
+		{ "data", DataObjectBuilder.BuildAsJsonValue() } 
+	};
+	UE_LOG(LogPremiereCMSManagement, Error, TEXT("%s"), *Query);
+	ExecuteGraphQLQuery(Query, Variables, QueryName, OnSuccess, OnFailure);
 }
 
 void UUserRepository::ConnectPerson(

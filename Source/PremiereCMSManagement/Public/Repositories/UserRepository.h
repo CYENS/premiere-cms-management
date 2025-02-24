@@ -38,8 +38,9 @@ public:
     ) const;
 	
 	void Update(
-		const FCMSIdInput& Where,
-		const FCMSPerformanceUpdateInput& Data,
+		const FCMSUserWhereUniqueInput& WhereUser,
+		const FCMSUserUpdateInput& Data,
+		const TOptional<FCMSPersonWhereUniqueInput>& PersonWhere,
 		const TFunction<void(const FCMSUser& User)>& OnSuccess,
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
 	) const;
