@@ -350,6 +350,7 @@ const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
 	%s
+	%s
 )")
 ,
 *GQLPerformanceFragment,
@@ -358,7 +359,8 @@ const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
 *GQLSessionStateFragment,
 *GQLSessionFragment,
 *GQLPersonFragment,
-*GQLUserFragment
+*GQLUserFragment,
+*GQLAvatarFragment
 );
 
 const FString GQLPerformance = TEXT(R"(
@@ -386,10 +388,29 @@ const FString GQLPerformance = TEXT(R"(
 			...sessionFragment
 		}
 		avatars {
-		  id
-		  name
+			...avatarFragment
 		}
 	)");
+
+
+const FString GQLAvatarFragments = FString::Printf(TEXT(R"(
+	%s
+	%s
+)"),
+*GQLUserFragment,
+*GQLPerformanceFragment
+);
+
+const FString GQLAvatar = TEXT(R"(
+{
+	id
+	assetId
+	name
+	performances {
+		...performanceFragment
+	}
+}
+)");
 
 const FString GQLSessionStatePrivateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
 const FString GQLSessionStatePublicActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
