@@ -15,6 +15,7 @@ class UGraphQLDataSource;
 class USessionRepository;
 class UUserRepository;
 class UPerformanceRepository;
+class UPersonRepository;
 enum class EGQLSessionState : uint8;
 
 class UPremiereCMSDeveloperSettings;
@@ -34,6 +35,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCM
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatar, const FCMSAvatar&, Avatar);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatars, const TArray<FCMSAvatar>&, Avatars);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerson, const FCMSPerson&, Person);
 
 UCLASS(BlueprintType, Config=Engine)
 class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameInstanceSubsystem
@@ -56,6 +58,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UUsdSceneRepository* UsdSceneRepository;
+	
+	UPROPERTY()
+	UPersonRepository* PersonRepository;
 	
 	UPROPERTY()
 	const UPremiereCMSDeveloperSettings* DeveloperSettings;
@@ -276,6 +281,15 @@ public:
 		const FCMSAvatarCreateInput& Data,
 		const FString& PerformanceId,
 		FOnGetAvatar OnCreateAvatarSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	/* Person */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Person")
+	void CreatePerson(
+		const FCMSPersonCreateInput& Data,
+		const FString& UserId,
+		FOnGetPerson OnCreatePersonSuccess,
 		FOnFailureDelegate OnFailure
 	);
 };

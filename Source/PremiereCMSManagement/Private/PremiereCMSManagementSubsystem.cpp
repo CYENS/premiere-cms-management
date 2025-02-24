@@ -7,6 +7,7 @@
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/GraphQLConstants.h"
 #include "Repositories/PerformanceRepository.h"
+#include "Repositories/PersonRepository.h"
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UsdSceneRepository.h"
 #include "Repositories/UserRepository.h"
@@ -35,6 +36,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	
 	AvatarRepository = NewObject<UAvatarRepository>();
 	AvatarRepository->Initialize(GraphQlDataSource);
+	
+	PersonRepository = NewObject<UPersonRepository>();
+	PersonRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -712,6 +716,32 @@ void UPremiereCMSManagementSubsystem::CreateAvatar(
 		[OnCreateAvatarSuccess](const FCMSAvatar& Avatar)
 		{
 			OnCreateAvatarSuccess.ExecuteIfBound(Avatar);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreatePerson(
+	const FCMSPersonCreateInput& Data,
+	const FString& UserId,
+	FOnGetPerson OnCreatePersonSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	TOptional<FCMSUserWhereUniqueInput> UserWhereUniqueInput;
+	if (!UserId.TrimStartAndEnd().IsEmpty())
+	{
+		UserWhereUniqueInput = { UserId.TrimStartAndEnd() };
+	}
+	PersonRepository->Create(
+		Data,
+		UserWhereUniqueInput,
+		[OnCreatePersonSuccess](const FCMSPerson& Person)
+		{
+			OnCreatePersonSuccess.ExecuteIfBound(Person);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{

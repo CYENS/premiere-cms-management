@@ -16,9 +16,37 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionState
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSUserForPerson
+{
+    GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString EosId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString Email;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString Name;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	FString UserRole = "Read";
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	bool IsAdmin;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
+	bool IsSuperAdmin;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSPerson
 {
     GENERATED_BODY()
+	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Id;
     
@@ -30,6 +58,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerson
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString ArtisticName;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FCMSUserForPerson User;
 };
 
 

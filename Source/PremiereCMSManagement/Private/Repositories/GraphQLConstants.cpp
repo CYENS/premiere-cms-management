@@ -412,6 +412,25 @@ performances {
 }
 )");
 
+const FString GQLPersonFragments = FString::Printf(TEXT(R"(
+%s
+%s
+)"),
+*GQLPersonFragment,
+*GQLUserFragment
+);
+
+const FString GQLPerson = TEXT(R"(
+id
+bio
+artisticName
+givenName
+familyName
+user {
+	...userFragment
+}
+)");
+
 const FString GQLSessionStatePrivateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
 const FString GQLSessionStatePublicActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
 const FString GQLSessionStatePrivateActiveId = TEXT("cm74t2qzv0026juc7cw14fvwj");

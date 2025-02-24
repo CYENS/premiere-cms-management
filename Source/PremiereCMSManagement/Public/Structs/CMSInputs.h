@@ -120,20 +120,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserWhereUniqueInput
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString UserRole;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString Email;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString EosId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    bool IsAdmin;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    bool IsSuperAdmin;
-    
+    FString Id;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")
@@ -214,3 +201,33 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarCreateInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Name;
 };
+
+// UENUM(BlueprintType, Category = "PremiereCMS | Inputs")
+// enum class EGender: uint8
+// {
+//     Male = TEXT("Male"),
+//     Female = TEXT("Female"),
+//     NonBinary = TEXT("Non Binary"),
+// };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSPersonCreateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString ArtisticName;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Bio;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Gender;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString FamilyName;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString GivenName;
+};
+
