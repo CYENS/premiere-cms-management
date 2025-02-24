@@ -18,4 +18,15 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = "General")
 	FString GraphQLUrl;
 	
+	UPROPERTY(EditAnywhere, Config, Category = "Debug")
+	bool ShouldLogQueries;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Debug")
+	bool ShouldLogRawResponse;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Debug")
+	bool ShouldLogErrors;
+
+	UPROPERTY(EditAnywhere, Config, Category = "Debug")
+	bool ShouldLogToEditor;
 };

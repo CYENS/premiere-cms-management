@@ -10,6 +10,8 @@
 #include "GraphQLDataSource.generated.h"
 
 
+class UPremiereCMSDeveloperSettings;
+
 enum EGraphQLOutcome
 {
 	Success,
@@ -51,15 +53,14 @@ class PREMIERECMSMANAGEMENT_API UGraphQLDataSource : public UObject
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
+	const UPremiereCMSDeveloperSettings* DeveloperSettings;
+
 public:
-	/**
-	 * Configure the GraphQL endpoint (e.g., "https://api.example.com/graphql").
-	 * In a real production environment, you might inject authentication tokens here as well.
-	 */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="GraphQL")
 	FString Endpoint;
 
-	void Initialize(FString EndpointUrl);
+	void Initialize(FString EndpointUrl, const UPremiereCMSDeveloperSettings* PremiereCMSDeveloperSettings);
 	
 	virtual void ExecuteGraphQLQuery(
 		const FString& Query,
@@ -132,7 +133,7 @@ private:
 	 * @param GraphQLResult The result to fill 
 	 * @return true if could parse the string and false otherwise
 	 */
-	static bool ParseGraphQLResponse(
+	bool ParseGraphQLResponse(
 		const FString& ResponseString,
 		FGraphQLResult& GraphQLResult
 	);

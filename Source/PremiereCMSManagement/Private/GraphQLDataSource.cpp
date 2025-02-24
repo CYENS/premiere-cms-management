@@ -4,10 +4,12 @@
 #include "Serialization/JsonSerializer.h"
 #include "Serialization/JsonWriter.h"
 #include "LogPremiereCMSManagement.h"
+#include "PremiereCMSDeveloperSettings.h"
 
-void UGraphQLDataSource::Initialize(FString EndpointUrl)
+void UGraphQLDataSource::Initialize(FString EndpointUrl, const UPremiereCMSDeveloperSettings* PremiereCMSDeveloperSettings )
 {
     this->Endpoint = EndpointUrl;
+    this->DeveloperSettings = PremiereCMSDeveloperSettings;
 }
 
 void UGraphQLDataSource::ExecuteGraphQLQuery(const FString& Query, const FOnGraphQLResponse OnComplete)
@@ -147,6 +149,20 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     FString BodyString;
     TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&BodyString);
     FJsonSerializer::Serialize(BodyObject.ToSharedRef(), Writer);
+    if (DeveloperSettings->ShouldLogQueries)
+    {
+        FString VariablesString;
+        TSharedRef<TJsonWriter<>> VariablesWriter = TJsonWriterFactory<>::Create(&VariablesString);
+        FJsonSerializer::Serialize(Variables.ToSharedRef(), VariablesWriter);
+        
+        UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Query: \n%s"), *Query);
+        UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Variables: \n%s"), *VariablesString);
+        if (DeveloperSettings->ShouldLogToEditor)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 7.5f, FColor::Cyan, FString::Printf(TEXT("Query:\n%s"), *Query));
+            GEngine->AddOnScreenDebugMessage(-1, 7.5f, FColor::Cyan, FString::Printf(TEXT("Variables:\n%s"), *VariablesString));
+        }
+    }
 
     HttpRequest->SetContentAsString(BodyString);
 
@@ -167,18 +183,33 @@ void UGraphQLDataSource::OnRequestComplete(
 {
     FGraphQLResult GraphQlResult;
     
+    GraphQlResult.RawResponse = Response->GetContentAsString();
+    if (DeveloperSettings->ShouldLogRawResponse)
+    {
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("Raw Response:\n%s"), *GraphQlResult.ErrorMessage);
+        if (DeveloperSettings->ShouldLogToEditor)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 7.5f, FColor::Cyan, FString::Printf(TEXT("Raw Response:\n%s"), *GraphQlResult.RawResponse));
+        }
+    }
+
     // general request errors
     if (!bWasSuccessful || !Response.IsValid())
     {
         GraphQlResult.GraphQLOutcome = RequestFailed;
         GraphQlResult.ErrorMessage = TEXT("Request failed or response is invalid.");
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("%s"), *GraphQlResult.ErrorMessage);
+        if (DeveloperSettings->ShouldLogErrors)
+        {
+            UE_LOG(LogPremiereCMSManagement, Error, TEXT("%s"), *GraphQlResult.ErrorMessage);
+            if (DeveloperSettings->ShouldLogToEditor)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 12.5f, FColor::Red, FString::Printf(TEXT("Error Message:\n%s"), *GraphQlResult.ErrorMessage));
+            }
+        }
         OnComplete.ExecuteIfBound(GraphQlResult);
         return;
     }
     
-    GraphQlResult.RawResponse = Response->GetContentAsString();
-
     // HTTP status code
     const int32 StatusCode = Response->GetResponseCode();
     GraphQlResult.HttpStatus = StatusCode;
@@ -186,13 +217,14 @@ void UGraphQLDataSource::OnRequestComplete(
     {
         GraphQlResult.GraphQLOutcome = HttpError;
         GraphQlResult.ErrorMessage = Response->GetContentAsString();
-        UE_LOG(
-            LogPremiereCMSManagement,
-            Error,
-            TEXT("UGraphQLDataSource: Request failed with status code %d. Reason: %s"),
-            StatusCode,
-            *GraphQlResult.ErrorMessage
-        );
+        if (DeveloperSettings->ShouldLogErrors)
+        {
+            UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDataSource: Request failed with status code %d. Reason: %s"), StatusCode, *GraphQlResult.ErrorMessage );
+            if (DeveloperSettings->ShouldLogToEditor)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 12.5f, FColor::Red, FString::Printf(TEXT("UGraphQLDataSource: Request failed with status code %d. Reason: %s"), StatusCode, *GraphQlResult.ErrorMessage));
+            }
+        }
         OnComplete.ExecuteIfBound(GraphQlResult);
         return;
     }
@@ -243,6 +275,15 @@ bool UGraphQLDataSource::ParseGraphQLResponse(
                     const TSharedPtr<FJsonObject> ErrorJsonObject = ErrorJsonValue->AsObject();
                     const FString ErrorMessage = ErrorJsonObject->GetStringField("message");
                     GraphQLResult.GraphQLErrors.Add(ErrorMessage);
+                    if (DeveloperSettings->ShouldLogErrors)
+                    {
+                        UE_LOG(LogPremiereCMSManagement, Error, TEXT("GraphQL Error: %s"), *ErrorMessage);
+                        if (DeveloperSettings->ShouldLogToEditor)
+                        {
+                            GEngine->AddOnScreenDebugMessage(-1, 12.5f, FColor::Red, FString::Printf(TEXT("GraphQL Error: %s"), *ErrorMessage));
+                        }
+                        
+                    }
                 }
                 GraphQLResult.ErrorMessage = GraphQLResult.GraphQLErrors[0]; // first error as the message
             }
