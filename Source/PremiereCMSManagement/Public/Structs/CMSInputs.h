@@ -202,3 +202,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString UserRole = "Read";
 };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarCreateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString AssetId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Name;
+};
