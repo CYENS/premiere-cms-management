@@ -11,7 +11,7 @@ void ATestCMSGameModeBase::BeginPlay()
 	GraphQLUrl = DeveloperSettings->GraphQLUrl;
 	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
-	GraphQlDataSource->Initialize(GraphQLUrl);
+	GraphQlDataSource->Initialize(GraphQLUrl, DeveloperSettings);
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
