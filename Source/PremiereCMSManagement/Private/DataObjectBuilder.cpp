@@ -55,6 +55,7 @@ FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const 
         return *this;
     }
 }
+
 template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& SingleItem)
 {
@@ -70,11 +71,34 @@ FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& 
 }
 
 template <typename T>
+FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const T& SingleItem)
+{
+    const TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
+    FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &SingleItem, SingleObj.ToSharedRef(), 0, 0);
+
+    const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
+    ConnectObject->SetObjectField(TEXT("disconnect"), SingleObj);
+
+    RootObject->SetObjectField(Key, ConnectObject);
+    return *this;
+}
+
+template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const TOptional<T>& SingleItem)
 {
     if (SingleItem.IsSet())
     {
         AddConnect(Key, SingleItem.GetValue());
+    }
+    return *this;
+}
+
+template <class T>
+FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const TOptional<T>& SingleItem)
+{
+    if (SingleItem.IsSet())
+    {
+        AddDisconnect(Key, SingleItem.GetValue());
     }
     return *this;
 }
