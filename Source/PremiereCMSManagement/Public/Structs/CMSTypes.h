@@ -247,6 +247,24 @@ struct PREMIERECMSMANAGEMENT_API FCMSXRLive
     FString StreamingUrl;
 };
 
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForAvatar
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString About;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+};
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatar
 {
