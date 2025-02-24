@@ -4,6 +4,7 @@
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
 #include "PremiereCMSDeveloperSettings.h"
+#include "Repositories/AvatarRepository.h"
 #include "Repositories/GraphQLConstants.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/SessionRepository.h"
@@ -31,6 +32,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	
 	UsdSceneRepository = NewObject<UUsdSceneRepository>();
 	UsdSceneRepository->Initialize(GraphQlDataSource);
+	
+	AvatarRepository = NewObject<UAvatarRepository>();
+	AvatarRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -681,6 +685,33 @@ void UPremiereCMSManagementSubsystem::DeleteUsdScene(
 		[OnGetUsdSceneSuccess](const FCMSUsdScene& UsdScene)
 		{
 			OnGetUsdSceneSuccess.ExecuteIfBound(UsdScene);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateAvatar(
+	const FCMSAvatarCreateInput& Data,
+	const FString& PerformanceId,
+	FOnGetAvatar OnCreateAvatarSuccess,
+	FOnFailureDelegate OnFailure
+)
+{
+	TOptional<FCMSPerformanceWhereUniqueInput> PerformanceWhereId;
+	if (!PerformanceId.TrimStartAndEnd().IsEmpty())
+	{
+		PerformanceWhereId = { PerformanceId.TrimStartAndEnd() };
+	}
+	
+	AvatarRepository->Create(
+		Data,
+		PerformanceWhereId,
+		[OnCreateAvatarSuccess](const FCMSAvatar& Avatar)
+		{
+			OnCreateAvatarSuccess.ExecuteIfBound(Avatar);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{

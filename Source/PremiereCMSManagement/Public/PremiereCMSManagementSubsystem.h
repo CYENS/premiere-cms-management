@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Repositories/AvatarRepository.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
@@ -31,6 +32,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUs
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdSceneSuccess, const FCMSUsdScene&, UsdScene);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatar, const FCMSAvatar&, Avatar);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatars, const TArray<FCMSAvatar>&, Avatars);
 
 UCLASS(BlueprintType, Config=Engine)
 class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameInstanceSubsystem
@@ -57,6 +60,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	UPROPERTY()
 	const UPremiereCMSDeveloperSettings* DeveloperSettings;
 	
+	UPROPERTY()
+	UAvatarRepository* AvatarRepository;
+
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
 	FString GraphQLUrl;
@@ -261,6 +267,15 @@ public:
 	void DeleteUsdScene(
 		const FCMSUsdSceneWhereUniqueInput& Where,
 		FOnGetUsdSceneSuccess OnGetUsdSceneSuccess,
+		FOnFailureDelegate OnFailure
+	);
+	
+	/*  Avatar */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
+	void CreateAvatar(
+		const FCMSAvatarCreateInput& Data,
+		const FString& PerformanceId,
+		FOnGetAvatar OnCreateAvatarSuccess,
 		FOnFailureDelegate OnFailure
 	);
 };
