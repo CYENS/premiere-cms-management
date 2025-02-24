@@ -269,8 +269,12 @@ USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatar
 {
     GENERATED_BODY()
+	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString AssetId;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Name;
