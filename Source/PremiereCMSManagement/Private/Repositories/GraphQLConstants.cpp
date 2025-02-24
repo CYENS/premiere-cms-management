@@ -254,8 +254,10 @@ const FString GQLUsdSceneFragments = FString::Printf(TEXT(R"(
 %s
 %s
 %s
+%s
 )")
 ,
+*GQLUsdXrLiveFragment,
 *GQLPersonFragment,
 *GQLUserFragment,
 *GQLPerformanceFragment
@@ -277,18 +279,8 @@ const FString GQLUsdScene = FString::Printf(TEXT(R"(
     performances {
       ...performanceFragment
     }
-	castAvatars {
-	  ...sessionCastFragment
-	}
     xrLive {
-      id
-      about
-      approved
-      dataStatus
-      dataUrl
-      performanceOrRehearsal
-      quality
-      streamingUrl
+	  ...xrLiveFragment
     }
 )"));
 
