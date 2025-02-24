@@ -396,19 +396,19 @@ const FString GQLPerformance = TEXT(R"(
 const FString GQLAvatarFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
+	%s
 )"),
+*GQLPersonFragment,
 *GQLUserFragment,
 *GQLPerformanceFragment
 );
 
 const FString GQLAvatar = TEXT(R"(
-{
-	id
-	assetId
-	name
-	performances {
-		...performanceFragment
-	}
+id
+assetId
+name
+performances {
+	...performanceFragment
 }
 )");
 
