@@ -322,10 +322,12 @@ void UPerformanceRepository::RemoveUsdScene(
 	);
 }
 
-void UPerformanceRepository::ConnectMembers(const FCMSIdInput& PerformanceWhereUniqueInput,
-	const TArray<FCMSIdInput>& MembersToConnectUsdSceneWhereUniqueInputs,
+void UPerformanceRepository::ConnectMembers(
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const TArray<FCMSUserWhereUniqueInput>& MembersWhere,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
 {
 	const FString QueryName = TEXT("updatePerformance");
 	const FString Query = FString::Printf(TEXT(R"(
@@ -342,10 +344,10 @@ void UPerformanceRepository::ConnectMembers(const FCMSIdInput& PerformanceWhereU
 	);
 
 	FDataObjectBuilder DataObjectBuilder;
-	DataObjectBuilder.AddConnect("members", MembersToConnectUsdSceneWhereUniqueInputs);
+	DataObjectBuilder.AddConnect("members", MembersWhere);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(PerformanceWhereUniqueInput)},
+		{"where", MakeWhereValue(PerformanceWhere)},
 		{"data", DataObjectBuilder.BuildAsJsonValue()},
 	};
 	
@@ -358,17 +360,18 @@ void UPerformanceRepository::ConnectMembers(const FCMSIdInput& PerformanceWhereU
 	);
 }
 
-void UPerformanceRepository::AddMember(
-	const FCMSUserPerformanceWhereUniqueInput& Where,
+void UPerformanceRepository::DisconnectMembers(
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const TArray<FCMSUserWhereUniqueInput>& MembersWhere,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString QueryName = TEXT("addUserToPerformance");
+	const FString QueryName = TEXT("updatePerformance");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation AddUserToPerformance ($where: UserPerformanceWhereUniqueInput!) {
-	  %s (where: $where) {
+	mutation ConnectMembersToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
 		%s
 	  }
 	}
@@ -377,42 +380,15 @@ void UPerformanceRepository::AddMember(
 	*QueryName,
 	*GQLPerformance
 	);
-	
-	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
-	};
-	ExecuteGraphQLQuery(
-		Query,
-		Variables,
-		QueryName,
-		OnSuccess,
-		OnFailure
-	);
-}
 
-void UPerformanceRepository::RemoveMember(
-	const FCMSUserPerformanceWhereUniqueInput& Where,
-	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure
-) const
-{
-	const FString QueryName = TEXT("removeUserFromPerformance");
-	const FString Query = FString::Printf(TEXT(R"(
-	%s
-	mutation RemoveUserFromPerformance ($where: UserPerformanceWhereUniqueInput!) {
-	  %s (where: $where) {
-		%s
-	  }
-	}
-	)"),
-	*GQLPerformanceFragments,
-	*QueryName,
-	*GQLPerformance
-	);
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddDisconnect("members", MembersWhere);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
+		{"where", MakeWhereValue(PerformanceWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
 	};
+	
 	ExecuteGraphQLQuery(
 		Query,
 		Variables,

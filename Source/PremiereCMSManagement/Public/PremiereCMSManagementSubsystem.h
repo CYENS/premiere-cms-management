@@ -179,16 +179,18 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void AddUserToPerformance(
-		const FCMSUserPerformanceWhereUniqueInput& Where,
+		const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+		const FCMSUserWhereUniqueInput& UserWhere,
 		const FOnGetPerformanceSuccess& OnUserAddSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void RemoveUserFromPerformance(
-		const FCMSUserPerformanceWhereUniqueInput& Where,
-		FOnGetPerformanceSuccess OnUserRemoveSuccess,
-		FOnFailureDelegate OnFailure
+		const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+		const FCMSUserWhereUniqueInput& UserWhere,
+		const FOnGetPerformanceSuccess& OnUserRemoveSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 
 	/* Avatars */
@@ -207,7 +209,6 @@ public:
 	    const FOnGetPerformanceSuccess& OnUsdSceneRemoveSuccess,
 	    const FOnFailureDelegate& OnFailure
 	);
-	
 
 	/* Session */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")

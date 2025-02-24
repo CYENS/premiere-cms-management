@@ -5,6 +5,7 @@
 #include "Structs/CMSTypes.h"
 #include "PerformanceRepository.generated.h"
 
+struct FCMSUserWhereUniqueInput;
 struct FCMSIdInput;
 struct FCMSPerformanceUpdateInput;
 struct FCMSPerformanceCreateInput;
@@ -78,20 +79,15 @@ public:
     ) const;
     
     void ConnectMembers(
-        const FCMSIdInput& PerformanceWhereUniqueInput,
-        const TArray<FCMSIdInput>& MembersToConnectUsdSceneWhereUniqueInputs,
+	    const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	    const TArray<FCMSUserWhereUniqueInput>& MembersWhere,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void AddMember(
-	    const FCMSUserPerformanceWhereUniqueInput& Where,
-        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
-    ) const;
-    
-    void RemoveMember(
-	    const FCMSUserPerformanceWhereUniqueInput& Where,
+    void DisconnectMembers(
+        const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	    const TArray<FCMSUserWhereUniqueInput>& MembersWhere,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

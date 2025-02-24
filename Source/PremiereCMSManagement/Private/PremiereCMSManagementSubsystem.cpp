@@ -412,14 +412,15 @@ void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
 }
 
 void UPremiereCMSManagementSubsystem::AddUserToPerformance(
-	const FCMSUserPerformanceWhereUniqueInput& Where,
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const FCMSUserWhereUniqueInput& UserWhere,
 	const FOnGetPerformanceSuccess& OnUserAddSuccess,
 	const FOnFailureDelegate& OnFailure
 )
 {
-	const TArray<FCMSIdInput> MembersToConnect { { Where.UserId } };
+	const TArray<FCMSUserWhereUniqueInput> MembersToConnect { { UserWhere.Id } };
 	PerformanceRepository->ConnectMembers(
-		{Where.PerformanceId },
+		PerformanceWhere,
 		MembersToConnect,
 		[OnUserAddSuccess](const FCMSPerformance& Performance)
 		{
@@ -433,13 +434,16 @@ void UPremiereCMSManagementSubsystem::AddUserToPerformance(
 }
 
 void UPremiereCMSManagementSubsystem::RemoveUserFromPerformance(
-	const FCMSUserPerformanceWhereUniqueInput& Where,
-	FOnGetPerformanceSuccess OnUserRemoveSuccess,
-	FOnFailureDelegate OnFailure
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const FCMSUserWhereUniqueInput& UserWhere,
+	const FOnGetPerformanceSuccess& OnUserRemoveSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
-	PerformanceRepository->RemoveMember(
-		Where,
+	TArray<FCMSUserWhereUniqueInput> MembersToConnect { {UserWhere } };
+	PerformanceRepository->DisconnectMembers(
+		PerformanceWhere,
+		MembersToConnect,	
 		[OnUserRemoveSuccess](const FCMSPerformance& Performance)
 		{
 			OnUserRemoveSuccess.ExecuteIfBound(Performance);
