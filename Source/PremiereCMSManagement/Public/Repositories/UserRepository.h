@@ -4,11 +4,13 @@
 #include "BaseRepository.h"
 #include "UserRepository.generated.h"
 
+struct FCMSUserWhereUniqueInput;
 struct FCMSPerformanceUpdateInput;
 struct FCMSIdInput;
 struct FCMSUser;
 struct FCMSUserUpdateInput;
 struct FCMSUserCreateInput;
+struct FCMSPersonWhereUniqueInput;
 
 UCLASS()
 class PREMIERECMSMANAGEMENT_API UUserRepository : public UBaseRepository
@@ -41,6 +43,20 @@ public:
 		const TFunction<void(const FCMSUser& User)>& OnSuccess,
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
 	) const;
+
+	void ConnectPerson(
+		const FCMSUserWhereUniqueInput& UserWhere,
+		const FCMSPersonWhereUniqueInput& PersonWhere,
+		const TFunction<void(const FCMSUser& User)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	);
+	
+	void DisconnectPerson(
+		const FCMSUserWhereUniqueInput& UserWhere,
+		const FCMSPersonWhereUniqueInput& PersonWhere,
+		const TFunction<void(const FCMSUser& User)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	);
 
 private:
     static bool ParseCMSUserFromResponse(const FString& JsonResponse, const FString& QueryName, FCMSUser& OutUser, FString& OutErrorReason);

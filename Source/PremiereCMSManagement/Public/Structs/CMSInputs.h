@@ -231,3 +231,11 @@ struct PREMIERECMSMANAGEMENT_API FCMSPersonCreateInput
     FString GivenName;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSPersonWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};

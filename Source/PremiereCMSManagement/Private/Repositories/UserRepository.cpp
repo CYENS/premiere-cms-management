@@ -134,7 +134,81 @@ void UUserRepository::Update(
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
+}
+
+void UUserRepository::ConnectPerson(
+	const FCMSUserWhereUniqueInput& UserWhere,
+	const FCMSPersonWhereUniqueInput& PersonWhere,
+	const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+)
+{
+	const FString QueryName = TEXT("updateUser");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation ConnectPersonToUser ($where: UserWhereUniqueInput!, $data: UserUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLUserFragments,
+	*QueryName,
+	*GQLUser
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddConnect("person", PersonWhere);
 	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(UserWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UUserRepository::DisconnectPerson(
+	const FCMSUserWhereUniqueInput& UserWhere,
+	const FCMSPersonWhereUniqueInput& PersonWhere,
+	const TFunction<void(const FCMSUser& User)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+)
+{
+	const FString QueryName = TEXT("updatePerson");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation DisconnectAvatarFromPerformance ($where: PersonWhereUniqueInput!, $data: PersonUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPersonFragments,
+	*QueryName,
+	*GQLPerson
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddDisconnect("person", PersonWhere);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(UserWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
 }
 
 bool UUserRepository::ParseCMSUserFromResponse(

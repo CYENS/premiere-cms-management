@@ -102,6 +102,14 @@ public:
 		const FOnGetUserSuccess& OnCreateUserSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void AddPersonToUser(
+		const FCMSUserWhereUniqueInput& UserWhere,
+		const FCMSPersonWhereUniqueInput& PersonWhere,
+		const FOnGetUserSuccess& OnAddPersonToUserSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
 
 	/* Performance */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
