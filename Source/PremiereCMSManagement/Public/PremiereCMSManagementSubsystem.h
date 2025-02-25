@@ -314,7 +314,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Person")
 	void FindPerson(
 		const FCMSPersonWhereUniqueInput& Where,
-		const FOnGetPerson& OnCreatePersonSuccess,
+		const FOnGetPerson& OnFindPersonSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 	

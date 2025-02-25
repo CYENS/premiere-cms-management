@@ -804,15 +804,15 @@ void UPremiereCMSManagementSubsystem::CreatePerson(
 
 void UPremiereCMSManagementSubsystem::FindPerson(
 	const FCMSPersonWhereUniqueInput& Where,
-	const FOnGetPerson& OnCreatePersonSuccess,
+	const FOnGetPerson& OnFindPersonSuccess,
 	const FOnFailureDelegate& OnFailure
 )
 {
 	PersonRepository->Find(
 		Where,
-		[OnCreatePersonSuccess](const FCMSPerson& Person)
+		[OnFindPersonSuccess](const FCMSPerson& Person)
 		{
-			OnCreatePersonSuccess.ExecuteIfBound(Person);
+			OnFindPersonSuccess.ExecuteIfBound(Person);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{
