@@ -196,6 +196,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
     FString EosId;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Password;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     bool IsAdmin;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")

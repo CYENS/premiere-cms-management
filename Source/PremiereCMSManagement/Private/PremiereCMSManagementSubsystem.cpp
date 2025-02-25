@@ -801,3 +801,22 @@ void UPremiereCMSManagementSubsystem::CreatePerson(
 		}
 	);
 }
+
+void UPremiereCMSManagementSubsystem::FindPerson(
+	const FCMSPersonWhereUniqueInput& Where,
+	const FOnGetPerson& OnCreatePersonSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	PersonRepository->Find(
+		Where,
+		[OnCreatePersonSuccess](const FCMSPerson& Person)
+		{
+			OnCreatePersonSuccess.ExecuteIfBound(Person);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
