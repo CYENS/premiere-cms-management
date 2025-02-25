@@ -1,8 +1,8 @@
 
 #include "Repositories/PersonRepository.h"
 
-#include "DataObjectBuilder.h"
 #include "Repositories/GraphQLConstants.h"
+#include "DataObjectBuilder.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
 
@@ -41,6 +41,39 @@ void UPersonRepository::Create(
 		Query,
 		Variables,
 		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPersonRepository::Find(
+	const FCMSPersonWhereUniqueInput& PersonWhere,
+	const TFunction<void(const FCMSPerson& Avatar)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("person");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    query Find ($where: PersonWhereUniqueInput!){
+      %s (where: $where) {
+		%s
+      }
+	}
+	)"),
+	*GQLSessionFragments,
+	*QueryName,
+	*GQLSession
+	);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(PersonWhere)}
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
 		OnSuccess,
 		OnFailure
 	);
