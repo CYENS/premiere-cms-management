@@ -5,6 +5,7 @@
 #include "PersonRepository.generated.h"
 
 struct FCMSPersonCreateInput;
+struct FCMSPersonWhereUniqueInput;
 struct FCMSUserWhereUniqueInput;
 struct FCMSPerson;
 
@@ -21,6 +22,19 @@ public:
 		const TFunction<void(const FCMSPerson& Avatar)>& OnSuccess,
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
+
+	void Find(
+		const FCMSPersonWhereUniqueInput& PersonWhere,
+		const TFunction<void(const FCMSPerson& Avatar)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
+	
+	void WhereFamilyNameAndGivenName(
+		const FString& FamilyName,
+		const FString& GivenName,
+		const TFunction<void(const TArray<FCMSPerson>& Avatar)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
 	
 	// void GetAll(
 	// 	const TFunction<void(const TArray<FCMSAvatar>& Avatars)>& OnSuccess,

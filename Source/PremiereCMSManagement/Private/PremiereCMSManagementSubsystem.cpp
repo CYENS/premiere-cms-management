@@ -801,3 +801,52 @@ void UPremiereCMSManagementSubsystem::CreatePerson(
 		}
 	);
 }
+
+void UPremiereCMSManagementSubsystem::FindPerson(
+	const FCMSPersonWhereUniqueInput& Where,
+	const FOnGetPerson& OnCreatePersonSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	PersonRepository->Find(
+		Where,
+		[OnCreatePersonSuccess](const FCMSPerson& Person)
+		{
+			OnCreatePersonSuccess.ExecuteIfBound(Person);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::FindPersonByGivenNameAndFamilyName(
+	const FString& GivenName,
+	const FString& FamilyName,
+	const FOnGetPerson& OnFindPersonSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	PersonRepository->WhereFamilyNameAndGivenName(
+		GivenName,
+		FamilyName,
+		[OnFindPersonSuccess](const TArray<FCMSPerson>& People)
+		{
+			if (!People.IsEmpty())
+			{
+				OnFindPersonSuccess.ExecuteIfBound(People[0]);
+			}
+			else
+			{
+				const FCMSPerson EmptyPerson {};
+				OnFindPersonSuccess.ExecuteIfBound(EmptyPerson);
+			}
+			
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}

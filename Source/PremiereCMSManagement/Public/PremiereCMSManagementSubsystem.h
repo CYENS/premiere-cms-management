@@ -310,4 +310,20 @@ public:
 		FOnGetPerson OnCreatePersonSuccess,
 		FOnFailureDelegate OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Person")
+	void FindPerson(
+		const FCMSPersonWhereUniqueInput& Where,
+		const FOnGetPerson& OnCreatePersonSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Person")
+	void FindPersonByGivenNameAndFamilyName(
+		const FString& GivenName,
+		const FString& FamilyName,
+		const FOnGetPerson& OnFindPersonSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
 };
