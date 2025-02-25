@@ -159,9 +159,18 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void AddUsdSceneToPerformance(
-		const FCMSUsdScenePerformanceWhereInput& Where,
-	    FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
-	    FOnFailureDelegate OnFailure
+		const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+		const FCMSUsdSceneWhereUniqueInput& UsdSceneWhere,
+		const FOnGetPerformanceSuccess& OnUsdSceneAddSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
+	void RemoveUsdSceneFromPerformance(
+		const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+		const FCMSUsdSceneWhereUniqueInput& UsdSceneWhere,
+		const FOnGetPerformanceSuccess& OnUsdSceneRemovedSuccess,
+		const FOnFailureDelegate& OnFailure
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
@@ -179,13 +188,6 @@ public:
 	    const FOnFailureDelegate& OnFailure
 	);
 
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
-	void RemoveUsdSceneFromPerformance(
-		const FCMSUsdScenePerformanceWhereInput& Where,
-	    FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
-	    FOnFailureDelegate OnFailure
-	);
-	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void AddUserToPerformance(
 		const FCMSPerformanceWhereUniqueInput& PerformanceWhere,

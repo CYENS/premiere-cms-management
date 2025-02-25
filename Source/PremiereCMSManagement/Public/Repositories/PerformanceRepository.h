@@ -5,6 +5,7 @@
 #include "Structs/CMSTypes.h"
 #include "PerformanceRepository.generated.h"
 
+struct FCMSUsdSceneWhereUniqueInput;
 struct FCMSUserWhereUniqueInput;
 struct FCMSIdInput;
 struct FCMSPerformanceUpdateInput;
@@ -72,8 +73,16 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
-    void RemoveUsdScene(
-        const FCMSUsdScenePerformanceWhereInput& Where,
+    void ConnectUsdScenes(
+        const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+        const TArray<FCMSUsdSceneWhereUniqueInput>& UsdScenesWhere,
+        const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    void DisconnectUsdScenes(
+        const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	    const TArray<FCMSUsdSceneWhereUniqueInput>& UsdScenesWhere,
         const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;

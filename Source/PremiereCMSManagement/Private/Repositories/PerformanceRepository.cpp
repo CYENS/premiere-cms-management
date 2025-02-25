@@ -290,17 +290,18 @@ void UPerformanceRepository::DisconnectSessions(const FCMSIdInput& PerformanceWh
 	);
 }
 
-void UPerformanceRepository::RemoveUsdScene(
-	const FCMSUsdScenePerformanceWhereInput& Where,
+void UPerformanceRepository::ConnectUsdScenes(
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const TArray<FCMSUsdSceneWhereUniqueInput>& UsdScenesWhere,
 	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
-	const FString QueryName = TEXT("removeUsdSceneFromPerformance");
+	const FString QueryName = TEXT("updatePerformance");
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
-	mutation RemoveUsdSceneFromPerformance ($where: UsdScenePerformanceWhereInput!) {
-	  %s (where: $where) {
+	mutation ConnectUsdScenesToPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
 		%s
 	  }
 	}
@@ -309,10 +310,53 @@ void UPerformanceRepository::RemoveUsdScene(
 	*QueryName,
 	*GQLPerformance
 	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddConnect("usdScenes", UsdScenesWhere);
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
+		{"where", MakeWhereValue(PerformanceWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
 	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UPerformanceRepository::DisconnectUsdScenes(
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const TArray<FCMSUsdSceneWhereUniqueInput>& UsdScenesWhere,
+	const TFunction<void(const FCMSPerformance& Performance)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("updatePerformance");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+	mutation DisconnectUsdScenesFromPerformance ($where: PerformanceWhereUniqueInput!, $data: PerformanceUpdateInput!) {
+	  %s (where: $where, data: $data) {
+		%s
+	  }
+	}
+	)"),
+	*GQLPerformanceFragments,
+	*QueryName,
+	*GQLPerformance
+	);
+
+	FDataObjectBuilder DataObjectBuilder;
+	DataObjectBuilder.AddDisconnect("usdScenes", UsdScenesWhere);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(PerformanceWhere)},
+		{"data", DataObjectBuilder.BuildAsJsonValue()},
+	};
+	
 	ExecuteGraphQLQuery(
 		Query,
 		Variables,

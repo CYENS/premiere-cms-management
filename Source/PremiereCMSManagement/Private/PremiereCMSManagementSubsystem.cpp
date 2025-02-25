@@ -356,14 +356,15 @@ void UPremiereCMSManagementSubsystem::FindPerformance(
 }
 
 void UPremiereCMSManagementSubsystem::AddUsdSceneToPerformance(
-	const FCMSUsdScenePerformanceWhereInput& Where,
-	FOnGetPerformanceSuccess OnUsdSceneAddSuccess,
-	FOnFailureDelegate OnFailure
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const FCMSUsdSceneWhereUniqueInput& UsdSceneWhere,
+	const FOnGetPerformanceSuccess& OnUsdSceneAddSuccess,
+	const FOnFailureDelegate& OnFailure
 )
 {
-	const TArray<FCMSIdInput> UsdScenesToConnect { { Where.UsdSceneId } };
+	const TArray UsdScenesToConnect { UsdSceneWhere };
 	PerformanceRepository->ConnectUsdScenes(
-		{ Where.PerformanceId },
+		PerformanceWhere,
 		UsdScenesToConnect,
 		[OnUsdSceneAddSuccess](const FCMSPerformance& Performance)
 		{
@@ -375,6 +376,29 @@ void UPremiereCMSManagementSubsystem::AddUsdSceneToPerformance(
 		}
 	);
 }
+
+void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
+	const FCMSPerformanceWhereUniqueInput& PerformanceWhere,
+	const FCMSUsdSceneWhereUniqueInput& UsdSceneWhere,
+	const FOnGetPerformanceSuccess& OnUsdSceneRemovedSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	const TArray UsdScenesToConnect { UsdSceneWhere };
+	PerformanceRepository->DisconnectUsdScenes(
+		PerformanceWhere,
+		UsdScenesToConnect,
+		[OnUsdSceneRemovedSuccess](const FCMSPerformance& Performance)
+		{
+			OnUsdSceneRemovedSuccess.ExecuteIfBound(Performance);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 
 void UPremiereCMSManagementSubsystem::AddSessionToPerformance(
 	const FCMSIdInput& PerformanceWhere,
@@ -409,25 +433,6 @@ void UPremiereCMSManagementSubsystem::RemoveSessionFromPerformance(
 	PerformanceRepository->DisconnectSessions(
 		{ PerformanceWhere.Id },
 		SessionsToConnect,
-		[OnUsdSceneRemoveSuccess](const FCMSPerformance& Performance)
-		{
-			OnUsdSceneRemoveSuccess.ExecuteIfBound(Performance);
-		},
-		[OnFailure](const FString& ErrorReason)
-		{
-			OnFailure.ExecuteIfBound(ErrorReason);
-		}
-	);
-}
-
-void UPremiereCMSManagementSubsystem::RemoveUsdSceneFromPerformance(
-	const FCMSUsdScenePerformanceWhereInput& Where,
-	FOnGetPerformanceSuccess OnUsdSceneRemoveSuccess,
-	FOnFailureDelegate OnFailure
-)
-{
-	PerformanceRepository->RemoveUsdScene(
-		Where,
 		[OnUsdSceneRemoveSuccess](const FCMSPerformance& Performance)
 		{
 			OnUsdSceneRemoveSuccess.ExecuteIfBound(Performance);
