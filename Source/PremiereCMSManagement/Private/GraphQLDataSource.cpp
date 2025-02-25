@@ -140,6 +140,10 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     HttpRequest->SetURL(Endpoint);
     HttpRequest->SetVerb(TEXT("POST"));
     HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+    if (!AuthenicationCookie.IsEmpty())
+    {
+        HttpRequest->SetHeader(TEXT("Cookie"), AuthenicationCookie);
+    }
 
     const TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
     BodyObject->SetStringField(TEXT("query"), Query);
@@ -174,6 +178,48 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     HttpRequest->ProcessRequest();
 }
 
+void UGraphQLDataSource::Login()
+{
+	const FString AuthenticationQuery = TEXT(R"(
+	mutation ($identity: String!, $secret: String!) {
+	  authenticate: authenticateUserWithPassword(email: $identity, password: $secret) {
+		... on UserAuthenticationWithPasswordSuccess {
+		  item {
+			id
+			__typename
+		  }
+		  __typename
+		}
+		... on UserAuthenticationWithPasswordFailure {
+		  message
+		  __typename
+		}
+	 
+		__typename
+	  }
+	}
+	)");
+
+	const FString AuthenticationVariables = FString::Printf(TEXT(R"(
+	{
+	  "identity": "%s",
+	  "secret": "%s"
+	}
+	)"),
+	*DeveloperSettings->AuthenticationIdentity,
+	*DeveloperSettings->AuthenticationSecret
+	);
+	
+	ExecuteGraphQLQuery(
+		AuthenticationQuery,
+		AuthenticationVariables,
+		FOnGraphQLResponse::CreateLambda([](FGraphQLResult Result)
+		{
+			UE_LOG(LogPremiereCMSManagement, Warning, TEXT("Login Response:\n%s"), *Result.RawResponse);
+		})
+	);
+}
+
 void UGraphQLDataSource::OnRequestComplete(
     FHttpRequestPtr Request,
     FHttpResponsePtr Response,
@@ -182,6 +228,12 @@ void UGraphQLDataSource::OnRequestComplete(
 )
 {
     FGraphQLResult GraphQlResult;
+
+    const FString SetCookieHeader = Response->GetHeader(TEXT("Set-Cookie"));
+    if (!SetCookieHeader.IsEmpty())
+    {
+        AuthenicationCookie = SetCookieHeader;
+    }
     
     GraphQlResult.RawResponse = Response->GetContentAsString();
     if (DeveloperSettings->ShouldLogRawResponse)

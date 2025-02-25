@@ -21,6 +21,7 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
 	GraphQlDataSource->Initialize(GraphQLUrl, DeveloperSettings);
+	GraphQlDataSource->Login();
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);

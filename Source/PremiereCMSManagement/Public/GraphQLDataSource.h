@@ -96,6 +96,8 @@ public:
 		const TSharedPtr<FJsonObject> Variables,
 		const FOnGraphQLResponse OnComplete
 	);
+
+	void Login();
 	
 	static bool GetDataObjectFromResponse(
 		const FString& JsonResponse,
@@ -137,6 +139,8 @@ private:
 		const FString& ResponseString,
 		FGraphQLResult& GraphQLResult
 	);
+	
+	FString AuthenicationCookie;
 };
 
 /**

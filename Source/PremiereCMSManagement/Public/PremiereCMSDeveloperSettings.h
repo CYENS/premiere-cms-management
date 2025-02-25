@@ -29,4 +29,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Config, Category = "Debug")
 	bool ShouldLogToEditor;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Authentication")
+	FString AuthenticationIdentity;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Authentication")
+	FString AuthenticationSecret;
 };
