@@ -169,3 +169,16 @@ bool ParseSingleItemFromResponse(
 	TFunctionRef<bool(const TSharedPtr<FJsonObject>&, T&, FString&)> ParseSingleItem,
 	FString& OutErrorReason
 );
+
+UENUM(BlueprintType)
+enum class EGraphQLOperationType: uint8 {
+	UpdateAudioData,
+	UpdateUsdScene
+};
+
+struct FGraphQLOperationNames {
+	FString WhereUniqueInputName;
+	FString QueryName;
+};
+
+FGraphQLOperationNames GetGraphQLOperationNames(EGraphQLOperationType OperationType);

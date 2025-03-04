@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Repositories/AvatarRepository.h"
+#include "Repositories/FileRepository.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
@@ -36,6 +37,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessa
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatar, const FCMSAvatar&, Avatar);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatars, const TArray<FCMSAvatar>&, Avatars);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerson, const FCMSPerson&, Person);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetFile, const FCMSFile&, File);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetObjectWithFile, const FCMSObjectWithFile&, ObjectWithFile);
 
 UCLASS(BlueprintType, Config=Engine)
 class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameInstanceSubsystem
@@ -67,6 +70,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UAvatarRepository* AvatarRepository;
+	
+	UPROPERTY()
+	UFileRepository* FileRepository;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
@@ -327,5 +333,14 @@ public:
 		const FOnGetPerson& OnFindPersonSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
-	
+
+	/* File */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | File")
+	void UploadFileToObject(
+		const EGraphQLOperationType Operation,
+		const FCMSIdInput& WhereId,
+		const FString& FilePath,
+		const FOnGetObjectWithFile& OnUploadSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
 };

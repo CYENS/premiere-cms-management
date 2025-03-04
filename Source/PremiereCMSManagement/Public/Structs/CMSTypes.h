@@ -406,3 +406,31 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSAvatar> Avatars;
 };
+
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSFile
+{
+	GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Filename;
+
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Filesize;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSObjectWithFile
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString FileUrl;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSFile File;
+};

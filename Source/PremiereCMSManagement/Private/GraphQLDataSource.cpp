@@ -349,6 +349,22 @@ bool UGraphQLDataSource::ParseGraphQLResponse(
     return false;
 }
 
+FGraphQLOperationNames GetGraphQLOperationNames(EGraphQLOperationType OperationType)
+{
+    // Static mapping from enum values to operation names.
+    static const TMap<EGraphQLOperationType, FGraphQLOperationNames> OperationMap = {
+        { EGraphQLOperationType::UpdateAudioData, { TEXT("AudioDataWhereUniqueInput"), TEXT("updateAudioData") } },
+        { EGraphQLOperationType::UpdateUsdScene, { TEXT("UsdSceneWhereUniqueInput"), TEXT("updateUsdScene") } }
+    };
+
+    if (const FGraphQLOperationNames* Found = OperationMap.Find(OperationType)) {
+        return *Found;
+    } else {
+        UE_LOG(LogTemp, Error, TEXT("Invalid GraphQL operation type"));
+        return { TEXT(""), TEXT("") };
+    } 
+}
+
 bool UGraphQLDataSource::GetDataArrayFromResponse(
     const FString& JsonResponse,
     const FString& QueryName,

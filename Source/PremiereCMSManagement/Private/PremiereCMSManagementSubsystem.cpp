@@ -5,6 +5,7 @@
 #include "LogPremiereCMSManagement.h"
 #include "PremiereCMSDeveloperSettings.h"
 #include "Repositories/AvatarRepository.h"
+#include "Repositories/FileRepository.h"
 #include "Repositories/GraphQLConstants.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/PersonRepository.h"
@@ -18,6 +19,7 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	DeveloperSettings = GetMutableDefault<UPremiereCMSDeveloperSettings>();
 	
 	GraphQLUrl = DeveloperSettings->GraphQLUrl;
+	const FString ApiUrl = DeveloperSettings->GraphQLUrl;
 	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
 	GraphQlDataSource->Initialize(GraphQLUrl, DeveloperSettings);
@@ -40,6 +42,9 @@ UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
 	
 	PersonRepository = NewObject<UPersonRepository>();
 	PersonRepository->Initialize(GraphQlDataSource);
+	
+	FileRepository = NewObject<UFileRepository>();
+	FileRepository->Initialize(GraphQlDataSource, ApiUrl);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -849,6 +854,29 @@ void UPremiereCMSManagementSubsystem::FindPersonByGivenNameAndFamilyName(
 				OnFindPersonSuccess.ExecuteIfBound(EmptyPerson);
 			}
 			
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::UploadFileToObject(
+	const EGraphQLOperationType Operation,
+	const FCMSIdInput& WhereId,
+	const FString& FilePath,
+	const FOnGetObjectWithFile& OnUploadSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	FileRepository->UploadToObject(
+		Operation,
+		WhereId,
+		FilePath,
+		[OnUploadSuccess](const FCMSObjectWithFile& ObjectWithFile)
+		{
+			OnUploadSuccess.ExecuteIfBound(ObjectWithFile);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{
