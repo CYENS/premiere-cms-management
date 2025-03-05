@@ -140,10 +140,7 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     HttpRequest->SetURL(Endpoint);
     HttpRequest->SetVerb(TEXT("POST"));
     HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-    if (!AuthenicationCookie.IsEmpty())
-    {
-        HttpRequest->SetHeader(TEXT("Cookie"), AuthenicationCookie);
-    }
+    TryAddAuthenticationCookie(HttpRequest);
 
     const TSharedPtr<FJsonObject> BodyObject = MakeShareable(new FJsonObject());
     BodyObject->SetStringField(TEXT("query"), Query);
@@ -397,6 +394,16 @@ bool UGraphQLDataSource::GetDataArrayFromResponse(
     }
 
     return true;
+}
+
+bool UGraphQLDataSource::TryAddAuthenticationCookie(const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest)
+{
+    if (!AuthenicationCookie.IsEmpty())
+    {
+        HttpRequest->SetHeader(TEXT("Cookie"), AuthenicationCookie);
+        return true;
+    }
+    return false;
 }
 
 

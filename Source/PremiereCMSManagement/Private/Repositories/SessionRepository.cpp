@@ -106,6 +106,55 @@ void USessionRepository::GetActiveSessions(
 	);
 }
 
+void USessionRepository::UpdateSession(
+	const FCMSSessionWhereUniqueInput& SessionWhere,
+	const FCMSSessionUpdateInput& Data,
+	const FCMSIdInput& SessionStateWhereId,
+	const TOptional<FCMSUserWhereUniqueInput>& OwnerWhere,
+	const TOptional<FCMSUsdSceneWhereUniqueInput>& UsdSceneWhere,
+	const TArray<FCMSIdInput>& AudioDataWhereIds,
+	const TArray<FCMSIdInput>& FaceDataWhereIds,
+	const TFunction<void(const FCMSSession& Session)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure) const
+{
+	const FString QueryName = TEXT("updateSession");
+
+	const FString Query = FString::Printf(
+		TEXT(R"(
+		%s
+		mutation Update ($where: SessionWhereUniqueInput!, $data: SessionUpdateInput!) {
+			%s (where: $where, data: $data) {
+				%s
+			}
+		}
+		)"),
+		*GQLSessionFragments,
+		*QueryName,
+		*GQLSession
+	);
+
+	FDataObjectBuilder ObjectBuilder;
+	ObjectBuilder.AddConnect("state", SessionStateWhereId);
+	ObjectBuilder.AddConnect("scene", UsdSceneWhere);
+	ObjectBuilder.AddConnect("owner", OwnerWhere);
+	ObjectBuilder.AddConnect("audioData", AudioDataWhereIds);
+	ObjectBuilder.AddConnect("faceData", FaceDataWhereIds);
+	ObjectBuilder.AddUStruct(Data);
+
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables{
+	{"where", MakeWhereValue(SessionWhere)},
+	{"data", ObjectBuilder.BuildAsJsonValue()}
+	};
+
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
 void USessionRepository::CreateSession(
 	const FCMSSessionCreateInput& Data,
 	const FCMSIdInput& SessionStateWhereId,

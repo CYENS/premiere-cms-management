@@ -259,6 +259,19 @@ public:
 		const FOnFailureDelegate& OnFailure
 	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session", meta=(AutoCreateRefTerm="Data,FaceDataWhereIds,AudioDataWhereIds"))
+	void UpdateSession(
+		const FCMSSessionWhereUniqueInput& Where,
+		const FCMSSessionUpdateInput& Data,
+		const FString& OwnerWhereId,
+		const FString& UsdSceneWhereId,
+		const EGQLSessionState SessionState,
+		const TArray<FString>& AudioDataWhereIds,
+		const TArray<FString>& FaceDataWhereIds,
+		const FOnGetSession& OnCreateSessionSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
 	void GetAllSessions(
 		const FOnGetSessions& OnGetAllPerformancesSuccess,
 		const FOnFailureDelegate& OnFailure
@@ -338,7 +351,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | File")
 	void UploadFileToObject(
 		const EGraphQLOperationType Operation,
-		const FCMSIdInput& WhereId,
+		const FCMSIdInput& Where,
 		const FString& FilePath,
 		const FOnGetObjectWithFile& OnUploadSuccess,
 		const FOnFailureDelegate& OnFailure

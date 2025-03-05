@@ -213,6 +213,63 @@ void UPremiereCMSManagementSubsystem::CreateSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateSession(
+	const FCMSSessionWhereUniqueInput& Where,
+	const FCMSSessionUpdateInput& Data,
+	const FString& OwnerWhereId,
+	const FString& UsdSceneWhereId,
+	const EGQLSessionState SessionState,
+	const TArray<FString>& AudioDataWhereIds,
+	const TArray<FString>& FaceDataWhereIds,
+	const FOnGetSession& OnCreateSessionSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	TArray<FCMSIdInput> FaceDataWhereIdStructs;
+	for (const auto& Id : FaceDataWhereIds)
+	{
+		FaceDataWhereIdStructs.Add({Id});
+	}
+	
+	TArray<FCMSIdInput> AudioDataWhereIdStructs;
+	for (const auto& Id : AudioDataWhereIds)
+	{
+		AudioDataWhereIdStructs.Add({Id});
+	}
+
+	const FString SessionStateId = GetSessionStateId(SessionState);
+	
+	TOptional<FCMSUserWhereUniqueInput> OwnerWhere;
+	if (!OwnerWhereId.TrimStartAndEnd().IsEmpty())
+	{
+		OwnerWhere =  {OwnerWhereId.TrimStartAndEnd()} ;
+	}
+	
+	TOptional<FCMSUsdSceneWhereUniqueInput> UsdSceneWhere;
+	if (!UsdSceneWhereId.TrimStartAndEnd().IsEmpty())
+	{
+		UsdSceneWhere =  {UsdSceneWhereId.TrimStartAndEnd()} ;
+	}
+	
+	SessionRepository->UpdateSession(
+		Where,
+		Data,
+		{ SessionStateId  },
+	    OwnerWhere,
+	    UsdSceneWhere,
+		AudioDataWhereIdStructs,
+		FaceDataWhereIdStructs,
+		[OnCreateSessionSuccess](const FCMSSession& Session)
+		{
+			OnCreateSessionSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::GetAllSessions(
 	const FOnGetSessions& OnGetAllSessionsSuccess,
 	const FOnFailureDelegate& OnFailure
@@ -864,7 +921,7 @@ void UPremiereCMSManagementSubsystem::FindPersonByGivenNameAndFamilyName(
 
 void UPremiereCMSManagementSubsystem::UploadFileToObject(
 	const EGraphQLOperationType Operation,
-	const FCMSIdInput& WhereId,
+	const FCMSIdInput& Where,
 	const FString& FilePath,
 	const FOnGetObjectWithFile& OnUploadSuccess,
 	const FOnFailureDelegate& OnFailure
@@ -872,7 +929,7 @@ void UPremiereCMSManagementSubsystem::UploadFileToObject(
 {
 	FileRepository->UploadToObject(
 		Operation,
-		WhereId,
+		Where,
 		FilePath,
 		[OnUploadSuccess](const FCMSObjectWithFile& ObjectWithFile)
 		{

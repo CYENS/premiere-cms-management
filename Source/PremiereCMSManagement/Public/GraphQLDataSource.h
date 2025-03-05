@@ -112,6 +112,8 @@ public:
 		const TArray<TSharedPtr<FJsonValue>>*& OutArray,
 		FString& OutErrorReason
 	);
+
+	bool TryAddAuthenticationCookie(const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest);
 	
 private:
 	/**
