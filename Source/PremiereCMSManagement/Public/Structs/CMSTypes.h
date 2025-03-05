@@ -432,5 +432,11 @@ struct PREMIERECMSMANAGEMENT_API FCMSObjectWithFile
 	FString FileUrl;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString PCloudFileId;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString UploadAt;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSFile File;
 };

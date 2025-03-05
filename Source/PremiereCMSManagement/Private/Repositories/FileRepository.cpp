@@ -140,6 +140,8 @@ FString UFileRepository::BuildOperationsString(
 				%s (where: $where, data: { file: { upload: $file } }) {
 					id
 					fileUrl
+					pCloudFileId
+					uploadAt
 					file { filename filesize }
 				}
 			}
