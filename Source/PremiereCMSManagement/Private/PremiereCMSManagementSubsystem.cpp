@@ -306,6 +306,54 @@ void UPremiereCMSManagementSubsystem::FindSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateSessionStateByEosSessionId(
+	const FString& WhereEosSessionId,
+	const EGQLSessionState SessionState,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->UpdateSessionStateByEosSessionId(
+		WhereEosSessionId,
+		SessionState,
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::FindSessionByEosSessionId(
+	const FString& WhereEosSessionId,
+	const FOnGetSession& OnFindSessionSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->FindByEosSessionId(
+		WhereEosSessionId,
+		[OnFindSessionSuccess] (const TArray<FCMSSession>& Sessions)
+		{
+			if (Sessions.Num() > 0)
+			{
+				OnFindSessionSuccess.ExecuteIfBound(Sessions[0]);
+			}
+			else
+			{
+				const FCMSSession EmptyCMSSession {}; 
+				OnFindSessionSuccess.ExecuteIfBound(EmptyCMSSession);
+			}
+		},
+		[OnFailure] (const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::CreateUser(
 	const FCMSUserCreateInput& Data,
 	const FString& PersonId,

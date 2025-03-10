@@ -242,6 +242,13 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+    void FindSessionByEosSessionId(
+        const FString& WhereEosSessionId,
+		const FOnGetSession& OnFindSessionSuccess,
+		const FOnFailureDelegate& OnFailure
+    );
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void GetActiveSessions(
 		const FOnGetSessions& OnGetActiveSessions,
 		const FOnFailureDelegate& OnFailure
@@ -272,6 +279,14 @@ public:
 		const FOnFailureDelegate& OnFailure
 	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void UpdateSessionStateByEosSessionId(
+		const FString& WhereEosSessionId,
+		EGQLSessionState SessionState,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
 	void GetAllSessions(
 		const FOnGetSessions& OnGetAllPerformancesSuccess,
 		const FOnFailureDelegate& OnFailure

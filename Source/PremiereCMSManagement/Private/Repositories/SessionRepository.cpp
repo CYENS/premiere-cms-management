@@ -65,6 +65,47 @@ void USessionRepository::FindSession(
 	);
 }
 
+void USessionRepository::FindByEosSessionId(
+	const FString& WhereEosSessionId,
+	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = TEXT("sessions");
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    query FindSessionByEosSessionId ($where: SessionWhereInput!) {
+      %s (where: $where) {
+		%s
+      }
+	}
+	)"),
+	*GQLSessionFragments,
+	*QueryName,
+	*GQLSession
+	);
+	
+	const FString Variables = FString::Printf(TEXT(R"(
+	{
+	  "where": {
+		"eosSessionId": {
+		  "equals": "%s"
+		}
+	  }
+	}
+	)"),
+	*WhereEosSessionId
+	);
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
 void USessionRepository::GetActiveSessions(
 	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -152,6 +193,45 @@ void USessionRepository::UpdateSession(
 		QueryName,
 		OnSuccess,
 		OnFailure
+	);
+}
+
+void USessionRepository::UpdateSessionStateByEosSessionId(
+	const FString& WhereEosSessionId,
+	const EGQLSessionState& SessionState,
+	const TFunction<void(const FCMSSession& Session)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	FindByEosSessionId(
+		WhereEosSessionId,
+		[&, OnSuccess, OnFailure, WhereEosSessionId, SessionState](const TArray<FCMSSession>& Sessions)
+		{
+			if (Sessions.IsEmpty())
+			{
+				const FString ErrorReason = FString::Printf(TEXT("Session with EosSessionId \"%s\" not found"), *WhereEosSessionId);
+				OnFailure(ErrorReason);
+				return;
+			}
+
+			const FCMSSession FirstSession = Sessions[0];
+			const FString SessionStateId = GetSessionStateId(SessionState);
+			UpdateSession(
+				{ FirstSession.Id },
+				{},
+				{ SessionStateId },
+				{},
+				{},
+				{},
+				{},
+				OnSuccess,
+				OnFailure
+			);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure(ErrorReason);
+		}
 	);
 }
 

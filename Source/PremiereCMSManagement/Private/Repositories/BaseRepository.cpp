@@ -130,8 +130,8 @@ void UBaseRepository::ExecuteGraphQLQuery(
         QueryName,
         [](const FGraphQLResult& Result, const FString& QueryName, TArray<T>& OutStructs , FString& OutError)
         {
+            const auto JsonArray = Result.ResponseObject->GetObjectField(TEXT("data"))->GetArrayField(QueryName);
             for (
-                const auto JsonArray = Result.ResponseObject->GetObjectField(TEXT("data"))->GetArrayField(QueryName);
                 const TSharedPtr<FJsonValue>& JsonValue : JsonArray
             )
             {
@@ -207,8 +207,8 @@ void UBaseRepository::ExecuteGraphQLQuery(
         QueryName,
         [](const FGraphQLResult& Result, const FString& QueryName, TArray<T>& OutStructs , FString& OutError)
         {
+            const auto JsonArray = Result.ResponseObject->GetObjectField(TEXT("data"))->GetArrayField(QueryName);
             for (
-                const auto JsonArray = Result.ResponseObject->GetObjectField(TEXT("data"))->GetArrayField(QueryName);
                 const TSharedPtr<FJsonValue>& JsonValue : JsonArray
             )
             {

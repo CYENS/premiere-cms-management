@@ -6,6 +6,7 @@
 
 #include "SessionRepository.generated.h"
 
+enum class EGQLSessionState: uint8;
 struct FCMSSession;
 struct FCMSSessionCreateInput;
 struct FCMSSessionUpdateInput;
@@ -31,6 +32,12 @@ public:
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
+	void FindByEosSessionId(
+		const FString& WhereEosSessionId,
+		const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
+    
     void GetActiveSessions(
         const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -55,6 +62,13 @@ public:
 		const TOptional<FCMSUsdSceneWhereUniqueInput>& UsdSceneWhere,
 		const TArray<FCMSIdInput>& AudioDataWhereIds,
 		const TArray<FCMSIdInput>& FaceDataWhereIds,
+	    const TFunction<void(const FCMSSession& Session)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+	
+    void UpdateSessionStateByEosSessionId(
+		const FString& WhereEosSessionId,
+		const EGQLSessionState& SessionState,
 	    const TFunction<void(const FCMSSession& Session)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
