@@ -287,11 +287,6 @@ public:
 		const FOnFailureDelegate& OnFailure
 	);
 
-	void GetAllSessions(
-		const FOnGetSessions& OnGetAllPerformancesSuccess,
-		const FOnFailureDelegate& OnFailure
-	) const;
-
 	/* UsdScenes */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
 	void GetAllUsdScenes(
