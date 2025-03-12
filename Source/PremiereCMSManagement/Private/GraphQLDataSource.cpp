@@ -156,8 +156,8 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
         TSharedRef<TJsonWriter<>> VariablesWriter = TJsonWriterFactory<>::Create(&VariablesString);
         FJsonSerializer::Serialize(Variables.ToSharedRef(), VariablesWriter);
         
-        UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Query: \n%s"), *Query);
-        UE_LOG(LogPremiereCMSManagementTest, Warning, TEXT("Variables: \n%s"), *VariablesString);
+        UE_LOG(LogPremiereCMSManagementTest, Display, TEXT("Query: \n%s"), *Query);
+        UE_LOG(LogPremiereCMSManagementTest, Display, TEXT("Variables: \n%s"), *VariablesString);
         if (DeveloperSettings->ShouldLogToEditor)
         {
             GEngine->AddOnScreenDebugMessage(-1, 7.5f, FColor::Cyan, FString::Printf(TEXT("Query:\n%s"), *Query));
@@ -166,6 +166,11 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     }
 
     HttpRequest->SetContentAsString(BodyString);
+    if (DeveloperSettings->ShouldLogHttpRequestHeaders) {
+        const TArray<FString> AllHeaders = HttpRequest->GetAllHeaders();
+        const FString HeaderString = FString::Join(AllHeaders, TEXT("\n"));
+        UE_LOG(LogPremiereCMSManagement, Display, TEXT("HttpRequest Headers:\n%s"), *HeaderString);
+    }
 
     HttpRequest->OnProcessRequestComplete().BindUObject(
         this,
@@ -212,7 +217,7 @@ void UGraphQLDataSource::Login()
 		AuthenticationVariables,
 		FOnGraphQLResponse::CreateLambda([](FGraphQLResult Result)
 		{
-			UE_LOG(LogPremiereCMSManagement, Warning, TEXT("Login Response:\n%s"), *Result.RawResponse);
+			UE_LOG(LogPremiereCMSManagement, Display, TEXT("Login Response:\n%s"), *Result.RawResponse);
 		})
 	);
 }
@@ -230,12 +235,14 @@ void UGraphQLDataSource::OnRequestComplete(
     if (!SetCookieHeader.IsEmpty())
     {
         AuthenicationCookie = SetCookieHeader;
+        UE_LOG(LogPremiereCMSManagement, Display, TEXT("Authentication Cookie: \n%s"), *AuthenicationCookie);
     }
     
     GraphQlResult.RawResponse = Response->GetContentAsString();
     if (DeveloperSettings->ShouldLogRawResponse)
     {
-        UE_LOG(LogPremiereCMSManagement, Error, TEXT("Raw Response:\n%s"), *GraphQlResult.ErrorMessage);
+        UE_LOG(LogPremiereCMSManagement, Display, TEXT("Authentication Cookie: \n%s"), *AuthenicationCookie);
+        UE_LOG(LogPremiereCMSManagement, Display, TEXT("Raw Response:\n%s"), *GraphQlResult.RawResponse);
         if (DeveloperSettings->ShouldLogToEditor)
         {
             GEngine->AddOnScreenDebugMessage(-1, 7.5f, FColor::Cyan, FString::Printf(TEXT("Raw Response:\n%s"), *GraphQlResult.RawResponse));

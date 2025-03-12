@@ -25,6 +25,9 @@ public:
 	bool ShouldLogRawResponse;
 	
 	UPROPERTY(EditAnywhere, Config, Category = "Debug")
+	bool ShouldLogHttpRequestHeaders;
+	
+	UPROPERTY(EditAnywhere, Config, Category = "Debug")
 	bool ShouldLogErrors;
 
 	UPROPERTY(EditAnywhere, Config, Category = "Debug")
