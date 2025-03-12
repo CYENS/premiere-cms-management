@@ -271,6 +271,78 @@ void UPremiereCMSManagementSubsystem::UpdateSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateSessionVisibilityByEosSessionId(
+	const FString& WhereEosSessionId,
+	const ESessionVisibility NewSessionVisibility,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->FindByEosSessionId(
+		WhereEosSessionId,
+		[&, WhereEosSessionId, NewSessionVisibility, OnSuccess, OnFailure](TArray<FCMSSession> Sessions)
+	{
+			if (Sessions.IsEmpty())
+			{
+				const FString ErrorReason = FString::Printf(TEXT("No session found with EosSessionId \"%s\""), *WhereEosSessionId);
+				OnFailure.ExecuteIfBound(ErrorReason);
+				return;
+			}
+
+			const FCMSSession FirstSession = Sessions[0];
+			const EGQLSessionState CurrentSessionState = GetSessionStateFromSessionStateId(FirstSession.State.Id);
+			EGQLSessionState NewSessionState;
+			
+			const bool IsSessionPublic = CurrentSessionState == EGQLSessionState::PublicInactive || CurrentSessionState == EGQLSessionState::PublicActive;
+			const bool IsPreviousVisibilitySameAsNewVisibility = (IsSessionPublic && NewSessionVisibility == Public) || (!IsSessionPublic && NewSessionVisibility == Private);
+			if (IsPreviousVisibilitySameAsNewVisibility)
+			{
+				// do nothing, just return the retrieved session
+				OnSuccess.ExecuteIfBound(FirstSession);
+				return;
+			}
+
+			switch (CurrentSessionState)
+			{
+				case EGQLSessionState::PublicInactive:
+					NewSessionState = EGQLSessionState::PrivateInactive;
+					break;
+				case EGQLSessionState::PublicActive:
+					NewSessionState = EGQLSessionState::PrivateActive;
+					break;
+				case EGQLSessionState::PrivateInactive:
+					NewSessionState = EGQLSessionState::PublicInactive;
+					break;
+				case EGQLSessionState::PrivateActive:
+					NewSessionState = EGQLSessionState::PublicActive;
+					break;
+			}
+
+			FString NewSessionStateId = GetSessionStateId(NewSessionState);
+
+			SessionRepository->UpdateSession(
+				{FirstSession.Id },
+				{},
+				{ NewSessionStateId },
+				{},
+				{},
+				{},
+				{},
+				[OnSuccess](const FCMSSession& Session)
+				{
+					OnSuccess.ExecuteIfBound(Session);
+				},
+				[OnFailure](const FString& ErrorReason)
+				{
+					OnFailure.ExecuteIfBound(ErrorReason);
+				}
+			);
+	}, [OnFailure](const FString& ErrorReason)
+	{
+		OnFailure.ExecuteIfBound(ErrorReason);
+	});
+}
+
 void UPremiereCMSManagementSubsystem::GetAllSessions(
 	const FOnGetSessions& OnGetAllSessionsSuccess,
 	const FOnFailureDelegate& OnFailure

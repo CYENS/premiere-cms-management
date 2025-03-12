@@ -40,6 +40,13 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerson, const FCMSPerson&, Person);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetFile, const FCMSFile&, File);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetObjectWithFile, const FCMSObjectWithFile&, ObjectWithFile);
 
+UENUM(BlueprintType)
+enum ESessionVisibility : uint8
+{
+	Private,
+	Public,
+};
+
 UCLASS(BlueprintType, Config=Engine)
 class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameInstanceSubsystem
 {
@@ -286,6 +293,14 @@ public:
 		const FOnGetSession& OnSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+    void UpdateSessionVisibilityByEosSessionId(
+        const FString& WhereEosSessionId,
+        const ESessionVisibility NewSessionVisibility,
+        const FOnGetSession& OnSuccess,
+        const FOnFailureDelegate& OnFailure
+    );
 
 	/* UsdScenes */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
