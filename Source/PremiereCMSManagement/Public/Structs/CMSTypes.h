@@ -344,6 +344,22 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCast
 	FCMSUser Session;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForSession
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString About;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+};
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSSession
@@ -366,7 +382,37 @@ struct PREMIERECMSMANAGEMENT_API FCMSSession
 	TArray<FString> AudioDataIds;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString PerformanceId;
+	FCMSPerformanceForSession Performance;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSSessionState State;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FCMSSessionCastForSession> CastAvatars;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionForPerformance
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString EosSessionId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString Title;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString StreamingUrl;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FString> AudioDataIds;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FCMSUser Owner;
@@ -401,7 +447,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformance
     TArray<FCMSUsdScene> UsdScenes;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FCMSSession> Sessions;
+    TArray<FCMSSessionForPerformance> Sessions;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     TArray<FCMSAvatar> Avatars;
