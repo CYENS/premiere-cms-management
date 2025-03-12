@@ -14,8 +14,9 @@
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSInputs.h"
 
-UPremiereCMSManagementSubsystem::UPremiereCMSManagementSubsystem()
+void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
+	Super::Initialize(Collection);
 	DeveloperSettings = GetMutableDefault<UPremiereCMSDeveloperSettings>();
 	
 	GraphQLUrl = DeveloperSettings->GraphQLUrl;

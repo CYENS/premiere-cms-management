@@ -45,7 +45,7 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 {
 	GENERATED_BODY()
 
-	UPremiereCMSManagementSubsystem();
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UPROPERTY()
 	UGraphQLDataSource* GraphQlDataSource;
