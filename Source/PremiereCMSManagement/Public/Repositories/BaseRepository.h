@@ -20,6 +20,7 @@ public:
     
     static void RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject);
 
+    static void FixId(TSharedPtr<FJsonObject>& JsonObject);
 protected:
     UPROPERTY()
     UGraphQLDataSource* DataSource;

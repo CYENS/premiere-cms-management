@@ -21,6 +21,7 @@ FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const TAr
         {
             TSharedPtr<FJsonObject> StructObj = MakeShareable(new FJsonObject());
             FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &Item, StructObj.ToSharedRef(), 0, 0);
+            UBaseRepository::FixId(StructObj);
             ConnectArray.Add(MakeShareable(new FJsonValueObject(StructObj)));
         }
         ConnectObject->SetArrayField(TEXT("connect"), ConnectArray);
@@ -47,6 +48,7 @@ FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const 
         {
             TSharedPtr<FJsonObject> StructObj = MakeShareable(new FJsonObject());
             FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &Item, StructObj.ToSharedRef(), 0, 0);
+            UBaseRepository::FixId(StructObj);
             ConnectArray.Add(MakeShareable(new FJsonValueObject(StructObj)));
         }
         ConnectObject->SetArrayField(TEXT("disconnect"), ConnectArray);
@@ -60,8 +62,9 @@ template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& SingleItem)
 {
     // Convert single item
-    const TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
+    TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
     FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &SingleItem, SingleObj.ToSharedRef(), 0, 0);
+    UBaseRepository::FixId(SingleObj);
 
     const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
     ConnectObject->SetObjectField(TEXT("connect"), SingleObj);
@@ -73,8 +76,9 @@ FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& 
 template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const T& SingleItem)
 {
-    const TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
+    TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
     FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &SingleItem, SingleObj.ToSharedRef(), 0, 0);
+    UBaseRepository::FixId(SingleObj);
 
     const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
     ConnectObject->SetObjectField(TEXT("disconnect"), SingleObj);
@@ -120,6 +124,7 @@ FDataObjectBuilder& FDataObjectBuilder::AddCreate(const FString& Key, const TArr
         {
             TSharedPtr<FJsonObject> StructObj = MakeShareable(new FJsonObject());
             FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &Item, StructObj.ToSharedRef(), 0, 0);
+            UBaseRepository::FixId(StructObj);
             ConnectArray.Add(MakeShareable(new FJsonValueObject(StructObj)));
         }
         ConnectObject->SetArrayField(TEXT("create"), ConnectArray);
@@ -133,8 +138,9 @@ template <typename T>
 FDataObjectBuilder& FDataObjectBuilder::AddCreate(const FString& Key, const T& SingleItem)
 {
     // Convert single item
-    const TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
+    TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
     FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &SingleItem, SingleObj.ToSharedRef(), 0, 0);
+    UBaseRepository::FixId(SingleObj);
 
     const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
     ConnectObject->SetObjectField(TEXT("connect"), SingleObj);
@@ -151,6 +157,7 @@ FDataObjectBuilder& FDataObjectBuilder::AddUStruct(const T& StructValue, const b
     // Convert T to a temporary JSON object
     TSharedPtr<FJsonObject> TempObj = MakeShareable(new FJsonObject());
     FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &StructValue, TempObj.ToSharedRef(), 0, 0);
+    UBaseRepository::FixId(TempObj);
     
     if (OmitEmptyFields)
     {

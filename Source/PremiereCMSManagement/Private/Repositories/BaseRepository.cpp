@@ -280,6 +280,36 @@ TSharedPtr<FJsonValueObject> UBaseRepository::MakeDataValue(const T& WhereStruct
     return MakeJsonValueObjectFromUStruct(WhereStruct);
 }
 
+static TSharedPtr<FJsonValue> CustomExportCallbackForId(FProperty* Property, const void* Value)
+{
+    // We only override for our "Id" property 
+    // (or if you want to do it for multiple properties, check for them here).
+    if (Property && Property->GetName() == TEXT("Id"))
+    {
+        if (FStrProperty* StrProp = CastField<FStrProperty>(Property))
+        {
+            // Return the property’s string *as-is*, skipping StandardizeCase entirely.
+            const FString StringValue = StrProp->GetPropertyValue(Value);
+            return MakeShared<FJsonValueString>(StringValue);
+        }
+    }
+
+    // Return nullptr so that for *all other* properties, 
+    // the default FJsonObjectConverter logic applies.
+    return TSharedPtr<FJsonValue>();
+}
+
+void UBaseRepository::FixId(TSharedPtr<FJsonObject>& JsonObject)
+{
+    const FString PossiblyMangledKey = TEXT("iD"); // or "Id", or "ID", etc. 
+    if (JsonObject->HasField(PossiblyMangledKey))
+    {
+        TSharedPtr<FJsonValue> ValueForId = JsonObject->TryGetField(PossiblyMangledKey);
+        JsonObject->RemoveField(PossiblyMangledKey);
+        JsonObject->SetField(TEXT("id"), ValueForId);
+    }
+}
+
 template <typename T>
 TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(const T& UStruct, const bool OmitEmptyFields)
 {
@@ -296,6 +326,8 @@ TSharedPtr<FJsonValueObject> UBaseRepository::MakeJsonValueObjectFromUStruct(con
     {
         return nullptr;
     }
+
+    FixId(JsonObject);
     
     if (OmitEmptyFields)
     {
