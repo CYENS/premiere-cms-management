@@ -14,12 +14,12 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementBlueprintLibrary : public 
 {
 	GENERATED_BODY()
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="PremiereCMSManagement")
 	static EGQLSessionState GetSessionStateFromId(const FString& SessionStateId);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="PremiereCMSManagement")
 	static EGQLSessionState GetSessionStateFromStruct(const FCMSSessionState& SessionState);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category="PremiereCMSManagement")
 	static FString GetSessionStateIdFromSessionState(EGQLSessionState SessionState);
 };
