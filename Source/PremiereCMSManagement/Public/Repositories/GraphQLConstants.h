@@ -30,3 +30,4 @@ enum class EGQLSessionState: uint8
 };
 
 FString GetSessionStateId(const EGQLSessionState& SessionState);
+EGQLSessionState GetSessionStateFromSessionStateId(const FString& SessionStateId);

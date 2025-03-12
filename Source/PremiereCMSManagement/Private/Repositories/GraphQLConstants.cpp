@@ -444,3 +444,16 @@ FString GetSessionStateId(const EGQLSessionState& SessionState)
 			return GQLSessionStatePrivateInactiveId;
 	}
 }
+
+EGQLSessionState GetSessionStateFromSessionStateId(const FString& SessionStateId)
+{
+	if (SessionStateId == GQLSessionStatePrivateActiveId)
+		return EGQLSessionState::PrivateActive;
+	if (SessionStateId == GQLSessionStatePublicActiveId)
+		return EGQLSessionState::PublicActive;
+	if (SessionStateId == GQLSessionStatePrivateInactiveId)
+		return EGQLSessionState::PrivateInactive;
+	if (SessionStateId == GQLSessionStatePublicInactiveId)
+		return EGQLSessionState::PublicInactive;
+	return EGQLSessionState::PrivateInactive;
+}
