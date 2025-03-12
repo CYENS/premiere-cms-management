@@ -92,6 +92,7 @@ const FString GQLAvatarFragment = TEXT(R"(
 fragment avatarFragment on Avatar {
 	id
 	name
+	assetId
   }
 )");
 
