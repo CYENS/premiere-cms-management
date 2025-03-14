@@ -17,6 +17,7 @@ class USessionRepository;
 class UUserRepository;
 class UPerformanceRepository;
 class UPersonRepository;
+class USessionCastRepository;
 enum class EGQLSessionState : uint8;
 
 class UPremiereCMSDeveloperSettings;
@@ -39,6 +40,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatars, const TArray<FCMSAvatar>&, Avat
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerson, const FCMSPerson&, Person);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetFile, const FCMSFile&, File);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetObjectWithFile, const FCMSObjectWithFile&, ObjectWithFile);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessionCast, const FCMSSessionCast&, SessionCast);
 
 UENUM(BlueprintType)
 enum ESessionVisibility : uint8
@@ -80,6 +82,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UFileRepository* FileRepository;
+	
+	UPROPERTY()
+	USessionCastRepository* SessionCastRepository;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
@@ -379,6 +384,16 @@ public:
 		const FCMSIdInput& Where,
 		const FString& FilePath,
 		const FOnGetObjectWithFile& OnUploadSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
+	/* SessionCast */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | SessionCast")
+	void CreateSessionCast(
+		const FCMSAvatarWhereUniqueInput& AvatarWhere,
+		const FCMSSessionWhereUniqueInput& SessionWhere,
+		const FCMSUserWhereUniqueInput& UserWhere,
+		const FOnGetSessionCast& OnSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 };

@@ -9,6 +9,7 @@
 #include "Repositories/GraphQLConstants.h"
 #include "Repositories/PerformanceRepository.h"
 #include "Repositories/PersonRepository.h"
+#include "Repositories/SessionCastRepository.h"
 #include "Repositories/SessionRepository.h"
 #include "Repositories/UsdSceneRepository.h"
 #include "Repositories/UserRepository.h"
@@ -46,6 +47,9 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 	
 	FileRepository = NewObject<UFileRepository>();
 	FileRepository->Initialize(GraphQlDataSource, ApiUrl);
+	
+	SessionCastRepository = NewObject<USessionCastRepository>();
+	SessionCastRepository->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -1055,6 +1059,29 @@ void UPremiereCMSManagementSubsystem::UploadFileToObject(
 		[OnUploadSuccess](const FCMSObjectWithFile& ObjectWithFile)
 		{
 			OnUploadSuccess.ExecuteIfBound(ObjectWithFile);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateSessionCast(
+	const FCMSAvatarWhereUniqueInput& AvatarWhere,
+	const FCMSSessionWhereUniqueInput& SessionWhere,
+	const FCMSUserWhereUniqueInput& UserWhere,
+	const FOnGetSessionCast& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionCastRepository->Create(
+		AvatarWhere,
+		SessionWhere,
+		UserWhere,
+		[OnSuccess](const FCMSSessionCast& Person)
+		{
+			OnSuccess.ExecuteIfBound(Person);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{

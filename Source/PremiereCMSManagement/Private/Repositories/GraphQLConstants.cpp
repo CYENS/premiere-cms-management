@@ -455,6 +455,39 @@ user {
 }
 )");
 
+const FString GQLSessionCastFragments = FString::Printf(TEXT(R"(
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+)"),
+*GQLUsdXrLiveFragment,
+*GQLUsdSceneFragment,
+*GQLPersonFragment,
+*GQLUserFragment,
+*GQLSessionStateFragment,
+*GQLPerformanceFragment,
+*GQLAvatarFragment,
+*GQLSessionFragmentWithoutCastAvatars
+);
+
+const FString GQLSessionCast = TEXT(R"(
+id
+label
+avatar {
+	...avatarFragment
+}
+user {
+	...userFragment
+}
+session {
+	...sessionFragmentWithoutCastAvatars
+})");
+
 const FString GQLSessionStatePrivateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");
 const FString GQLSessionStatePublicActiveId = TEXT("cm73eju9c00004lmje0o2h47l");
 const FString GQLSessionStatePrivateActiveId = TEXT("cm74t2qzv0026juc7cw14fvwj");

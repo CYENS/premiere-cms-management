@@ -266,6 +266,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSPersonCreateInput
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSPersonWhereUniqueInput
 {
     GENERATED_BODY()

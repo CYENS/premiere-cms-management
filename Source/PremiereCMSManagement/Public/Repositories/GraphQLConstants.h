@@ -16,6 +16,8 @@ extern const FString GQLAvatarFragments;
 extern const FString GQLAvatar;
 extern const FString GQLPersonFragments;
 extern const FString GQLPerson;
+extern const FString GQLSessionCastFragments;
+extern const FString GQLSessionCast;
 
 extern const FString GQLSessionStatePublicActiveId;
 extern const FString GQLSessionStatePrivateInactiveId;
