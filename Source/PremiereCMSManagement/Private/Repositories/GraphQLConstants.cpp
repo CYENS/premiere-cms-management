@@ -85,6 +85,9 @@ fragment sessionFragment on Session {
     performance {
       ...performanceFragment
     }
+	castAvatars {
+	  ...sessionCastFragment
+	}
   }
 )");
 
@@ -195,6 +198,29 @@ const FString GQLUser = FString::Printf(TEXT(R"(
     }
 )"));
 
+const FString GQLSessionFragmentWithoutCastAvatars = TEXT(R"(
+fragment sessionFragmentWithoutCastAvatars on Session {
+	id
+	eosSessionId
+	title
+	state {
+		...sessionStateFragment
+	}
+	owner {
+		...userFragment
+	}
+    scene {
+	  ...usdSceneFragment
+    }
+    xrLive {
+	  ...xrLiveFragment
+    }
+    performance {
+      ...performanceFragment
+    }
+}
+)");
+
 const FString GQLSessionCastFragment = TEXT(R"(
 fragment sessionCastFragment on SessionCast {
   id
@@ -206,7 +232,7 @@ fragment sessionCastFragment on SessionCast {
 	...userFragment
   }
   session {
-	...sessionFragment
+	...sessionFragmentWithoutCastAvatars
   }
 }
 )");
@@ -233,8 +259,8 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
 	%s
-)")
-,
+	%s
+)"),
 *GQLUsdXrLiveFragment,
 *GQLUsdSceneFragment,
 *GQLPersonFragment,
@@ -248,6 +274,7 @@ const FString GQLSessionFragments = FString::Printf(TEXT(R"(
 *GQLLightDataFragment,
 *GQLPropMotionDataFragment,
 *GQLAvatarMotionDataFragment,
+*GQLSessionFragmentWithoutCastAvatars,
 *GQLSessionCastFragment
 );
 
@@ -344,6 +371,8 @@ const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
 	%s
 	%s
 	%s
+	%s
+	%s
 )")
 ,
 *GQLPerformanceFragment,
@@ -353,7 +382,9 @@ const FString GQLPerformanceFragments = FString::Printf(TEXT(R"(
 *GQLSessionFragment,
 *GQLPersonFragment,
 *GQLUserFragment,
-*GQLAvatarFragment
+*GQLAvatarFragment,
+*GQLSessionFragmentWithoutCastAvatars,
+*GQLSessionCastFragment
 );
 
 const FString GQLPerformance = TEXT(R"(
