@@ -10,6 +10,7 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
+enum ERelateToOneCategories : uint8;
 struct FCMSPerformanceWhereUniqueInput;
 class UUsdSceneRepository;
 class UGraphQLDataSource;
@@ -23,6 +24,27 @@ enum class EGQLSessionState : uint8;
 class UPremiereCMSDeveloperSettings;
 
 struct FCMSPerformanceCreateInput;
+
+USTRUCT(BlueprintType)
+struct FCMSGraphQLResult
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TEnumAsByte<EGraphQLOutcome> GraphQLOutcome;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString RawResponse;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 HttpStatusCode;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString ErrorMessage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FString> GraphQLErrors ;
+};
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSession, const FCMSSession&, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessions, const TArray<FCMSSession>&, Sessions);
@@ -41,6 +63,7 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerson, const FCMSPerson&, Person);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetFile, const FCMSFile&, File);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetObjectWithFile, const FCMSObjectWithFile&, ObjectWithFile);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessionCast, const FCMSSessionCast&, SessionCast);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGraphQLResponseDelegate, const FCMSGraphQLResult&, Result);
 
 UENUM(BlueprintType)
 enum ESessionVisibility : uint8
@@ -98,6 +121,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void TestGraphQlQueryFJsonValue() const;
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | GraphQL")
+	void ExecuteGraphQL(
+		const FString Query,
+		const FString Variables,
+		const FOnGraphQLResponseDelegate& OnResponse
+	);
 	
 	/* User */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")

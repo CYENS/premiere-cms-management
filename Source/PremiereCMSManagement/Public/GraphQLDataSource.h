@@ -12,7 +12,8 @@
 
 class UPremiereCMSDeveloperSettings;
 
-enum EGraphQLOutcome
+UENUM(BlueprintType)
+enum EGraphQLOutcome: uint8
 {
 	Success,
 	RequestFailed,

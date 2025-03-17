@@ -109,6 +109,11 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
 {
     TSharedPtr<FJsonObject> VariablesJsonObject;
     TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Variables);
+    if (Variables.TrimStartAndEnd().IsEmpty())
+    {
+        ExecuteGraphQLQuery(Query, OnComplete);
+        return;
+    }
     if (!FJsonSerializer::Deserialize(JsonReader, VariablesJsonObject) ||  !VariablesJsonObject.IsValid())
     {
         UE_LOG(LogPremiereCMSManagement, Error, TEXT("Failed to deserialize variable: %s"), *Variables);
@@ -116,6 +121,7 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
         GraphQLResult.GraphQLOutcome = ParseError;
         GraphQLResult.ErrorMessage = FString::Printf(TEXT("Failed to parse variable: %s"), *Variables);
         OnComplete.ExecuteIfBound(GraphQLResult);
+        return;
     }
     
     ExecuteGraphQLQuery(Query, VariablesJsonObject, OnComplete);

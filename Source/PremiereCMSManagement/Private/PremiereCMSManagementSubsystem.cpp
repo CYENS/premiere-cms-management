@@ -163,6 +163,30 @@ void UPremiereCMSManagementSubsystem::TestGraphQlQueryFJsonValue() const
 	);
 }
 
+void UPremiereCMSManagementSubsystem::ExecuteGraphQL(
+	const FString Query,
+	const FString Variables,
+	const FOnGraphQLResponseDelegate& OnResponse
+)
+{
+	GraphQlDataSource->ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		FOnGraphQLResponse::CreateLambda([OnResponse](FGraphQLResult Result)
+		{
+			
+			const FCMSGraphQLResult GraphQLResult  {
+					Result.GraphQLOutcome,
+					Result.RawResponse,
+					Result.HttpStatus,
+					Result.ErrorMessage,
+					Result.GraphQLErrors,
+				};
+			OnResponse.ExecuteIfBound(GraphQLResult);
+		})
+	);
+}
+
 void UPremiereCMSManagementSubsystem::CreateSession(
 	const FCMSSessionCreateInput& Data,
 	const FString& OwnerWhereId,
