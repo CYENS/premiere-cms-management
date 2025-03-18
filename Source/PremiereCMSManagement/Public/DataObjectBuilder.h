@@ -52,8 +52,7 @@ public:
      */
     template <typename T>
     FDataObjectBuilder& AddConnect(const FString& Key, const T& SingleItem);
-    template <class T>
-    FDataObjectBuilder& AddDisconnect(const FString& Key, const T& SingleItem);
+    FDataObjectBuilder& AddDisconnect(const FString& Key);
 
     template <class T>
     FDataObjectBuilder& AddConnect(const FString& Key, const TOptional<T>& SingleItem);

@@ -73,15 +73,10 @@ FDataObjectBuilder& FDataObjectBuilder::AddConnect(const FString& Key, const T& 
     return *this;
 }
 
-template <typename T>
-FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key, const T& SingleItem)
+FDataObjectBuilder& FDataObjectBuilder::AddDisconnect(const FString& Key)
 {
-    TSharedPtr<FJsonObject> SingleObj = MakeShareable(new FJsonObject());
-    FJsonObjectConverter::UStructToJsonObject(T::StaticStruct(), &SingleItem, SingleObj.ToSharedRef(), 0, 0);
-    UBaseRepository::FixId(SingleObj);
-
     const TSharedPtr<FJsonObject> ConnectObject = MakeShareable(new FJsonObject());
-    ConnectObject->SetObjectField(TEXT("disconnect"), SingleObj);
+    ConnectObject->SetBoolField(TEXT("disconnect"), true);
 
     RootObject->SetObjectField(Key, ConnectObject);
     return *this;

@@ -219,7 +219,7 @@ void UUserRepository::DisconnectPerson(
 	);
 
 	FDataObjectBuilder DataObjectBuilder;
-	DataObjectBuilder.AddDisconnect("person", PersonWhere);
+	DataObjectBuilder.AddDisconnect("person");
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
 		{"where", MakeWhereValue(UserWhere)},

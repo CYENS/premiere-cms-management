@@ -130,7 +130,7 @@ void UAvatarRepository::DisconnectPerformance(
 	);
 
 	FDataObjectBuilder DataObjectBuilder;
-	DataObjectBuilder.AddDisconnect("performance", PerformanceWhere);
+	DataObjectBuilder.AddDisconnect("performances");
 	
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
 		{"where", MakeWhereValue(AvatarWhere)},
