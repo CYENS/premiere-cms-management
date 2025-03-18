@@ -316,13 +316,13 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCastForSession
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FString Id;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSAvatar Avatar;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser User;
 };
 
@@ -331,16 +331,16 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCast
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FString Id;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSAvatar Avatar;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser User;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser Session;
 };
 
@@ -366,7 +366,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSSession
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FString Id;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
@@ -399,7 +399,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionForPerformance
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(BlueprintReadOnly, Category = "PremiereCMS | Types")
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FString Id;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
