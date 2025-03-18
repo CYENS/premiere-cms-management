@@ -43,6 +43,11 @@ class PREMIERECMSMANAGEMENT_API USessionRepository : public UBaseRepository
 {
     GENERATED_BODY()
 
+protected:
+	virtual FString GetObjectName() const override;
+	virtual FString GetObjectGraphQLSelectionSet() const override;
+	virtual FString GetObjectGraphQLFragments() const override;
+	
 public:
     void GetAll(
         const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,

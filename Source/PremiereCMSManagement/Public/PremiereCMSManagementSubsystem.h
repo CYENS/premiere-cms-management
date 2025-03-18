@@ -334,7 +334,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void DisconnectOneItemFromSession(
 		const FString& SessionWhereId,
-		const FString& ItemWhereId,
 		const ERelateToOneCategoriesForSession ItemToConnectType,
 		const FOnGetSession& OnSuccess,
 		const FOnFailureDelegate& OnFailure
@@ -350,7 +349,7 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
-	void DisconnectManyObjectsFromSession(
+	void DisconnectManyItemsFromSession(
 		const FString& SessionWhereId,
 		const TArray<FString>& ItemWhereId,
 		const ERelateToManyCategoriesForSession ItemToConnectType,

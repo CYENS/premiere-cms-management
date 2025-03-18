@@ -324,7 +324,6 @@ void UPremiereCMSManagementSubsystem::ConnectOneItemToSession(
 
 void UPremiereCMSManagementSubsystem::DisconnectOneItemFromSession(
 	const FString& SessionWhereId,
-	const FString& ItemWhereId,
 	const ERelateToOneCategoriesForSession ItemToConnectType,
 	const FOnGetSession& OnSuccess,
 	const FOnFailureDelegate& OnFailure
@@ -332,7 +331,6 @@ void UPremiereCMSManagementSubsystem::DisconnectOneItemFromSession(
 {
 	SessionRepository->DisconnectOneItemFromObject<FCMSSession>(
 		SessionWhereId,
-		ItemWhereId,
 		UBaseRepository::EnumToString(ItemToConnectType),
 		[OnSuccess](const FCMSSession& Session)
 		{
@@ -368,7 +366,7 @@ auto UPremiereCMSManagementSubsystem::ConnectManyItemsToSession(
 	);
 }
 
-void UPremiereCMSManagementSubsystem::DisconnectManyObjectsFromSession(
+void UPremiereCMSManagementSubsystem::DisconnectManyItemsFromSession(
 	const FString& SessionWhereId,
 	const TArray<FString>& ItemWhereId,
 	const ERelateToManyCategoriesForSession ItemToConnectType,

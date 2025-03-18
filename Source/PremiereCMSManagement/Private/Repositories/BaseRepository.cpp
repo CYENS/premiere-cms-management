@@ -78,7 +78,6 @@ void UBaseRepository::ConnectOneItemToObject(
 template <typename T>
 void UBaseRepository::DisconnectOneItemFromObject(
     const FString& ObjectWhereId,
-    const FString& ItemWhereId,
     const FString& ItemKeyName,
     TFunction<void(const T&)> OnSuccess,
     TFunction<void(const FString&)> OnFailure
@@ -102,7 +101,6 @@ void UBaseRepository::DisconnectOneItemFromObject(
 	);
 
 	FDataObjectBuilder ObjectBuilder;
-    const FCMSIdInput ItemToConnectWhereIdStruct { ItemWhereId };
 	ObjectBuilder.AddDisconnect(ItemKeyName);
 
     const FCMSIdInput ObjectWhereIdStruct { ObjectWhereId };

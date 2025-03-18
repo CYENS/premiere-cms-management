@@ -39,7 +39,6 @@ public:
     template <typename T>
     void DisconnectOneItemFromObject(
         const FString& ObjectWhereId,
-        const FString& ItemWhereId,
         const FString& ItemKeyName,
         TFunction<void(const T&)> OnSuccess,
         TFunction<void(const FString&)> OnFailure
