@@ -299,6 +299,98 @@ void UPremiereCMSManagementSubsystem::UpdateSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::ConnectOneItemToSession(
+	const FString& SessionWhereId,
+	const FString& ItemWhereId,
+	const ERelateToOneCategoriesForSession ItemToConnectType,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->ConnectOneItemToObject<FCMSSession>(
+		SessionWhereId,
+		ItemWhereId,
+		UBaseRepository::EnumToString(ItemToConnectType),
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::DisconnectOneItemFromSession(
+	const FString& SessionWhereId,
+	const FString& ItemWhereId,
+	const ERelateToOneCategoriesForSession ItemToConnectType,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->DisconnectOneItemFromObject<FCMSSession>(
+		SessionWhereId,
+		ItemWhereId,
+		UBaseRepository::EnumToString(ItemToConnectType),
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+auto UPremiereCMSManagementSubsystem::ConnectManyItemsToSession(
+	const FString& SessionWhereId,
+	const TArray<FString>& ItemWhereId,
+	const ERelateToManyCategoriesForSession ItemToConnectType,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+) -> void
+{
+	SessionRepository->ConnectManyItemsToObject<FCMSSession>(
+		SessionWhereId,
+		ItemWhereId,
+		UBaseRepository::EnumToString(ItemToConnectType),
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::DisconnectManyObjectsFromSession(
+	const FString& SessionWhereId,
+	const TArray<FString>& ItemWhereId,
+	const ERelateToManyCategoriesForSession ItemToConnectType,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->DisconnectManyItemsFromObject<FCMSSession>(
+		SessionWhereId,
+		ItemWhereId,
+		UBaseRepository::EnumToString(ItemToConnectType),
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::UpdateSessionVisibilityByEosSessionId(
 	const FString& WhereEosSessionId,
 	const ESessionVisibility NewSessionVisibility,

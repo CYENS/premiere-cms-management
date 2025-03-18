@@ -6,6 +6,21 @@
 #include "Structs/CMSInputs.h"
 #include "Structs/CMSTypes.h"
 
+FString USessionRepository::GetObjectName() const
+{
+	return TEXT("Session");
+}
+
+FString USessionRepository::GetObjectGraphQLSelectionSet() const
+{
+	return GQLSession;
+}
+
+FString USessionRepository::GetObjectGraphQLFragments() const
+{
+	return GQLSessionFragments;
+}
+
 void USessionRepository::GetAll(
 	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure

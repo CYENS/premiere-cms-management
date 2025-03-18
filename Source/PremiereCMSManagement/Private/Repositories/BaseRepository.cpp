@@ -2,13 +2,253 @@
 
 #include "Repositories/BaseRepository.h"
 
+#include "DataObjectBuilder.h"
 #include "GraphQLDataSource.h"
 #include "JsonObjectConverter.h"
 #include "LogPremiereCMSManagement.h"
+#include "Structs/CMSInputs.h"
 
 void UBaseRepository::Initialize(UGraphQLDataSource* InDataSource)
 {
     DataSource = InDataSource;
+}
+
+
+template <typename TEnum>
+FString UBaseRepository::EnumToString(TEnum EnumValue)
+{
+    static_assert(TIsEnum<TEnum>::Value, "EnumToString can only be used with enums.");
+
+    const UEnum* EnumPtr = StaticEnum<TEnum>();
+    if (!EnumPtr)
+    {
+        return TEXT("");
+    }
+
+    FString EnumValueAsString = EnumPtr->GetNameStringByValue(static_cast<int64>(EnumValue));
+    EnumValueAsString[0] = FChar::ToLower(EnumValueAsString[0]);
+    return EnumValueAsString;
+}
+
+template <typename T>
+void UBaseRepository::ConnectOneItemToObject(
+    const FString& ObjectWhereId,
+    const FString& ItemToConnectWhereId,
+    const FString& ItemKeyName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+) const
+{
+	const FString QueryName = GetUpdateQueryName();
+	const FString Query = FString::Printf(
+		TEXT(R"(
+		%s
+		mutation Update ($where: %s!, $data: %s!) {
+			%s (where: $where, data: $data) {
+				%s
+			}
+		}
+		)"),
+		*GetObjectGraphQLFragments(),
+		*GetObjectWhereUniqueInputName(),
+		*GetObjectUpdateInputName(),
+		*QueryName,
+		*GetObjectGraphQLSelectionSet()
+	);
+
+	FDataObjectBuilder ObjectBuilder;
+    const FCMSIdInput ItemToConnectWhereIdStruct { ItemToConnectWhereId };
+	ObjectBuilder.AddConnect(ItemKeyName, ItemToConnectWhereIdStruct);
+
+    const FCMSIdInput ObjectWhereIdStruct { ObjectWhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables{
+	{"where", MakeWhereValue(ObjectWhereIdStruct)},
+	{"data", ObjectBuilder.BuildAsJsonValue()}
+	};
+
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
+void UBaseRepository::DisconnectOneItemFromObject(
+    const FString& ObjectWhereId,
+    const FString& ItemWhereId,
+    const FString& ItemKeyName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+) const
+{
+	const FString QueryName = GetUpdateQueryName();
+	const FString Query = FString::Printf(
+		TEXT(R"(
+		%s
+		mutation Update ($where: %s!, $data: %s!) {
+			%s (where: $where, data: $data) {
+				%s
+			}
+		}
+		)"),
+		*GetObjectGraphQLFragments(),
+		*GetObjectWhereUniqueInputName(),
+		*GetObjectUpdateInputName(),
+		*QueryName,
+		*GetObjectGraphQLSelectionSet()
+	);
+
+	FDataObjectBuilder ObjectBuilder;
+    const FCMSIdInput ItemToConnectWhereIdStruct { ItemWhereId };
+	ObjectBuilder.AddDisconnect(ItemKeyName);
+
+    const FCMSIdInput ObjectWhereIdStruct { ObjectWhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables{
+	{"where", MakeWhereValue(ObjectWhereIdStruct)},
+	{"data", ObjectBuilder.BuildAsJsonValue()}
+	};
+
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
+void UBaseRepository::ConnectManyItemsToObject(
+    const FString& ObjectWhereId,
+    const TArray<FString>& ItemsToConnectWhereId,
+    const FString& ItemKeyName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+) const
+{
+	const FString QueryName = GetUpdateQueryName();
+	const FString Query = FString::Printf(
+		TEXT(R"(
+		%s
+		mutation Update ($where: %s!, $data: %s!) {
+			%s (where: $where, data: $data) {
+				%s
+			}
+		}
+		)"),
+		*GetObjectGraphQLFragments(),
+		*GetObjectWhereUniqueInputName(),
+		*GetObjectUpdateInputName(),
+		*QueryName,
+		*GetObjectGraphQLSelectionSet()
+	);
+
+	FDataObjectBuilder ObjectBuilder;
+    TArray<FCMSIdInput> ItemIdsAsStructs;
+    for (const FString& ItemId : ItemsToConnectWhereId)
+    {
+        const FCMSIdInput ItemIdStruct { ItemId };
+        ItemIdsAsStructs.Add( ItemIdStruct);
+    }
+	ObjectBuilder.AddConnect(ItemKeyName, ItemIdsAsStructs);
+
+    const FCMSIdInput ObjectWhereIdStruct { ObjectWhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables{
+	{"where", MakeWhereValue(ObjectWhereIdStruct)},
+	{"data", ObjectBuilder.BuildAsJsonValue()}
+	};
+
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
+void UBaseRepository::DisconnectManyItemsFromObject(
+    const FString& ObjectWhereId,
+    const TArray<FString>& ItemsWhereId,
+    const FString& ItemKeyName,
+    TFunction<void(const T&)> OnSuccess,
+    TFunction<void(const FString&)> OnFailure
+) const
+{
+	const FString QueryName = GetUpdateQueryName();
+	const FString Query = FString::Printf(
+		TEXT(R"(
+		%s
+		mutation Update ($where: %s!, $data: %s!) {
+			%s (where: $where, data: $data) {
+				%s
+			}
+		}
+		)"),
+		*GetObjectGraphQLFragments(),
+		*GetObjectWhereUniqueInputName(),
+		*GetObjectUpdateInputName(),
+		*QueryName,
+		*GetObjectGraphQLSelectionSet()
+	);
+
+	FDataObjectBuilder ObjectBuilder;
+    TArray<FCMSIdInput> ItemIdsAsStructs;
+    for (const FString& ItemId : ItemsWhereId)
+    {
+        const FCMSIdInput ItemIdStruct { ItemId };
+        ItemIdsAsStructs.Add( ItemIdStruct);
+    }
+	ObjectBuilder.AddDisconnect(ItemKeyName, ItemIdsAsStructs);
+
+    const FCMSIdInput ObjectWhereIdStruct { ObjectWhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables{
+	{"where", MakeWhereValue(ObjectWhereIdStruct)},
+	{"data", ObjectBuilder.BuildAsJsonValue()}
+	};
+
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+FString UBaseRepository::GetObjectName() const
+{
+    return TEXT("");
+}
+
+FString UBaseRepository::GetUpdateQueryName() const
+{
+
+    return FString::Printf(TEXT("update%s"), *GetObjectName());
+}
+
+FString UBaseRepository::GetObjectWhereUniqueInputName() const
+{
+    return FString::Printf(TEXT("%sWhereUniqueInput"), *GetObjectName());
+}
+
+FString UBaseRepository::GetObjectUpdateInputName() const
+{
+    return FString::Printf(TEXT("%sUpdateInput"), *GetObjectName());
+}
+
+FString UBaseRepository::GetObjectGraphQLSelectionSet() const
+{
+    return TEXT("");
+}
+
+FString UBaseRepository::GetObjectGraphQLFragments() const
+{
+    return TEXT("");
 }
 
 template <typename T>

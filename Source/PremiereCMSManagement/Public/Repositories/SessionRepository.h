@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseRepository.h"
+#include "Structs/CMSInputs.h"
 #include "UObject/NoExportTypes.h"
 
 #include "SessionRepository.generated.h"
@@ -14,6 +15,28 @@ struct FCMSSessionWhereUniqueInput;
 struct FCMSUsdSceneWhereUniqueInput;
 struct FCMSUserWhereUniqueInput;
 struct FCMSIdInput;
+
+UENUM(BlueprintType)
+enum ERelateToOneCategoriesForSession: uint8
+{
+	Owner,
+	Performance,
+	Scene,
+	State,
+	XRLive
+};
+
+UENUM(BlueprintType)
+enum ERelateToManyCategoriesForSession: uint8
+{
+	Attendees,
+	AudioData,
+	CastAvatars,
+	FaceData,
+	LightData,
+	MotionData,
+	PropMotionData
+};
 
 UCLASS()
 class PREMIERECMSMANAGEMENT_API USessionRepository : public UBaseRepository

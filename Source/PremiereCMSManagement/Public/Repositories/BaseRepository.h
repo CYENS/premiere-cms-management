@@ -9,6 +9,8 @@ class UGraphQLDataSource;
 
 DECLARE_DELEGATE_OneParam(FOnFailure, FString);
 
+template<class T> class TMyTemplate {};
+
 UCLASS(Abstract)
 class PREMIERECMSMANAGEMENT_API UBaseRepository : public UObject
 {
@@ -17,11 +19,58 @@ class PREMIERECMSMANAGEMENT_API UBaseRepository : public UObject
 public:
     UFUNCTION(BlueprintCallable, Category = "PremiereCMS")
     void Initialize(UGraphQLDataSource* InDataSource);
+
+    template <typename TEnum>
+    static FString EnumToString(TEnum EnumValue);
     
     static void RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject);
 
     static void FixId(TSharedPtr<FJsonObject>& JsonObject);
+
+    template <typename T>
+    void ConnectOneItemToObject(
+        const FString& ObjectWhereId,
+        const FString& ItemToConnectWhereId,
+        const FString& ItemKeyName,
+        TFunction<void(const T&)> OnSuccess,
+        TFunction<void(const FString&)> OnFailure
+    ) const;
+    
+    template <typename T>
+    void DisconnectOneItemFromObject(
+        const FString& ObjectWhereId,
+        const FString& ItemWhereId,
+        const FString& ItemKeyName,
+        TFunction<void(const T&)> OnSuccess,
+        TFunction<void(const FString&)> OnFailure
+    ) const;
+    
+    template <typename T>
+    void ConnectManyItemsToObject(
+        const FString& ObjectWhereId,
+        const TArray<FString>& ItemsToConnectWhereId,
+        const FString& ItemKeyName,
+        TFunction<void(const T&)> OnSuccess,
+        TFunction<void(const FString&)> OnFailure
+    ) const;
+    
+    template <typename T>
+    void DisconnectManyItemsFromObject(
+        const FString& ObjectWhereId,
+        const TArray<FString>& ItemsWhereId,
+        const FString& ItemKeyName,
+        TFunction<void(const T&)> OnSuccess,
+        TFunction<void(const FString&)> OnFailure
+    ) const;
+    
 protected:
+    virtual FString GetObjectWhereUniqueInputName() const;
+    virtual FString GetObjectUpdateInputName() const;
+    virtual FString GetObjectName() const;
+    virtual FString GetUpdateQueryName() const;
+    virtual FString GetObjectGraphQLSelectionSet() const;
+    virtual FString GetObjectGraphQLFragments() const;
+    
     UPROPERTY()
     UGraphQLDataSource* DataSource;
 

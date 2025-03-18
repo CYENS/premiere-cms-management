@@ -10,7 +10,6 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "PremiereCMSManagementSubsystem.generated.h"
 
-enum ERelateToOneCategories : uint8;
 struct FCMSPerformanceWhereUniqueInput;
 class UUsdSceneRepository;
 class UGraphQLDataSource;
@@ -20,6 +19,8 @@ class UPerformanceRepository;
 class UPersonRepository;
 class USessionCastRepository;
 enum class EGQLSessionState : uint8;
+enum ERelateToOneCategoriesForSession : uint8;
+enum ERelateToManyCategoriesForSession : uint8;
 
 class UPremiereCMSDeveloperSettings;
 
@@ -320,7 +321,43 @@ public:
 		const FOnGetSession& OnCreateSessionSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
+
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void ConnectOneItemToSession(
+		const FString& SessionWhereId,
+		const FString& ItemWhereId,
+		const ERelateToOneCategoriesForSession ItemToConnectType,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void DisconnectOneItemFromSession(
+		const FString& SessionWhereId,
+		const FString& ItemWhereId,
+		const ERelateToOneCategoriesForSession ItemToConnectType,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void ConnectManyItemsToSession(
+		const FString& SessionWhereId,
+		const TArray<FString>& ItemWhereId,
+		const ERelateToManyCategoriesForSession ItemToConnectType,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void DisconnectManyObjectsFromSession(
+		const FString& SessionWhereId,
+		const TArray<FString>& ItemWhereId,
+		const ERelateToManyCategoriesForSession ItemToConnectType,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void UpdateSessionStateByEosSessionId(
 		const FString& WhereEosSessionId,

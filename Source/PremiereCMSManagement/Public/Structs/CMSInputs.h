@@ -132,6 +132,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionWhereUniqueInput
     FString Id;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionCastWhereUniqueInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Id;
+};
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")
 struct PREMIERECMSMANAGEMENT_API FCMSSessionCreateInput
 {
