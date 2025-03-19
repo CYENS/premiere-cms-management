@@ -497,6 +497,25 @@ void UPremiereCMSManagementSubsystem::FindSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::DeleteSession(
+	const FString& WhereId,
+	const FOnGetSession& OnGetSessionSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	SessionRepository->Delete<FCMSSession>(
+		WhereId,
+		[OnGetSessionSuccess] (const FCMSSession& Session)
+		{
+			OnGetSessionSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure] (const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::UpdateSessionStateByEosSessionId(
 	const FString& WhereEosSessionId,
 	const EGQLSessionState SessionState,

@@ -44,9 +44,9 @@ class PREMIERECMSMANAGEMENT_API USessionRepository : public UBaseRepository
     GENERATED_BODY()
 
 protected:
-	virtual FString GetObjectName() const override;
-	virtual FString GetObjectGraphQLSelectionSet() const override;
-	virtual FString GetObjectGraphQLFragments() const override;
+	virtual FString GetObjectType() const override;
+	virtual FString GetObjectQuerySelectionSet() const override;
+	virtual FString GetObjectFragments() const override;
 	
 public:
 	void FindByEosSessionId(

@@ -42,6 +42,13 @@ public:
     ) const;
     
     template <typename T>
+    void Delete(
+        const FString& WhereId,
+	    const TFunction<void(const T& Object)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    template <typename T>
     void ConnectOneItemToObject(
         const FString& ObjectWhereId,
         const FString& ItemToConnectWhereId,
@@ -79,12 +86,13 @@ public:
 protected:
     virtual FString GetObjectWhereUniqueInputName() const;
     virtual FString GetObjectUpdateInputName() const;
-    virtual FString GetObjectName() const;
+    virtual FString GetObjectType() const;
     virtual FString GetAllGraphQLQueryName() const;
     virtual FString GetFindQueryName() const;
+    virtual FString GetDeleteQueryName() const;
     virtual FString GetUpdateQueryName() const;
-    virtual FString GetObjectGraphQLSelectionSet() const;
-    virtual FString GetObjectGraphQLFragments() const;
+    virtual FString GetObjectQuerySelectionSet() const;
+    virtual FString GetObjectFragments() const;
     
     UPROPERTY()
     UGraphQLDataSource* DataSource;

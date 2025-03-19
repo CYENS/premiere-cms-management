@@ -6,17 +6,17 @@
 #include "Structs/CMSInputs.h"
 #include "Structs/CMSTypes.h"
 
-FString USessionRepository::GetObjectName() const
+FString USessionRepository::GetObjectType() const
 {
 	return TEXT("Session");
 }
 
-FString USessionRepository::GetObjectGraphQLSelectionSet() const
+FString USessionRepository::GetObjectQuerySelectionSet() const
 {
 	return GQLSession;
 }
 
-FString USessionRepository::GetObjectGraphQLFragments() const
+FString USessionRepository::GetObjectFragments() const
 {
 	return GQLSessionFragments;
 }

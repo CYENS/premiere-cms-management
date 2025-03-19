@@ -45,9 +45,9 @@ void UBaseRepository::GetAll(
       }
 	}
 	)"),
-	*GetObjectGraphQLFragments(),
+	*GetObjectFragments(),
 	*QueryName,
-	*GetObjectGraphQLSelectionSet()
+	*GetObjectQuerySelectionSet()
 	);
 	ExecuteGraphQLQuery(
 		Query,
@@ -73,10 +73,46 @@ void UBaseRepository::Find(
       }
 	}
 	)"),
-	*GetObjectGraphQLFragments(),
+	*GetObjectFragments(),
 	*GetObjectWhereUniqueInputName(),
 	*QueryName,
-	*GetObjectGraphQLSelectionSet()
+	*GetObjectQuerySelectionSet()
+	);
+	
+    const FCMSIdInput WhereIdStruct { WhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(WhereIdStruct)}
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
+void UBaseRepository::Delete(
+	const FString& WhereId,
+	const TFunction<void(const T& Object)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = GetDeleteQueryName();
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    mutation Delete ($where: %s!){
+      %s (where: $where) {
+		%s
+      }
+	}
+	)"),
+	*GetObjectFragments(),
+	*GetObjectWhereUniqueInputName(),
+	*QueryName,
+	*GetObjectQuerySelectionSet()
 	);
 	
     const FCMSIdInput WhereIdStruct { WhereId };
@@ -112,11 +148,11 @@ void UBaseRepository::ConnectOneItemToObject(
 			}
 		}
 		)"),
-		*GetObjectGraphQLFragments(),
+		*GetObjectFragments(),
 		*GetObjectWhereUniqueInputName(),
 		*GetObjectUpdateInputName(),
 		*QueryName,
-		*GetObjectGraphQLSelectionSet()
+		*GetObjectQuerySelectionSet()
 	);
 
 	FDataObjectBuilder ObjectBuilder;
@@ -156,11 +192,11 @@ void UBaseRepository::DisconnectOneItemFromObject(
 			}
 		}
 		)"),
-		*GetObjectGraphQLFragments(),
+		*GetObjectFragments(),
 		*GetObjectWhereUniqueInputName(),
 		*GetObjectUpdateInputName(),
 		*QueryName,
-		*GetObjectGraphQLSelectionSet()
+		*GetObjectQuerySelectionSet()
 	);
 
 	FDataObjectBuilder ObjectBuilder;
@@ -200,11 +236,11 @@ void UBaseRepository::ConnectManyItemsToObject(
 			}
 		}
 		)"),
-		*GetObjectGraphQLFragments(),
+		*GetObjectFragments(),
 		*GetObjectWhereUniqueInputName(),
 		*GetObjectUpdateInputName(),
 		*QueryName,
-		*GetObjectGraphQLSelectionSet()
+		*GetObjectQuerySelectionSet()
 	);
 
 	FDataObjectBuilder ObjectBuilder;
@@ -250,11 +286,11 @@ void UBaseRepository::DisconnectManyItemsFromObject(
 			}
 		}
 		)"),
-		*GetObjectGraphQLFragments(),
+		*GetObjectFragments(),
 		*GetObjectWhereUniqueInputName(),
 		*GetObjectUpdateInputName(),
 		*QueryName,
-		*GetObjectGraphQLSelectionSet()
+		*GetObjectQuerySelectionSet()
 	);
 
 	FDataObjectBuilder ObjectBuilder;
@@ -281,15 +317,16 @@ void UBaseRepository::DisconnectManyItemsFromObject(
 	);
 }
 
-FString UBaseRepository::GetObjectName() const
+FString UBaseRepository::GetObjectType() const
 {
+	// examples: Session, Person, AudioData
     return TEXT("");
 }
 
 FString UBaseRepository::GetAllGraphQLQueryName() const
 {
 	// example: Session -> session -> sessions
-	FString GetAllQueryName = GetObjectName();
+	FString GetAllQueryName = GetObjectType();
 	GetAllQueryName[0] = FChar::ToLower(GetAllQueryName[0]);
 	GetAllQueryName.Append(TEXT("s"));
 	return GetAllQueryName;
@@ -298,33 +335,39 @@ FString UBaseRepository::GetAllGraphQLQueryName() const
 FString UBaseRepository::GetFindQueryName() const
 {
 	// example: Session -> session
-	FString FindQueryName = GetObjectName();
+	FString FindQueryName = GetObjectType();
 	FindQueryName[0] = FChar::ToLower(FindQueryName[0]);
 	return FindQueryName;
+}
+
+FString UBaseRepository::GetDeleteQueryName() const
+{
+	// example: deleteSession
+	return FString::Printf(TEXT("delete%s"), *GetObjectType());
 }
 
 FString UBaseRepository::GetUpdateQueryName() const
 {
 
-    return FString::Printf(TEXT("update%s"), *GetObjectName());
+    return FString::Printf(TEXT("update%s"), *GetObjectType());
 }
 
 FString UBaseRepository::GetObjectWhereUniqueInputName() const
 {
-    return FString::Printf(TEXT("%sWhereUniqueInput"), *GetObjectName());
+    return FString::Printf(TEXT("%sWhereUniqueInput"), *GetObjectType());
 }
 
 FString UBaseRepository::GetObjectUpdateInputName() const
 {
-    return FString::Printf(TEXT("%sUpdateInput"), *GetObjectName());
+    return FString::Printf(TEXT("%sUpdateInput"), *GetObjectType());
 }
 
-FString UBaseRepository::GetObjectGraphQLSelectionSet() const
+FString UBaseRepository::GetObjectQuerySelectionSet() const
 {
     return TEXT("");
 }
 
-FString UBaseRepository::GetObjectGraphQLFragments() const
+FString UBaseRepository::GetObjectFragments() const
 {
     return TEXT("");
 }

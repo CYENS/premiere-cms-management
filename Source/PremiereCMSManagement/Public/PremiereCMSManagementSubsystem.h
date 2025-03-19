@@ -285,6 +285,13 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
+	void DeleteSession(
+		const FString& WhereId,
+		const FOnGetSession& OnGetSessionSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
     void FindSessionByEosSessionId(
         const FString& WhereEosSessionId,
 		const FOnGetSession& OnFindSessionSuccess,
