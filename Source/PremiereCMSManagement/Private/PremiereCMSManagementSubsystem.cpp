@@ -466,7 +466,7 @@ void UPremiereCMSManagementSubsystem::GetAllSessions(
 	const FOnFailureDelegate& OnFailure
 )
 {
-	SessionRepository->GetAll(
+	SessionRepository->GetAll<FCMSSession>(
 		[OnGetAllSessionsSuccess](const TArray<FCMSSession>& Sessions)
 		{
 			OnGetAllSessionsSuccess.ExecuteIfBound(Sessions);

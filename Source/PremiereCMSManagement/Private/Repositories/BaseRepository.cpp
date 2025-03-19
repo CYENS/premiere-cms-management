@@ -31,6 +31,33 @@ FString UBaseRepository::EnumToString(TEnum EnumValue)
 }
 
 template <typename T>
+void UBaseRepository::GetAll(
+	const TFunction<void(const TArray<T>& Sessions)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = GetAllGraphQLQueryName();
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    query GetAll {
+      %s {
+		%s
+      }
+	}
+	)"),
+	*GetObjectGraphQLFragments(),
+	*QueryName,
+	*GetObjectGraphQLSelectionSet()
+	);
+	ExecuteGraphQLQuery(
+		Query,
+		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
 void UBaseRepository::ConnectOneItemToObject(
     const FString& ObjectWhereId,
     const FString& ItemToConnectWhereId,
@@ -221,6 +248,15 @@ void UBaseRepository::DisconnectManyItemsFromObject(
 FString UBaseRepository::GetObjectName() const
 {
     return TEXT("");
+}
+
+FString UBaseRepository::GetAllGraphQLQueryName() const
+{
+	// example: Session -> session -> sessions
+	FString GetAllQueryName = GetObjectName();
+	GetAllQueryName[0] = FChar::ToLower(GetAllQueryName[0]);
+	GetAllQueryName.Append(TEXT("s"));
+	return GetAllQueryName;
 }
 
 FString UBaseRepository::GetUpdateQueryName() const

@@ -21,32 +21,6 @@ FString USessionRepository::GetObjectGraphQLFragments() const
 	return GQLSessionFragments;
 }
 
-void USessionRepository::GetAll(
-	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure
-) const
-{
-	const FString QueryName = TEXT("sessions");
-	const FString Query = FString::Printf(TEXT(R"(
-	%s
-    query GetAll {
-      %s {
-		%s
-      }
-	}
-	)"),
-	*GQLSessionFragments,
-	*QueryName,
-	*GQLSession
-	);
-	ExecuteGraphQLQuery(
-		Query,
-		QueryName,
-		OnSuccess,
-		OnFailure
-	);
-}
-
 void USessionRepository::FindSession(
 	const FCMSSessionWhereUniqueInput& Where,
 	const TFunction<void(const FCMSSession& Session)>& OnSuccess,
