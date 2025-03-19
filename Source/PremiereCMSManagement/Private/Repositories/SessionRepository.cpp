@@ -21,39 +21,6 @@ FString USessionRepository::GetObjectGraphQLFragments() const
 	return GQLSessionFragments;
 }
 
-void USessionRepository::FindSession(
-	const FCMSSessionWhereUniqueInput& Where,
-	const TFunction<void(const FCMSSession& Session)>& OnSuccess,
-	const TFunction<void(const FString& ErrorReason)>& OnFailure
-) const
-{
-	const FString QueryName = TEXT("session");
-	const FString Query = FString::Printf(TEXT(R"(
-	%s
-    query FindSession($where: SessionWhereUniqueInput!){
-      %s (where: $where) {
-		%s
-      }
-	}
-	)"),
-	*GQLSessionFragments,
-	*QueryName,
-	*GQLSession
-	);
-	
-	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
-		{"where", MakeWhereValue(Where)}
-	};
-	
-	ExecuteGraphQLQuery(
-		Query,
-		Variables,
-        QueryName,
-		OnSuccess,
-		OnFailure
-	);
-}
-
 void USessionRepository::FindByEosSessionId(
 	const FString& WhereEosSessionId,
 	const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,

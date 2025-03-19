@@ -23,13 +23,21 @@ public:
     template <typename TEnum>
     static FString EnumToString(TEnum EnumValue);
     
+    
     static void RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject);
 
     static void FixId(TSharedPtr<FJsonObject>& JsonObject);
 
     template <typename T>
     void GetAll(
-        const TFunction<void(const TArray<T>& Sessions)>& OnSuccess,
+        const TFunction<void(const TArray<T>& Objects)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+
+    template <typename T>
+    void Find(
+        const FString& WhereId,
+	    const TFunction<void(const T& Object)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
     
@@ -73,6 +81,7 @@ protected:
     virtual FString GetObjectUpdateInputName() const;
     virtual FString GetObjectName() const;
     virtual FString GetAllGraphQLQueryName() const;
+    virtual FString GetFindQueryName() const;
     virtual FString GetUpdateQueryName() const;
     virtual FString GetObjectGraphQLSelectionSet() const;
     virtual FString GetObjectGraphQLFragments() const;

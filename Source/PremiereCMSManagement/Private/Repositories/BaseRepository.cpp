@@ -58,6 +58,42 @@ void UBaseRepository::GetAll(
 }
 
 template <typename T>
+void UBaseRepository::Find(
+	const FString& WhereId,
+	const TFunction<void(const T& Object)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = GetFindQueryName();
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    query Find ($where: %s!){
+      %s (where: $where) {
+		%s
+      }
+	}
+	)"),
+	*GetObjectGraphQLFragments(),
+	*GetObjectWhereUniqueInputName(),
+	*QueryName,
+	*GetObjectGraphQLSelectionSet()
+	);
+	
+    const FCMSIdInput WhereIdStruct { WhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(WhereIdStruct)}
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename T>
 void UBaseRepository::ConnectOneItemToObject(
     const FString& ObjectWhereId,
     const FString& ItemToConnectWhereId,
@@ -257,6 +293,14 @@ FString UBaseRepository::GetAllGraphQLQueryName() const
 	GetAllQueryName[0] = FChar::ToLower(GetAllQueryName[0]);
 	GetAllQueryName.Append(TEXT("s"));
 	return GetAllQueryName;
+}
+
+FString UBaseRepository::GetFindQueryName() const
+{
+	// example: Session -> session
+	FString FindQueryName = GetObjectName();
+	FindQueryName[0] = FChar::ToLower(FindQueryName[0]);
+	return FindQueryName;
 }
 
 FString UBaseRepository::GetUpdateQueryName() const

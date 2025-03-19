@@ -484,8 +484,8 @@ void UPremiereCMSManagementSubsystem::FindSession(
 	const FOnFailureDelegate& OnFailure
 )
 {
-	SessionRepository->FindSession(
-		Where,
+	SessionRepository->Find<FCMSSession>(
+		Where.Id,
 		[OnGetSessionSuccess] (const FCMSSession& Session)
 		{
 			OnGetSessionSuccess.ExecuteIfBound(Session);

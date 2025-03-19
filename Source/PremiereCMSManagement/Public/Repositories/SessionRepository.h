@@ -49,12 +49,6 @@ protected:
 	virtual FString GetObjectGraphQLFragments() const override;
 	
 public:
-    void FindSession(
-        const FCMSSessionWhereUniqueInput& Where,
-	    const TFunction<void(const FCMSSession& Session)>& OnSuccess,
-        const TFunction<void(const FString& ErrorReason)>& OnFailure
-    ) const;
-    
 	void FindByEosSessionId(
 		const FString& WhereEosSessionId,
 		const TFunction<void(const TArray<FCMSSession>& Sessions)>& OnSuccess,
