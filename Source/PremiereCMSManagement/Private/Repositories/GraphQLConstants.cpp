@@ -501,32 +501,22 @@ assetLibraryJson
 const FString GQLUsdAssetLibraryFragments = TEXT(R"()");
 
 const TMap<FString, FString> GQLObjectSelectionSets = {
-	{ "UsdAssetLibrary", GQLUsdAssetLibrary }
+	{ "UsdAssetLibrary", GQLUsdAssetLibrary },
+	{ "Avatar", GQLAvatar },
 }; 
 const TMap<FString, FString> GQLObjectFragments = {
-	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments }
+	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments },
+	{ "Avatar", GQLAvatarFragments },
 }; 
 
 FString GetObjectSelectionSetFromType(const FString& ObjectType)
 {
 	return GQLObjectSelectionSets[ObjectType];
-	const FString* SelectionSet = GQLObjectSelectionSets.Find(ObjectType);
-	if (SelectionSet == nullptr)
-	{
-		return TEXT("");
-	}
-	return *SelectionSet;
 }
 
 FString GetObjectFragmentsFromType(const FString& ObjectType)
 {
 	return GQLObjectFragments[ObjectType];
-	const FString* Fragments = GQLObjectFragments.Find(ObjectType);
-	if (Fragments == nullptr)
-	{
-		return TEXT("");
-	}
-	return *Fragments;
 }
 
 const FString GQLSessionStatePrivateInactiveId = TEXT("cm73etiku0000juc7l7iy5xoq");

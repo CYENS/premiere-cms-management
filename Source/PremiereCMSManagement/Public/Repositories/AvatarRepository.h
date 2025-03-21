@@ -14,6 +14,9 @@ class PREMIERECMSMANAGEMENT_API UAvatarRepository : public UBaseRepository
 {
     GENERATED_BODY()
 
+protected:
+	virtual FString GetObjectType() const override;
+	
 public:
 
     void Create(

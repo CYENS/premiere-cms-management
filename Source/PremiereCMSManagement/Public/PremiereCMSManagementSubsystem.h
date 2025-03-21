@@ -432,6 +432,15 @@ public:
 		FOnFailureDelegate OnFailure
 	);
 	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	void UpdateAvatar(
+		const FString WhereId,
+		const FCMSAvatarUpdateInput& UpdateData,
+		const FOnGetAvatar& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	
 	/* Person */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Person")
 	void CreatePerson(

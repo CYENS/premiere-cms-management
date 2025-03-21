@@ -245,6 +245,15 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarCreateInput
     FString Name;
 };
 
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarUpdateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Name;
+};
+
 // UENUM(BlueprintType, Category = "PremiereCMS | Inputs")
 // enum class EGender: uint8
 // {

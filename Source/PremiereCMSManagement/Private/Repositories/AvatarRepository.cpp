@@ -6,6 +6,11 @@
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
 
+FString UAvatarRepository::GetObjectType() const
+{
+	return TEXT("Avatar");
+}
+
 void UAvatarRepository::Create(
 	const FCMSAvatarCreateInput& AvatarCreateInput,
 	const TOptional<FCMSPerformanceWhereUniqueInput>& PerformanceWhere,

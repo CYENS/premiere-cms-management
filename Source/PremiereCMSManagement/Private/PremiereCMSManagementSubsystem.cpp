@@ -1106,6 +1106,27 @@ void UPremiereCMSManagementSubsystem::CreateAvatar(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateAvatar(
+	const FString WhereId,
+	const FCMSAvatarUpdateInput& UpdateData,
+	const FOnGetAvatar& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	AvatarRepository->Update<FCMSAvatar>(
+		WhereId,
+		UpdateData,
+		[OnSuccess](const FCMSAvatar& Avatar)
+		{
+			OnSuccess.ExecuteIfBound(Avatar);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::CreatePerson(
 	const FCMSPersonCreateInput& Data,
 	const FString& UserId,
