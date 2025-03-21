@@ -6,6 +6,7 @@
 #include "GraphQLDataSource.h"
 #include "JsonObjectConverter.h"
 #include "LogPremiereCMSManagement.h"
+#include "Repositories/GraphQLConstants.h"
 #include "Structs/CMSInputs.h"
 
 void UBaseRepository::Initialize(UGraphQLDataSource* InDataSource)
@@ -36,7 +37,10 @@ void UBaseRepository::GetAll(
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
 ) const
 {
+	const FString ObjectType = GetObjectType();
+	const FString ObjectFragments = GetObjectFragments();
 	const FString QueryName = GetAllGraphQLQueryName();
+	const FString ObjectSelectionSet = GetObjectQuerySelectionSet();
 	const FString Query = FString::Printf(TEXT(R"(
 	%s
     query GetAll {
@@ -45,9 +49,9 @@ void UBaseRepository::GetAll(
       }
 	}
 	)"),
-	*GetObjectFragments(),
+	*ObjectFragments,
 	*QueryName,
-	*GetObjectQuerySelectionSet()
+	*ObjectSelectionSet
 	);
 	ExecuteGraphQLQuery(
 		Query,
@@ -118,6 +122,89 @@ void UBaseRepository::Delete(
     const FCMSIdInput WhereIdStruct { WhereId };
 	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
 		{"where", MakeWhereValue(WhereIdStruct)}
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename ObjectT, typename CreateT>
+void UBaseRepository::Create(
+    const CreateT& CreateData,
+    const TFunction<void(const ObjectT& Object)>& OnSuccess,
+    const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString ObjectFragments = GetObjectFragments();
+	const FString ObjectCreateInputName = GetObjectCreateInputName();
+	const FString QueryName = GetCreateQueryName();
+	const FString QuerySelectionSet = GetObjectQuerySelectionSet();
+	
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    mutation Create ($data: %s!){
+      %s (data: $data) {
+		%s
+      }
+	}
+	)"),
+	*ObjectFragments,
+	*ObjectCreateInputName,
+	*QueryName,
+	*QuerySelectionSet
+	);
+	
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"data", MakeDataValue(CreateData)}
+	};
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+template <typename ObjectT, typename UpdateT>
+void UBaseRepository::Update(
+	const FString& WhereId,
+	const UpdateT& UpdateData,
+	const TFunction<void(const ObjectT& Object)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString ObjectFragments = GetObjectFragments();
+	const FString ObjectWhereUniqueInputName = GetObjectWhereUniqueInputName();
+	const FString ObjectUpdateInputName = GetObjectUpdateInputName();
+	const FString QueryName = GetUpdateQueryName();
+	const FString QuerySelectionSet = GetObjectQuerySelectionSet();
+	
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    mutation Update ($where: %s!, $data: %s!){
+      %s (where: $where, data: $data) {
+		%s
+      }
+	}
+	)"),
+	*ObjectFragments,
+	*ObjectWhereUniqueInputName,
+	*ObjectUpdateInputName,
+	*QueryName,
+	*QuerySelectionSet
+	);
+
+	const FCMSIdInput WhereIdStruct { WhereId };
+	const TMap<FString, TSharedPtr<FJsonValue>> Variables = {
+		{"where", MakeWhereValue(WhereIdStruct)},
+		{"data", MakeDataValue(UpdateData)}
 	};
 	
 	ExecuteGraphQLQuery(
@@ -323,6 +410,16 @@ FString UBaseRepository::GetObjectType() const
     return TEXT("");
 }
 
+FString UBaseRepository::GetObjectQuerySelectionSet() const
+{
+    return GetObjectSelectionSetFromType(GetObjectType());
+}
+
+FString UBaseRepository::GetObjectFragments() const
+{
+    return GetObjectFragmentsFromType(GetObjectType());
+}
+
 FString UBaseRepository::GetAllGraphQLQueryName() const
 {
 	// example: Session -> session -> sessions
@@ -346,30 +443,35 @@ FString UBaseRepository::GetDeleteQueryName() const
 	return FString::Printf(TEXT("delete%s"), *GetObjectType());
 }
 
+FString UBaseRepository::GetCreateQueryName() const
+{
+	// example: createSession
+	return FString::Printf(TEXT("create%s"), *GetObjectType());
+}
+
 FString UBaseRepository::GetUpdateQueryName() const
 {
 
+	// example: updateSession
     return FString::Printf(TEXT("update%s"), *GetObjectType());
 }
 
 FString UBaseRepository::GetObjectWhereUniqueInputName() const
 {
+	// example: SessionWhereUniqueInput
     return FString::Printf(TEXT("%sWhereUniqueInput"), *GetObjectType());
+}
+
+FString UBaseRepository::GetObjectCreateInputName() const
+{
+	// example: SessionCreateInput
+    return FString::Printf(TEXT("%sCreateInput"), *GetObjectType());
 }
 
 FString UBaseRepository::GetObjectUpdateInputName() const
 {
+	// example: SessionUpdateInput
     return FString::Printf(TEXT("%sUpdateInput"), *GetObjectType());
-}
-
-FString UBaseRepository::GetObjectQuerySelectionSet() const
-{
-    return TEXT("");
-}
-
-FString UBaseRepository::GetObjectFragments() const
-{
-    return TEXT("");
 }
 
 template <typename T>

@@ -254,20 +254,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdScene
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSUSDAssetLibrary
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString PCloudFileId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString AssetLibraryJson;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSXRLive
 {
     GENERATED_BODY()
@@ -483,6 +469,45 @@ struct PREMIERECMSMANAGEMENT_API FCMSObjectWithFile
 	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FString UploadAt;
 	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSFile File;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSAssetLibraryJson
+{
+	GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Objects;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Furniture;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Nature;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSUsdAssetLibrary
+{
+    GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString PCloudFileId;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString FileUrl;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString UploadAt;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSAssetLibraryJson AssetLibraryJson;
+    
 	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSFile File;
 };

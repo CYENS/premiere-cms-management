@@ -291,3 +291,36 @@ struct PREMIERECMSMANAGEMENT_API FCMSPersonWhereUniqueInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Id;
 };
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSAssetLibraryJsonCreateInput
+{
+	GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Objects;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Furniture;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FString> Nature;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUsdAssetLibraryCreateInput
+{
+    GENERATED_BODY()
+    
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSAssetLibraryJsonCreateInput AssetLibraryJson;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSUsdAssetLibraryUpdateInput
+{
+    GENERATED_BODY()
+    
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSAssetLibraryJsonCreateInput AssetLibraryJson;
+};

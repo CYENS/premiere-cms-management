@@ -11,6 +11,7 @@
 #include "Repositories/PersonRepository.h"
 #include "Repositories/SessionCastRepository.h"
 #include "Repositories/SessionRepository.h"
+#include "Repositories/UsdAssetRepositoryLibrary.h"
 #include "Repositories/UsdSceneRepository.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSInputs.h"
@@ -50,6 +51,9 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 	
 	SessionCastRepository = NewObject<USessionCastRepository>();
 	SessionCastRepository->Initialize(GraphQlDataSource);
+
+	UsdAssetLibrary = NewObject<UUsdAssetLibraryRepository>();
+	UsdAssetLibrary->Initialize(GraphQlDataSource);
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const
@@ -1215,6 +1219,82 @@ void UPremiereCMSManagementSubsystem::CreateSessionCast(
 		[OnSuccess](const FCMSSessionCast& Person)
 		{
 			OnSuccess.ExecuteIfBound(Person);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::GetAllUsdAssetLibraries(
+	const FOnGetUsdAssetLibraries& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UsdAssetLibrary->GetAll<FCMSUsdAssetLibrary>(
+		[OnSuccess](const TArray<FCMSUsdAssetLibrary>& UsdAssetLibraries)
+		{
+			OnSuccess.ExecuteIfBound(UsdAssetLibraries);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::FindUsdAssetLibrary(
+	const FString WhereId,
+	const FOnGetUsdAssetLibrary& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UsdAssetLibrary->Find<FCMSUsdAssetLibrary>(
+		WhereId,
+		[OnSuccess](const FCMSUsdAssetLibrary& UsdAssetLibrary)
+		{
+			OnSuccess.ExecuteIfBound(UsdAssetLibrary);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateUsdAssetLibrary(
+	const FCMSUsdAssetLibraryCreateInput CreateData,
+	const FOnGetUsdAssetLibrary& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UsdAssetLibrary->Create<FCMSUsdAssetLibrary>(
+		CreateData,
+		[OnSuccess](const FCMSUsdAssetLibrary& UsdAssetLibrary)
+		{
+			OnSuccess.ExecuteIfBound(UsdAssetLibrary);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::UpdateUsdAssetLibrary(
+	const FString WhereId,
+	const FCMSUsdAssetLibraryUpdateInput UpdateData,
+	const FOnGetUsdAssetLibrary& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UsdAssetLibrary->Update<FCMSUsdAssetLibrary>(
+		WhereId,
+		UpdateData,
+		[OnSuccess](const FCMSUsdAssetLibrary& UsdAssetLibrary)
+		{
+			OnSuccess.ExecuteIfBound(UsdAssetLibrary);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{

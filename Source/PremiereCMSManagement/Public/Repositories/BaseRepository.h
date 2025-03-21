@@ -47,6 +47,21 @@ public:
 	    const TFunction<void(const T& Object)>& OnSuccess,
         const TFunction<void(const FString& ErrorReason)>& OnFailure
     ) const;
+
+    template <typename ObjectT, typename  CreateT>
+    void Create(
+        const CreateT& CreateData,
+        const TFunction<void(const ObjectT& Object)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
+    
+    template <typename ObjectT, typename  CreateT>
+    void Update(
+        const FString& WhereId,
+        const CreateT& UpdateData,
+        const TFunction<void(const ObjectT& Object)>& OnSuccess,
+        const TFunction<void(const FString& ErrorReason)>& OnFailure
+    ) const;
     
     template <typename T>
     void ConnectOneItemToObject(
@@ -84,15 +99,18 @@ public:
     ) const;
     
 protected:
-    virtual FString GetObjectWhereUniqueInputName() const;
-    virtual FString GetObjectUpdateInputName() const;
     virtual FString GetObjectType() const;
+    virtual FString GetObjectQuerySelectionSet() const;
+    virtual FString GetObjectFragments() const;
+    
+    virtual FString GetObjectWhereUniqueInputName() const;
+    virtual FString GetObjectCreateInputName() const;
+    virtual FString GetObjectUpdateInputName() const;
     virtual FString GetAllGraphQLQueryName() const;
     virtual FString GetFindQueryName() const;
     virtual FString GetDeleteQueryName() const;
+    virtual FString GetCreateQueryName() const;
     virtual FString GetUpdateQueryName() const;
-    virtual FString GetObjectQuerySelectionSet() const;
-    virtual FString GetObjectFragments() const;
     
     UPROPERTY()
     UGraphQLDataSource* DataSource;

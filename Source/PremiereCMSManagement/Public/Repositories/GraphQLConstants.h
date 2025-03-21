@@ -18,6 +18,9 @@ extern const FString GQLPersonFragments;
 extern const FString GQLPerson;
 extern const FString GQLSessionCastFragments;
 extern const FString GQLSessionCast;
+extern const FString GQLUsdAssetLibraryFragments;
+extern const FString GQLUsdAssetLibrary;
+extern const TMap<FString, FString> GQLSelectionSets;
 
 extern const FString GQLSessionStatePublicActiveId;
 extern const FString GQLSessionStatePrivateInactiveId;
@@ -33,3 +36,6 @@ enum class EGQLSessionState: uint8
 
 FString GetSessionStateId(const EGQLSessionState& SessionState);
 EGQLSessionState GetSessionStateFromSessionStateId(const FString& SessionStateId);
+
+FString GetObjectSelectionSetFromType(const FString& ObjectType);
+FString GetObjectFragmentsFromType(const FString& ObjectType);

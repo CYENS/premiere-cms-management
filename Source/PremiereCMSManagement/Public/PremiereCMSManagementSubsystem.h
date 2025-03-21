@@ -4,6 +4,7 @@
 #include "CoreMinimal.h"
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/FileRepository.h"
+#include "Repositories/UsdAssetRepositoryLibrary.h"
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSTypes.h"
 #include "Structs/CMSInputs.h"
@@ -65,6 +66,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetFile, const FCMSFile&, File);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetObjectWithFile, const FCMSObjectWithFile&, ObjectWithFile);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessionCast, const FCMSSessionCast&, SessionCast);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGraphQLResponseDelegate, const FCMSGraphQLResult&, Result);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdAssetLibrary, const FCMSUsdAssetLibrary&, UsdAssetLibrary);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdAssetLibraries, const TArray<FCMSUsdAssetLibrary>&, UsdAssetLibraries);
 
 UENUM(BlueprintType)
 enum ESessionVisibility : uint8
@@ -109,6 +112,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	USessionCastRepository* SessionCastRepository;
+	
+	UPROPERTY()
+	UUsdAssetLibraryRepository* UsdAssetLibrary;
 
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
@@ -467,6 +473,35 @@ public:
 		const FCMSSessionWhereUniqueInput& SessionWhere,
 		const FCMSUserWhereUniqueInput& UserWhere,
 		const FOnGetSessionCast& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	/* UsdAssetLibrary */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	void GetAllUsdAssetLibraries(
+		const FOnGetUsdAssetLibraries& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	void FindUsdAssetLibrary(
+		FString WhereId,
+		const FOnGetUsdAssetLibrary& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	void CreateUsdAssetLibrary(
+		FCMSUsdAssetLibraryCreateInput CreateData,
+		const FOnGetUsdAssetLibrary& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	void UpdateUsdAssetLibrary(
+		FString WhereId,
+		FCMSUsdAssetLibraryUpdateInput UpdateData,
+		const FOnGetUsdAssetLibrary& OnSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 };
