@@ -276,7 +276,7 @@ public:
 	void RemoveAvatarFromPerformance(
 		const FCMSIdInput& PerformanceWhere,
 		const FCMSIdInput& AvatarWhere,
-	    const FOnGetPerformanceSuccess& OnUsdSceneRemoveSuccess,
+	    const FOnGetPerformanceSuccess& OnSuccess,
 	    const FOnFailureDelegate& OnFailure
 	);
 

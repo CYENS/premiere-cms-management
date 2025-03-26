@@ -856,7 +856,7 @@ void UPremiereCMSManagementSubsystem::AddAvatarToPerformance(
 void UPremiereCMSManagementSubsystem::RemoveAvatarFromPerformance(
 	const FCMSIdInput& PerformanceWhere,
 	const FCMSIdInput& AvatarWhere,
-	const FOnGetPerformanceSuccess& OnAvatarRemoveSuccess,
+	const FOnGetPerformanceSuccess& OnSuccess,
 	const FOnFailureDelegate& OnFailure
 )
 {
@@ -864,9 +864,9 @@ void UPremiereCMSManagementSubsystem::RemoveAvatarFromPerformance(
 	PerformanceRepository->DisconnectAvatars(
 		{ PerformanceWhere.Id },
 		AvatarsToConnect,
-		[OnAvatarRemoveSuccess](const FCMSPerformance& Performance)
+		[OnSuccess](const FCMSPerformance& Performance)
 		{
-			OnAvatarRemoveSuccess.ExecuteIfBound(Performance);
+			OnSuccess.ExecuteIfBound(Performance);
 		},
 		[OnFailure](const FString& ErrorReason)
 		{
