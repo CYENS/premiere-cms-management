@@ -48,6 +48,7 @@ struct FCMSGraphQLResult
 	TArray<FString> GraphQLErrors ;
 };
 
+DECLARE_DYNAMIC_DELEGATE(FOnLoginSuccess);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSession, const FCMSSession&, Session);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetSessions, const TArray<FCMSSession>&, Sessions);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUserSuccess, FCMSUser, User);
@@ -119,6 +120,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
 	FString GraphQLUrl;
+
+	UFUNCTION(BlueprintCallable)
+	void Login(const FOnLoginSuccess& OnSuccess, const FOnFailureDelegate& OnFailure);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement")
 	void TestGraphQlQueryFString() const;

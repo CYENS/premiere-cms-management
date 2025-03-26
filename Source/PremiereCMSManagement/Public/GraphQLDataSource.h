@@ -98,7 +98,7 @@ public:
 		const FOnGraphQLResponse OnComplete
 	);
 
-	void Login();
+	void Login(const FOnGraphQLResponse& OnComplete);
 	
 	static bool GetDataObjectFromResponse(
 		const FString& JsonResponse,

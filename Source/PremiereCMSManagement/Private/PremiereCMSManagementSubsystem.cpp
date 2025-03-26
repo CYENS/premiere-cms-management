@@ -26,7 +26,7 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 	
 	GraphQlDataSource = NewObject<UGraphQLDataSource>();
 	GraphQlDataSource->Initialize(GraphQLUrl, DeveloperSettings);
-	GraphQlDataSource->Login();
+	GraphQlDataSource->Login(FOnGraphQLResponse::CreateLambda([](FGraphQLResult){}));
 
 	SessionRepository = NewObject<USessionRepository>();
 	SessionRepository->Initialize(GraphQlDataSource);
@@ -54,6 +54,25 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 
 	UsdAssetLibrary = NewObject<UUsdAssetLibraryRepository>();
 	UsdAssetLibrary->Initialize(GraphQlDataSource);
+}
+
+void UPremiereCMSManagementSubsystem::Login(
+	const FOnLoginSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	GraphQlDataSource->Login(
+	FOnGraphQLResponse::CreateLambda([OnSuccess, OnFailure] (FGraphQLResult Result)
+	{
+
+		if (Result.GraphQLOutcome != Success)
+		{
+			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Error: %s"), *Result.RawResponse);
+			OnFailure.ExecuteIfBound(Result.ErrorMessage);
+		}
+
+		OnSuccess.ExecuteIfBound();
+	}));
 }
 
 void UPremiereCMSManagementSubsystem::TestGraphQlQueryFString() const

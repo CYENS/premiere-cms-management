@@ -186,7 +186,7 @@ void UGraphQLDataSource::ExecuteGraphQLQuery(
     HttpRequest->ProcessRequest();
 }
 
-void UGraphQLDataSource::Login()
+void UGraphQLDataSource::Login(const FOnGraphQLResponse& OnComplete)
 {
 	const FString AuthenticationQuery = TEXT(R"(
 	mutation ($identity: String!, $secret: String!) {
@@ -221,10 +221,7 @@ void UGraphQLDataSource::Login()
 	ExecuteGraphQLQuery(
 		AuthenticationQuery,
 		AuthenticationVariables,
-		FOnGraphQLResponse::CreateLambda([](FGraphQLResult Result)
-		{
-			UE_LOG(LogPremiereCMSManagement, Display, TEXT("Login Response:\n%s"), *Result.RawResponse);
-		})
+		OnComplete
 	);
 }
 
