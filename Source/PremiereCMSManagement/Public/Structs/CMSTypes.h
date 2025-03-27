@@ -225,48 +225,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSPropMotionData
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSUsdScene
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString PCloudFileId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString FileUrl;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Title;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    bool Template;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    bool Public;
-	
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-	FCMSUser Owner;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    TArray<FCMSUser> Members;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSXRLive
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString StreamingUrl;
-};
-
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForAvatar
+struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForSession
 {
     GENERATED_BODY()
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
@@ -312,6 +271,101 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCastForSession
 	FCMSUser User;
 };
 
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionForUsdScene
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString EosSessionId;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString Title;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString StreamingUrl;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FString> AudioDataIds;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSPerformanceForSession Performance;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSSessionState State;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	TArray<FCMSSessionCastForSession> CastAvatars;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSUsdScene
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString PCloudFileId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString FileUrl;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    bool Template;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    bool Public;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FCMSSessionForUsdScene> Scene;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    TArray<FCMSUser> Members;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSXRLive
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString StreamingUrl;
+};
+
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForAvatar
+{
+    GENERATED_BODY()
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Title;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString About;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Owner;
+};
+
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSSessionCast
 {
@@ -331,20 +385,33 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCast
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForSession
+struct PREMIERECMSMANAGEMENT_API FCMSUsdSceneForSession
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
+    	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Id;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString PCloudFileId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString FileUrl;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Title;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString About;
+    bool Template;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    bool Public;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSUser Owner;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    TArray<FCMSUser> Members;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
@@ -372,6 +439,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSSession
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FCMSUser Owner;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSUsdSceneForSession Scene;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FCMSSessionState State;
