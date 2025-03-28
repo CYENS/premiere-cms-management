@@ -428,7 +428,7 @@ public:
 	);
 	
 	/*  Avatar */
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdScene")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Avatar")
 	void CreateAvatar(
 		const FCMSAvatarCreateInput& Data,
 		const FString& PerformanceId,
@@ -436,7 +436,14 @@ public:
 		FOnFailureDelegate OnFailure
 	);
 	
-	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | UsdAssetLibrary")
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Avatar")
+	void FindAvatar(
+		const FString& WhereId,
+		const FOnGetAvatar& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Avatar")
 	void UpdateAvatar(
 		const FString WhereId,
 		const FCMSAvatarUpdateInput& UpdateData,

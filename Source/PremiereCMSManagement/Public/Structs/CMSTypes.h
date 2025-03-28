@@ -242,6 +242,21 @@ struct PREMIERECMSMANAGEMENT_API FCMSPerformanceForSession
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSSessionCastForAvatar
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Id;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser User;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSUser Session;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatar
 {
     GENERATED_BODY()
@@ -254,6 +269,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatar
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Name;
+
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	TArray<FCMSSessionCastForAvatar> SessionCast;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")

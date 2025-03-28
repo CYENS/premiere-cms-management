@@ -416,15 +416,26 @@ const FString GQLPerformance = TEXT(R"(
 		}
 	)");
 
-
 const FString GQLAvatarFragments = FString::Printf(TEXT(R"(
+	%s
+	%s
+	%s
+	%s
+	%s
+	%s
 	%s
 	%s
 	%s
 )"),
 *GQLPersonFragment,
 *GQLUserFragment,
-*GQLPerformanceFragment
+*GQLPerformanceFragment,
+*GQLAvatarFragment,
+*GQLSessionStateFragment,
+*GQLUsdSceneFragment,
+*GQLUsdXrLiveFragment,
+*GQLSessionFragmentWithoutCastAvatars,
+*GQLSessionCastFragment
 );
 
 const FString GQLAvatar = TEXT(R"(
@@ -433,6 +444,9 @@ assetId
 name
 performances {
 	...performanceFragment
+}
+sessionCast {
+	...sessionCastFragment
 }
 )");
 
@@ -503,7 +517,8 @@ const FString GQLUsdAssetLibraryFragments = TEXT(R"()");
 const TMap<FString, FString> GQLObjectSelectionSets = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibrary },
 	{ "Avatar", GQLAvatar },
-}; 
+};
+
 const TMap<FString, FString> GQLObjectFragments = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments },
 	{ "Avatar", GQLAvatarFragments },
