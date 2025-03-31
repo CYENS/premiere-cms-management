@@ -11,19 +11,18 @@ fragment personFragment on Person {
 )");
 
 const FString GQLUserFragment = TEXT(R"(
-	fragment userFragment on User {
-	  id
-	  name
-	  email
-	  eosId
-	  userRole
-	  isAdmin
-	  isSuperAdmin
-	  createdAt
-	  person {
+fragment userFragment on User {
+	id
+	name
+	email
+	eosId
+	userRole
+	adminPermissions
+	createdAt
+	person {
 		...personFragment
-	  } 
-	}
+	} 
+}
 )");
 
 const FString GQLPerformanceFragment = TEXT(R"(
@@ -190,8 +189,7 @@ const FString GQLUser = FString::Printf(TEXT(R"(
     email
     eosId
     userRole
-    isAdmin
-    isSuperAdmin
+	adminPermissions
     createdAt
     person {
 		...personFragment

@@ -36,10 +36,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserForPerson
 	FString UserRole = "Read";
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	bool IsAdmin;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS")
-	bool IsSuperAdmin;
+	FString AdminPermissions;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
