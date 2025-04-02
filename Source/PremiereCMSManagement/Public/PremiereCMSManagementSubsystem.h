@@ -155,6 +155,13 @@ public:
 	);
 	
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
+	void FindUserByEosId(
+		const FString& WhereEosId,
+		const FOnGetUserSuccess& OnFindUserSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | User")
 	void CreateUser(
 		const FCMSUserCreateInput& Data,
 		const FString& PersonId,

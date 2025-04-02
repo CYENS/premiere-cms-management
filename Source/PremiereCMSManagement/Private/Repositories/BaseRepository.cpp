@@ -429,6 +429,12 @@ FString UBaseRepository::GetAllGraphQLQueryName() const
 	return GetAllQueryName;
 }
 
+FString UBaseRepository::GetWhereGraphQLQueryName() const
+{
+	// same as GetAllGraphQLQueryName
+	return GetAllGraphQLQueryName();
+}
+
 FString UBaseRepository::GetFindQueryName() const
 {
 	// example: Session -> session
@@ -454,6 +460,12 @@ FString UBaseRepository::GetUpdateQueryName() const
 
 	// example: updateSession
     return FString::Printf(TEXT("update%s"), *GetObjectType());
+}
+
+FString UBaseRepository::GetObjectWhereInputName() const
+{
+	// example: SessionWhereInput
+    return FString::Printf(TEXT("%sWhereInput"), *GetObjectType());
 }
 
 FString UBaseRepository::GetObjectWhereUniqueInputName() const

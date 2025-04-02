@@ -952,6 +952,34 @@ void UPremiereCMSManagementSubsystem::FindUser(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::FindUserByEosId(
+	const FString& WhereEosId,
+	const FOnGetUserSuccess& OnFindUserSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	UserRepository->FindByEosId(
+		WhereEosId,
+		[OnFindUserSuccess](const TArray<FCMSUser>& Users)
+		{
+			const FCMSUser EmptyUser {};
+			if (Users.Num() > 0)
+			{
+				OnFindUserSuccess.ExecuteIfBound(Users[0]);
+			}
+			else
+			{
+				OnFindUserSuccess.ExecuteIfBound(EmptyUser);
+			}
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+
 void UPremiereCMSManagementSubsystem::CreatePerformance(
 	const FCMSPerformanceCreateInput& CreatePerformanceInput,
 	const FString& OwnerId,

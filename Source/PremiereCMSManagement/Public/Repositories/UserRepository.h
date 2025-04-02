@@ -17,6 +17,9 @@ class PREMIERECMSMANAGEMENT_API UUserRepository : public UBaseRepository
 {
     GENERATED_BODY()
 
+protected:
+	virtual FString GetObjectType() const override;
+	
 public:
     
 	void GetAll(
@@ -27,6 +30,12 @@ public:
 	void Find(
 		const FCMSIdInput& Where,
 		const TFunction<void(const FCMSUser& User)>& OnSuccess,
+		const TFunction<void(const FString& ErrorReason)>& OnFailure
+	) const;
+
+	void FindByEosId(
+		const FString& EosId,
+		const TFunction<void(const TArray<FCMSUser>& Users)>& OnSuccess,
 		const TFunction<void(const FString& ErrorReason)>& OnFailure
 	) const;
 	

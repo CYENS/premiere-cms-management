@@ -514,11 +514,13 @@ const FString GQLUsdAssetLibraryFragments = TEXT(R"()");
 
 const TMap<FString, FString> GQLObjectSelectionSets = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibrary },
+	{ "User", GQLUser },
 	{ "Avatar", GQLAvatar },
 };
 
 const TMap<FString, FString> GQLObjectFragments = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments },
+	{ "User", GQLUserFragments },
 	{ "Avatar", GQLAvatarFragments },
 }; 
 

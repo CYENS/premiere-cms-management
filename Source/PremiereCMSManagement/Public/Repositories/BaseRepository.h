@@ -23,7 +23,6 @@ public:
     template <typename TEnum>
     static FString EnumToString(TEnum EnumValue);
     
-    
     static void RemoveEmptyStringsFromJson(TSharedPtr<FJsonObject>& JsonObject);
 
     static void FixId(TSharedPtr<FJsonObject>& JsonObject);
@@ -103,15 +102,17 @@ protected:
     virtual FString GetObjectQuerySelectionSet() const;
     virtual FString GetObjectFragments() const;
     
+    virtual FString GetObjectWhereInputName() const;
     virtual FString GetObjectWhereUniqueInputName() const;
     virtual FString GetObjectCreateInputName() const;
     virtual FString GetObjectUpdateInputName() const;
     virtual FString GetAllGraphQLQueryName() const;
+    virtual FString GetWhereGraphQLQueryName() const;
     virtual FString GetFindQueryName() const;
     virtual FString GetDeleteQueryName() const;
     virtual FString GetCreateQueryName() const;
     virtual FString GetUpdateQueryName() const;
-    
+
     UPROPERTY()
     UGraphQLDataSource* DataSource;
 

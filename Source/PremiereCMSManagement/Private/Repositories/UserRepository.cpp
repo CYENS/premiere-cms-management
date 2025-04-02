@@ -11,6 +11,11 @@
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 
+FString UUserRepository::GetObjectType() const
+{
+	return TEXT("User");
+}
+
 void UUserRepository::GetAll(
 	const TFunction<void(const TArray<FCMSUser>& Users)>& OnSuccess,
 	const TFunction<void(const FString& ErrorReason)>& OnFailure
@@ -65,6 +70,52 @@ void UUserRepository::Find(
 		Query,
 		Variables,
 		QueryName,
+		OnSuccess,
+		OnFailure
+	);
+}
+
+void UUserRepository::FindByEosId(
+	const FString& EosId,
+	const TFunction<void(const TArray<FCMSUser>& Users)>& OnSuccess,
+	const TFunction<void(const FString& ErrorReason)>& OnFailure
+) const
+{
+	const FString QueryName = GetWhereGraphQLQueryName();
+	const FString Query = FString::Printf(TEXT(R"(
+	%s
+    query Where ($where: %s!) {
+      %s (where: $where) {
+		%s
+      }
+	}
+	)"),
+	*GetObjectFragments(),
+	*GetObjectWhereInputName(),
+	*QueryName,
+	*GetObjectQuerySelectionSet()
+	);
+	
+	const FString Variables = FString::Printf(TEXT(R"(
+	{
+	  "where": {
+		"AND": [
+		  {
+			"eosId": {
+			  "equals": "%s"
+			}
+		  }
+		]
+	  }
+	}
+	)"),
+	*EosId
+	);
+	
+	ExecuteGraphQLQuery(
+		Query,
+		Variables,
+        QueryName,
 		OnSuccess,
 		OnFailure
 	);
