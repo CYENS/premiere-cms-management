@@ -503,11 +503,6 @@ session {
 const FString GQLUsdAssetLibrary = TEXT(R"(
 id
 pCloudFileId
-uploadAt
-fileUrl
-file {
-  filesize
-}
 assetLibraryJson
 )");
 const FString GQLUsdAssetLibraryFragments = TEXT(R"()");

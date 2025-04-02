@@ -584,15 +584,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdAssetLibrary
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString PCloudFileId;
 	
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString FileUrl;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString UploadAt;
-	
 	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
 	FCMSAssetLibraryJson AssetLibraryJson;
-    
-	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-	FCMSFile File;
 };
