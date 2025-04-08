@@ -154,6 +154,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionCreateInput
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs | Session")
     FString PerformanceStreamingUrl;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs | Session")
+    FString Backdrop;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs | Session")

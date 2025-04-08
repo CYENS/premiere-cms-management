@@ -69,6 +69,7 @@ fragment sessionFragment on Session {
 	id
 	eosSessionId
 	title
+	backdrop
 	state {
 		...sessionStateFragment
 	}
@@ -314,6 +315,7 @@ const FString GQLSession = TEXT(R"(
     id
     eosSessionId
     title
+	backdrop
     state {
 	  ...sessionStateFragment
 	}
@@ -511,12 +513,14 @@ const TMap<FString, FString> GQLObjectSelectionSets = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibrary },
 	{ "User", GQLUser },
 	{ "Avatar", GQLAvatar },
+	{ "Session", GQLSession },
 };
 
 const TMap<FString, FString> GQLObjectFragments = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments },
 	{ "User", GQLUserFragments },
 	{ "Avatar", GQLAvatarFragments },
+	{ "Session", GQLSessionFragments },
 }; 
 
 FString GetObjectSelectionSetFromType(const FString& ObjectType)
