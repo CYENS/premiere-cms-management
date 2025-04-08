@@ -486,6 +486,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionForPerformance
 	FString StreamingUrl;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FString Backdrop;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	TArray<FString> AudioDataIds;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
