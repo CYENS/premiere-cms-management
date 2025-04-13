@@ -233,6 +233,11 @@ void UGraphQLDataSource::OnRequestComplete(
 )
 {
     FGraphQLResult GraphQlResult;
+    if (!Response.IsValid())
+    {
+        UE_LOG(LogPremiereCMSManagement, Error, TEXT("UGraphQLDatasource On Request Completed. Response invalid"));
+        return;
+    }
 
     const FString SetCookieHeader = Response->GetHeader(TEXT("Set-Cookie"));
     if (!SetCookieHeader.IsEmpty())
