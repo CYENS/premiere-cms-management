@@ -18,6 +18,7 @@ fragment userFragment on User {
 	eosId
 	userRole
 	adminPermissions
+	actionPermissions
 	createdAt
 	person {
 		...personFragment
@@ -191,6 +192,7 @@ const FString GQLUser = FString::Printf(TEXT(R"(
     eosId
     userRole
 	adminPermissions
+	actionPermissions
     createdAt
     person {
 		...personFragment

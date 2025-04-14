@@ -207,6 +207,12 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserUpdateInput
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString EosId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString AdminPermissions;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString ActionPermissions;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
@@ -227,13 +233,13 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
     FString Password;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    bool IsAdmin;
+    FString UserRole = TEXT("Viewer");
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    bool IsSuperAdmin;
+    FString AdminPermissions;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
-    FString UserRole = "Read";
+    FString ActionPermissions = TEXT("read");
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
@@ -256,14 +262,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarUpdateInput
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
     FString Name;
 };
-
-// UENUM(BlueprintType, Category = "PremiereCMS | Inputs")
-// enum class EGender: uint8
-// {
-//     Male = TEXT("Male"),
-//     Female = TEXT("Female"),
-//     NonBinary = TEXT("Non Binary"),
-// };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSPersonCreateInput
