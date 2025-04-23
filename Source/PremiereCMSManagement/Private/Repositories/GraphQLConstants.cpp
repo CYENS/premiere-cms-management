@@ -452,6 +452,25 @@ sessionCast {
 }
 )");
 
+const FString GQLAvatarMotionData = TEXT(R"(
+id
+label
+initialPositionX
+initialPositionY
+initialPositionZ
+initialRotationX
+initialRotationY
+initialRotationZ
+avatar {
+	...avatarFragment
+}
+)");
+
+const FString GQLAvatarMotionDataFragments = FString::Printf(TEXT(R"(
+%s
+)"),
+*GQLAvatarFragment);
+
 const FString GQLPersonFragments = FString::Printf(TEXT(R"(
 %s
 %s
@@ -515,6 +534,7 @@ const TMap<FString, FString> GQLObjectSelectionSets = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibrary },
 	{ "User", GQLUser },
 	{ "Avatar", GQLAvatar },
+	{ "AvatarMotionData", GQLAvatarMotionData },
 	{ "Session", GQLSession },
 };
 
@@ -522,6 +542,7 @@ const TMap<FString, FString> GQLObjectFragments = {
 	{ "UsdAssetLibrary", GQLUsdAssetLibraryFragments },
 	{ "User", GQLUserFragments },
 	{ "Avatar", GQLAvatarFragments },
+	{ "AvatarMotionData", GQLAvatarMotionDataFragments },
 	{ "Session", GQLSessionFragments },
 }; 
 

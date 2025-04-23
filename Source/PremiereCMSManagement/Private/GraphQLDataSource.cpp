@@ -366,7 +366,8 @@ FGraphQLOperationNames GetGraphQLOperationNames(EGraphQLOperationType OperationT
     // Static mapping from enum values to operation names.
     static const TMap<EGraphQLOperationType, FGraphQLOperationNames> OperationMap = {
         { EGraphQLOperationType::UpdateAudioData, { TEXT("AudioDataWhereUniqueInput"), TEXT("updateAudioData") } },
-        { EGraphQLOperationType::UpdateUsdScene, { TEXT("UsdSceneWhereUniqueInput"), TEXT("updateUsdScene") } }
+        { EGraphQLOperationType::UpdateUsdScene, { TEXT("UsdSceneWhereUniqueInput"), TEXT("updateUsdScene") } },
+        { EGraphQLOperationType::UpdateAvatarMotionData, { TEXT("AvatarMotionDataUniqueInput"), TEXT("updateAvatarMotionData") } },
     };
 
     if (const FGraphQLOperationNames* Found = OperationMap.Find(OperationType)) {

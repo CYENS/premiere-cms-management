@@ -4,6 +4,7 @@
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
 #include "PremiereCMSDeveloperSettings.h"
+#include "Repositories/AvatarMotionDataRepository.h"
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/FileRepository.h"
 #include "Repositories/GraphQLConstants.h"
@@ -42,6 +43,9 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 	
 	AvatarRepository = NewObject<UAvatarRepository>();
 	AvatarRepository->Initialize(GraphQlDataSource);
+	
+	AvatarMotionDataRepository = NewObject<UAvatarMotionDataRepository>();
+	AvatarMotionDataRepository->Initialize(GraphQlDataSource);
 	
 	PersonRepository = NewObject<UPersonRepository>();
 	PersonRepository->Initialize(GraphQlDataSource);
@@ -827,6 +831,59 @@ void UPremiereCMSManagementSubsystem::RemoveUserFromPerformance(
 		[OnFailure](const FString& ErrorReason)
 		{
 			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::GetAllAvatarMotionDatas(
+	const FOnGetAvatarMotionDatasSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	AvatarMotionDataRepository->GetAll<FCMSAvatarMotionData>(
+		[OnSuccess](const TArray<FCMSAvatarMotionData>& AvatarMotionDatas )
+		{
+			OnSuccess.ExecuteIfBound(AvatarMotionDatas);
+		}, [OnFailure](const FString& ErrorMessage)
+		{
+			OnFailure.ExecuteIfBound(ErrorMessage);
+		});
+}
+
+void UPremiereCMSManagementSubsystem::FindAvatarMotionData(
+	const FString& WhereId,
+	const FOnGetAvatarMotionDataSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	AvatarMotionDataRepository->Find<FCMSAvatarMotionData>(
+		WhereId,
+		[OnSuccess](const FCMSAvatarMotionData& AvatarMotionData)
+		{
+			OnSuccess.ExecuteIfBound(AvatarMotionData);
+		},
+		[OnFailure](const FString& ErrorMessage)
+		{
+			OnFailure.ExecuteIfBound(ErrorMessage);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::CreateAvatarMotionData(
+	const FCMSAvatarMotionDataCreateInput& Data,
+	const FOnGetAvatarMotionDataSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	AvatarMotionDataRepository->Create<FCMSAvatarMotionData, FCMSAvatarMotionDataCreateInput>(
+		Data,
+		[OnSuccess](const FCMSAvatarMotionData& AvatarMotionData)
+		{
+			OnSuccess.ExecuteIfBound(AvatarMotionData);
+		},
+		[OnFailure](const FString& ErrorMessage)
+		{
+			OnFailure.ExecuteIfBound(ErrorMessage);
 		}
 	);
 }

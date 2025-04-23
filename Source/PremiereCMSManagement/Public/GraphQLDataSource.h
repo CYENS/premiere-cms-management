@@ -176,7 +176,8 @@ bool ParseSingleItemFromResponse(
 UENUM(BlueprintType)
 enum class EGraphQLOperationType: uint8 {
 	UpdateAudioData,
-	UpdateUsdScene
+	UpdateUsdScene,
+	UpdateAvatarMotionData,
 };
 
 struct FGraphQLOperationNames {

@@ -101,14 +101,27 @@ struct PREMIERECMSMANAGEMENT_API FCMSDateTime
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionData
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarForAvatarMotionData
 {
     GENERATED_BODY()
+	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString Id;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString SessionId;
+    FString AssetId;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Name;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionData
+{
+    GENERATED_BODY()
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FString Id;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
     FString PCloudFileId;
@@ -117,13 +130,25 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionData
     FString FileUrl;
     
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FVector InitialPosition;
-    
+	float InitialPositionX;
+	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FRotator InitialRotation;
-    
+	float InitialPositionY;
+	
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString AvatarId;
+	float InitialPositionZ;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	float InitialRotationX;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	float InitialRotationY;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	float InitialRotationZ;
+	
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+    FCMSAvatarForAvatarMotionData Avatar;
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")

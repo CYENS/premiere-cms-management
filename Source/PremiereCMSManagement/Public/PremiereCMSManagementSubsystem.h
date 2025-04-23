@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Repositories/AvatarMotionDataRepository.h"
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/FileRepository.h"
 #include "Repositories/UsdAssetRepositoryLibrary.h"
@@ -57,6 +58,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnCreatePerformanceSuccess, FCMSPerformance, 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetPerformanceSuccess, FCMSPerformance, Performance);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&, Users);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUsdScene>&, UsdScenes);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatarMotionDataSuccess, const FCMSAvatarMotionData, AvatarMotionData);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatarMotionDatasSuccess, const TArray<FCMSAvatarMotionData>&, AvatarMotionDatas);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdSceneSuccess, const FCMSUsdScene&, UsdScene);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
@@ -107,6 +110,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UAvatarRepository* AvatarRepository;
+	
+	UPROPERTY()
+	UAvatarMotionDataRepository* AvatarMotionDataRepository;
 	
 	UPROPERTY()
 	UFileRepository* FileRepository;
@@ -270,6 +276,27 @@ public:
 		const FOnFailureDelegate& OnFailure
 	);
 
+	/* AvatarMotionData */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AvatarMotionData")
+	void GetAllAvatarMotionDatas(
+		const FOnGetAvatarMotionDatasSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AvatarMotionData")
+	void FindAvatarMotionData(
+		const FString& WhereId,
+		const FOnGetAvatarMotionDataSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AvatarMotionData")
+	void CreateAvatarMotionData(
+		const FCMSAvatarMotionDataCreateInput& Data,
+		const FOnGetAvatarMotionDataSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
 	/* Avatars */
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Performance")
 	void AddAvatarToPerformance(

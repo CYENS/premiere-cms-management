@@ -243,6 +243,33 @@ struct PREMIERECMSMANAGEMENT_API FCMSUserCreateInput
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionDataCreateInput
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    FString Label;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialPositionX;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialPositionY;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialPositionZ;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialRotationX;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialRotationY;
+    
+    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Inputs")
+    float InitialRotationZ;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatarCreateInput
 {
     GENERATED_BODY()

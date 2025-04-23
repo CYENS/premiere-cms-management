@@ -14,6 +14,8 @@ extern const FString GQLUsdSceneFragments;
 extern const FString GQLUsdScene;
 extern const FString GQLAvatarFragments;
 extern const FString GQLAvatar;
+extern const FString GQLAvatarMotionData;
+extern const FString GQLAvatarMotionDataFragments;
 extern const FString GQLPersonFragments;
 extern const FString GQLPerson;
 extern const FString GQLSessionCastFragments;
