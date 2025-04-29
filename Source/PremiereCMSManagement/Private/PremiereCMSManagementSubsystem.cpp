@@ -326,6 +326,29 @@ void UPremiereCMSManagementSubsystem::UpdateSession(
 	);
 }
 
+void UPremiereCMSManagementSubsystem::UpdateSessionEosId(
+	const FString& WhereId,
+	const FString& EosSessionId,
+	const FOnGetSession& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	FCMSSessionCreateInput SessionCreateInput;
+	SessionCreateInput.EosSessionId = EosSessionId;
+	SessionRepository->Update<FCMSSession, FCMSSessionCreateInput>(
+		WhereId,
+		SessionCreateInput,
+		[OnSuccess](const FCMSSession& Session)
+		{
+			OnSuccess.ExecuteIfBound(Session);
+		},
+		[OnFailure](const FString& ErrorReason)
+		{
+			OnFailure.ExecuteIfBound(ErrorReason);
+		}
+	);
+}
+
 void UPremiereCMSManagementSubsystem::ConnectOneItemToSession(
 	const FString& SessionWhereId,
 	const FString& ItemWhereId,

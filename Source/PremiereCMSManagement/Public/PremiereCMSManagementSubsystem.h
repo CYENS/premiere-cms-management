@@ -372,6 +372,14 @@ public:
 		const FOnGetSession& OnCreateSessionSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session", meta=(AutoCreateRefTerm="Data,FaceDataWhereIds,AudioDataWhereIds"))
+	void UpdateSessionEosId(
+		const FString& WhereId,
+		const FString& EosSessionId,
+		const FOnGetSession& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
 
 	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | Session")
 	void ConnectOneItemToSession(
