@@ -616,5 +616,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSUsdAssetLibrary
     FString PCloudFileId;
 	
 	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-	FCMSAssetLibraryJson AssetLibraryJson;
+	FString AssetLibraryJson;
+	
 };
