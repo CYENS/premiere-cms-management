@@ -318,6 +318,7 @@ const FString GQLSession = TEXT(R"(
     eosSessionId
     title
 	backdrop
+	performanceStreamingUrl
     state {
 	  ...sessionStateFragment
 	}

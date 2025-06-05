@@ -469,7 +469,7 @@ struct PREMIERECMSMANAGEMENT_API FCMSSession
 	FString Title;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
-	FString StreamingUrl;
+	FString PerformanceStreamingUrl;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FString Backdrop;
