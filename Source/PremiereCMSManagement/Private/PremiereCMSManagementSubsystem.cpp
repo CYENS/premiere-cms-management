@@ -17,6 +17,41 @@
 #include "Repositories/UserRepository.h"
 #include "Structs/CMSInputs.h"
 
+FString UPremiereCMSManagementSubsystem::GetDefaultOnlinePlatformService()
+{
+	FString DefaultPlatformService;
+
+	// GEngineIni is a global FString pointing to DefaultEngine.ini
+	// The section is usually [/Script/OnlineSubsystem.<SubsystemName>] but for DefaultPlatformService,
+	// it's under [/Script/OnlineSubsystem.OnlineSubsystem]
+	GConfig->GetString(
+		TEXT("OnlineSubsystem"), // Section name as defined in DefaultEngine.ini
+		TEXT("DefaultPlatformService"),                 // Key name
+		DefaultPlatformService,                         // Output FString
+		GEngineIni                                      // Config file (e.g., DefaultEngine.ini)
+	);
+
+	return DefaultPlatformService;
+}
+
+bool UPremiereCMSManagementSubsystem::IsPlatformEOS()
+{
+	const FString DefaultPlatformService = GetDefaultOnlinePlatformService();
+	if (DefaultPlatformService.Equals(TEXT("EOS"), ESearchCase::IgnoreCase))
+	{
+		return true;
+	}
+	else if (DefaultPlatformService.Equals(TEXT("EOSDev"), ESearchCase::IgnoreCase))
+	{
+		return true;
+	}
+	else if (DefaultPlatformService.Equals(TEXT("EOSQA"), ESearchCase::IgnoreCase))
+	{
+		return true;
+	}
+	return false;
+}
+
 void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);

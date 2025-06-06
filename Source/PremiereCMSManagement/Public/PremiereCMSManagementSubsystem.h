@@ -127,6 +127,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Config, Category="PremiereCMSManagement | Settings")
 	FString GraphQLUrl;
 
+	UFUNCTION(BlueprintCallable, Category = "PremiereCMSManagement | Settings")
+	static FString GetDefaultOnlinePlatformService();
+
+	UFUNCTION(BlueprintCallable, Category = "PremiereCMSManagement | Settings")
+	static bool IsPlatformEOS();
+
 	UFUNCTION(BlueprintCallable)
 	void Login(const FOnLoginSuccess& OnSuccess, const FOnFailureDelegate& OnFailure);
 	
