@@ -71,6 +71,7 @@ fragment sessionFragment on Session {
 	eosSessionId
 	title
 	backdrop
+	performanceStreamingUrl
 	state {
 		...sessionStateFragment
 	}
