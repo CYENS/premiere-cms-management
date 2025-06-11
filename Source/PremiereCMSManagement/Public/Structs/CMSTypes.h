@@ -520,6 +520,9 @@ struct PREMIERECMSMANAGEMENT_API FCMSSessionForPerformance
 	FCMSUser Owner;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
+	FCMSUsdSceneForSession Scene;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
 	FCMSSessionState State;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "PremiereCMS | Types")
