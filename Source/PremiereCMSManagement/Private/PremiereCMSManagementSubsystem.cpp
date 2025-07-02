@@ -108,6 +108,7 @@ void UPremiereCMSManagementSubsystem::Login(
 		{
 			UE_LOG(LogPremiereCMSManagement, Error, TEXT("Error: %s"), *Result.RawResponse);
 			OnFailure.ExecuteIfBound(Result.ErrorMessage);
+			return;
 		}
 
 		OnSuccess.ExecuteIfBound();
