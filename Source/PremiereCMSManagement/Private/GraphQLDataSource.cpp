@@ -367,7 +367,7 @@ FGraphQLOperationNames GetGraphQLOperationNames(EGraphQLOperationType OperationT
     static const TMap<EGraphQLOperationType, FGraphQLOperationNames> OperationMap = {
         { EGraphQLOperationType::UpdateAudioData, { TEXT("AudioDataWhereUniqueInput"), TEXT("updateAudioData") } },
         { EGraphQLOperationType::UpdateUsdScene, { TEXT("UsdSceneWhereUniqueInput"), TEXT("updateUsdScene") } },
-        { EGraphQLOperationType::UpdateAvatarMotionData, { TEXT("AvatarMotionDataUniqueInput"), TEXT("updateAvatarMotionData") } },
+        { EGraphQLOperationType::UpdateAvatarMotionData, { TEXT("AvatarMotionDataWhereUniqueInput"), TEXT("updateAvatarMotionData") } },
     };
 
     if (const FGraphQLOperationNames* Found = OperationMap.Find(OperationType)) {
