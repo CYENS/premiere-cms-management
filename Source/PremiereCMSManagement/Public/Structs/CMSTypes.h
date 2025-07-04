@@ -116,6 +116,24 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarForAvatarMotionData
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
+struct PREMIERECMSMANAGEMENT_API FCMSAudioData
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString Id;
+
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString PCloudFileId;
+    
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FString FileUrl;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
+	FCMSAvatarForAvatarMotionData Avatar;
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionData
 {
     GENERATED_BODY()
@@ -185,26 +203,6 @@ struct PREMIERECMSMANAGEMENT_API FCMSLightData
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
 struct PREMIERECMSMANAGEMENT_API FCMSFaceData
-{
-    GENERATED_BODY()
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString Id;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString SessionId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString PCloudFileId;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString FileUrl;
-    
-    UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")
-    FString AvatarId;
-};
-
-USTRUCT(BlueprintType, Category = "PremiereCMS | Types")
-struct PREMIERECMSMANAGEMENT_API FCMSAudioData
 {
     GENERATED_BODY()
     UPROPERTY(BlueprintReadWrite, Category = "PremiereCMS | Types")

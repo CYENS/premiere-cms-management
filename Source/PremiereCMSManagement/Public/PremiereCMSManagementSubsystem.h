@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Repositories/AudioDataRepository.h"
 #include "Repositories/AvatarMotionDataRepository.h"
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/FileRepository.h"
@@ -60,6 +61,8 @@ DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsersSuccess, const TArray<FCMSUser>&
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllUsdScenesSuccess, const TArray<FCMSUsdScene>&, UsdScenes);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatarMotionDataSuccess, const FCMSAvatarMotionData, AvatarMotionData);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAvatarMotionDatasSuccess, const TArray<FCMSAvatarMotionData>&, AvatarMotionDatas);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAudioDataSuccess, const FCMSAudioData, AvatarMotionData);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAudioDatasSuccess, const TArray<FCMSAudioData>&, AvatarMotionDatas);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetUsdSceneSuccess, const FCMSUsdScene&, UsdScene);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnGetAllPerformancesSuccess, const TArray<FCMSPerformance>&, Performances);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FOnFailureDelegate, const FString&, ErrorMessage);
@@ -113,6 +116,9 @@ class PREMIERECMSMANAGEMENT_API UPremiereCMSManagementSubsystem : public UGameIn
 	
 	UPROPERTY()
 	UAvatarMotionDataRepository* AvatarMotionDataRepository;
+
+	UPROPERTY()
+	UAudioDataRepository* AudioDataRepository;
 	
 	UPROPERTY()
 	UFileRepository* FileRepository;
@@ -300,6 +306,27 @@ public:
 	void CreateAvatarMotionData(
 		const FCMSAvatarMotionDataCreateInput& Data,
 		const FOnGetAvatarMotionDataSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+
+	/* AudioData */
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AudioData")
+	void GetAllAudioData(
+		const FOnGetAudioDatasSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AudioData")
+	void FindAudioData(
+		const FString& WhereId,
+		const FOnGetAudioDataSuccess& OnSuccess,
+		const FOnFailureDelegate& OnFailure
+	);
+	
+	UFUNCTION(BlueprintCallable, Category="PremiereCMSManagement | AvatarMotionData")
+	void CreateAudioData(
+		const FCMSAudioDataCreateInput& Data,
+		const FOnGetAudioDataSuccess& OnSuccess,
 		const FOnFailureDelegate& OnFailure
 	);
 	

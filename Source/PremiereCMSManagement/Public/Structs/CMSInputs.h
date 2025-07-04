@@ -270,6 +270,12 @@ struct PREMIERECMSMANAGEMENT_API FCMSAvatarMotionDataCreateInput
 };
 
 USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
+struct PREMIERECMSMANAGEMENT_API FCMSAudioDataCreateInput
+{
+    GENERATED_BODY()
+};
+
+USTRUCT(BlueprintType, Category = "PremiereCMS | Inputs")
 struct PREMIERECMSMANAGEMENT_API FCMSAvatarCreateInput
 {
     GENERATED_BODY()
