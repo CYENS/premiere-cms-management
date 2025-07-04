@@ -4,6 +4,7 @@
 #include "GraphQLDataSource.h"
 #include "LogPremiereCMSManagement.h"
 #include "PremiereCMSDeveloperSettings.h"
+#include "Repositories/AudioDataRepository.h"
 #include "Repositories/AvatarMotionDataRepository.h"
 #include "Repositories/AvatarRepository.h"
 #include "Repositories/FileRepository.h"
@@ -81,6 +82,9 @@ void UPremiereCMSManagementSubsystem::Initialize(FSubsystemCollectionBase& Colle
 	
 	AvatarMotionDataRepository = NewObject<UAvatarMotionDataRepository>();
 	AvatarMotionDataRepository->Initialize(GraphQlDataSource);
+
+	AudioDataRepository = NewObject<UAudioDataRepository>();
+	AudioDataRepository->Initialize(GraphQlDataSource);
 	
 	PersonRepository = NewObject<UPersonRepository>();
 	PersonRepository->Initialize(GraphQlDataSource);
@@ -939,6 +943,59 @@ void UPremiereCMSManagementSubsystem::CreateAvatarMotionData(
 		[OnSuccess](const FCMSAvatarMotionData& AvatarMotionData)
 		{
 			OnSuccess.ExecuteIfBound(AvatarMotionData);
+		},
+		[OnFailure](const FString& ErrorMessage)
+		{
+			OnFailure.ExecuteIfBound(ErrorMessage);
+		}
+	);
+}
+
+void UPremiereCMSManagementSubsystem::GetAllAudioData(
+	const FOnGetAudioDatasSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+)
+{
+	AudioDataRepository->GetAll<FCMSAudioData>(
+	[OnSuccess](const TArray<FCMSAudioData>& AudioDatas )
+	{
+		OnSuccess.ExecuteIfBound(AudioDatas);
+	}, [OnFailure](const FString& ErrorMessage)
+	{
+		OnFailure.ExecuteIfBound(ErrorMessage);
+	});
+}
+
+void UPremiereCMSManagementSubsystem::FindAudioData(
+	const FString& WhereId,
+	const FOnGetAudioDataSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+	)
+{
+	AudioDataRepository->Find<FCMSAudioData>(
+	WhereId ,
+	[OnSuccess](const FCMSAudioData& AudioData)
+	{
+		OnSuccess.ExecuteIfBound(AudioData);
+	},
+	[OnFailure](const FString& ErrorMessage)
+	{
+		OnFailure.ExecuteIfBound(ErrorMessage);
+	}
+);
+}
+
+void UPremiereCMSManagementSubsystem::CreateAudioData(
+	const FCMSAudioDataCreateInput& Data,
+	const FOnGetAudioDataSuccess& OnSuccess,
+	const FOnFailureDelegate& OnFailure
+	)
+{
+	AudioDataRepository->Create<FCMSAudioData, FCMSAudioDataCreateInput>(
+		Data,
+		[OnSuccess](const FCMSAudioData& AudioData)
+		{
+			OnSuccess.ExecuteIfBound(AudioData);
 		},
 		[OnFailure](const FString& ErrorMessage)
 		{
