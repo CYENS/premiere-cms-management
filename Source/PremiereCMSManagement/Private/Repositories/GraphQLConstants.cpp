@@ -468,7 +468,20 @@ avatar {
 }
 )");
 
+
 const FString GQLAvatarMotionDataFragments = FString::Printf(TEXT(R"(
+%s
+)"),
+*GQLAvatarFragment);
+
+const FString GQLAudioData = TEXT(R"(
+id
+avatar {
+	...avatarFragment
+}
+)");
+
+const FString GQLAudioDataFragments = FString::Printf(TEXT(R"(
 %s
 )"),
 *GQLAvatarFragment);
@@ -538,6 +551,7 @@ const TMap<FString, FString> GQLObjectSelectionSets = {
 	{ "Avatar", GQLAvatar },
 	{ "AvatarMotionData", GQLAvatarMotionData },
 	{ "Session", GQLSession },
+	{ "AudioData", GQLAudioData}
 };
 
 const TMap<FString, FString> GQLObjectFragments = {
@@ -546,6 +560,7 @@ const TMap<FString, FString> GQLObjectFragments = {
 	{ "Avatar", GQLAvatarFragments },
 	{ "AvatarMotionData", GQLAvatarMotionDataFragments },
 	{ "Session", GQLSessionFragments },
+	{ "AudioData", GQLAudioDataFragments }
 }; 
 
 FString GetObjectSelectionSetFromType(const FString& ObjectType)
